@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+function generateTicketCode() {
+  const rand = Math.floor(1000 + Math.random() * 9000);
+  return `TIC-${rand}`;
+}
+
 export async function POST(req: Request) {
   console.log("HIT")
   const body = await req.json();
@@ -45,14 +50,15 @@ export async function POST(req: Request) {
   try {
     const ticket = await prisma.ticket.create({
       data: {
-      title,
-      description,
-      priority,
-      category,
-      responseDueAt,
-      resolveDueAt,
-    },
-  });
+        code: generateTicketCode(),
+        title,
+        description,
+        priority,
+        category,
+        responseDueAt,
+        resolveDueAt,
+      },
+    });
     return NextResponse.json(ticket);
   } catch (err) {
     console.error(err);
