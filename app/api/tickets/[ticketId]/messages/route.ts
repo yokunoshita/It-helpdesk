@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAdminSessionFromRequest } from "@/lib/admin-auth";
 import prisma from "@/lib/prisma";
-import { publishTicketMessage } from "@/lib/realtime";
+import { publishAdminEvent, publishTicketMessage } from "@/lib/realtime";
 
 export async function GET(
   _req: Request,
@@ -14,6 +14,9 @@ export async function GET(
     },
     include: {
       messages: {
+        where: {
+          sender: { in: ["user", "admin"] },
+        },
         orderBy: { createdAt: "asc" },
       },
     },
@@ -102,6 +105,7 @@ export async function POST(
     await prisma.ticket.update({
       where: { id: ticket.id },
       data: {
+        status: ticket.status === "OPEN" ? "IN_PROGRESS" : ticket.status,
         assignedAdminId: adminSession?.username || ticket.assignedAdminId,
         assignedAt: adminSession ? new Date() : ticket.assignedAt,
         lastAdminReadAt: new Date(),
@@ -120,6 +124,17 @@ export async function POST(
   }
 
   publishTicketMessage(ticket.id, newMessage);
+  if (sender === "user") {
+    publishAdminEvent({
+      id: `user_message:${newMessage.id}`,
+      type: "user_message",
+      ticketId: ticket.id,
+      ticketCode: ticket.code,
+      title: ticket.title,
+      message: newMessage.message,
+      createdAt: newMessage.createdAt.toISOString(),
+    });
+  }
 
   return NextResponse.json(newMessage, { status: 201 });
 }

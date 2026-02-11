@@ -19,6 +19,9 @@ export async function GET(
     },
     include: {
       messages: {
+        where: {
+          sender: { in: ["user", "admin"] },
+        },
         orderBy: { createdAt: "asc" },
       },
     },
@@ -30,6 +33,25 @@ export async function GET(
       { status: 404 }
     );
   }
+
+  const reporterMeta = await prisma.ticketMessage.findFirst({
+    where: {
+      ticketId: ticket.id,
+      sender: "system",
+      message: {
+        startsWith: "reporter_name:",
+      },
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+    select: {
+      message: true,
+    },
+  });
+  const reporterName = reporterMeta?.message
+    ? reporterMeta.message.replace(/^reporter_name:/, "").trim()
+    : null;
 
   const unreadUserMessages = await prisma.ticketMessage.count({
     where: {
@@ -43,6 +65,7 @@ export async function GET(
 
   return NextResponse.json({
     ...ticket,
+    reporterName,
     unreadUserMessages,
     isAssignedToMe: ticket.assignedAdminId === session.username,
   });

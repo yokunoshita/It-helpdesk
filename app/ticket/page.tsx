@@ -1,0 +1,117 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { TicketForm } from "@/app/ticket/ticket-form";
+
+type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
+type PersistedChatState = {
+  ticketId: string;
+  ticketData: {
+    name: string;
+    location: string;
+    title: string;
+    category: string;
+    urgency: string;
+    detail: string;
+  };
+};
+
+const LAST_CHAT_STORAGE_KEY = "hd_last_chat_state";
+
+export default function TicketPage() {
+  const router = useRouter();
+  const [gateState, setGateState] = useState<"checking" | "blocked" | "open">(
+    "checking"
+  );
+
+  useEffect(() => {
+    let mounted = true;
+
+    const checkActiveTicket = async () => {
+      try {
+        const raw = localStorage.getItem(LAST_CHAT_STORAGE_KEY);
+        if (!raw) {
+          if (mounted) setGateState("open");
+          return;
+        }
+
+        const parsed = JSON.parse(raw) as Partial<PersistedChatState>;
+        if (!parsed.ticketId || typeof parsed.ticketId !== "string") {
+          if (mounted) setGateState("open");
+          return;
+        }
+
+        const res = await fetch(`/api/tickets/${parsed.ticketId}`);
+        if (!res.ok) {
+          localStorage.removeItem(LAST_CHAT_STORAGE_KEY);
+          if (mounted) setGateState("open");
+          return;
+        }
+
+        const ticket = (await res.json()) as { status?: TicketStatus };
+        const isActive =
+          ticket.status === "OPEN" ||
+          ticket.status === "IN_PROGRESS" ||
+          ticket.status === "WAITING";
+
+        if (mounted) setGateState(isActive ? "blocked" : "open");
+      } catch {
+        if (mounted) setGateState("open");
+      }
+    };
+
+    void checkActiveTicket();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  if (gateState === "checking") {
+    return (
+      <div className="mx-auto max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+        Memeriksa status tiket aktif...
+      </div>
+    );
+  }
+
+  if (gateState === "blocked") {
+    return (
+      <div className="mx-auto max-w-2xl rounded-2xl border border-amber-200 bg-amber-50 p-6 dark:border-amber-500/30 dark:bg-amber-500/10">
+        <h2 className="text-base font-bold text-amber-800 dark:text-amber-200">
+          Anda masih punya tiket yang belum selesai
+        </h2>
+        <p className="mt-2 text-sm text-amber-700 dark:text-amber-300">
+          Selesaikan atau tunggu tiket aktif ditutup admin dulu sebelum membuat tiket baru.
+        </p>
+        <div className="mt-4 flex gap-2">
+          <button
+            type="button"
+            onClick={() => router.push("/chat")}
+            className="rounded-lg bg-amber-600 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-700"
+          >
+            Lanjutkan Chat Aktif
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/")}
+            className="rounded-lg border border-amber-300 bg-white px-4 py-2 text-xs font-semibold text-amber-800 hover:bg-amber-100 dark:border-amber-400/40 dark:bg-amber-900/10 dark:text-amber-200 dark:hover:bg-amber-900/20"
+          >
+            Kembali
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <TicketForm
+      onBack={() => router.push("/")}
+      onSuccess={(ticketId, ticketData) => {
+        const payload: PersistedChatState = { ticketId, ticketData };
+        localStorage.setItem(LAST_CHAT_STORAGE_KEY, JSON.stringify(payload));
+        router.push("/chat");
+      }}
+    />
+  );
+}

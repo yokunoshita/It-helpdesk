@@ -17,6 +17,9 @@ export async function GET(
     include: includeMessages
       ? {
           messages: {
+            where: {
+              sender: { in: ["user", "admin"] },
+            },
             orderBy: { createdAt: "asc" },
           },
         }

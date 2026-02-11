@@ -1,9 +1,26 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { publishAdminEvent } from "@/lib/realtime";
+
+const REPORTER_COOKIE = "hd_reporter_key";
+const REPORTER_META_PREFIX = "reporter:";
+const REPORTER_NAME_META_PREFIX = "reporter_name:";
+const REPORTER_META_SENDER = "system";
 
 function generateTicketCode() {
   const rand = Math.floor(1000 + Math.random() * 9000);
   return `TIC-${rand}`;
+}
+
+function parseCookie(req: Request, name: string) {
+  const raw = req.headers.get("cookie");
+  if (!raw) return null;
+  const parts = raw.split(";").map((item) => item.trim());
+  for (const part of parts) {
+    if (!part.startsWith(`${name}=`)) continue;
+    return decodeURIComponent(part.slice(name.length + 1));
+  }
+  return null;
 }
 
 export async function GET(req: Request) {
@@ -55,13 +72,58 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const { title, description, priority, category } = body;
+  const { title, description, priority, category, reporterName } = body;
 
   if (!title || !description || !priority || !category) {
     return NextResponse.json(
       { error: "Missing required fields" },
       { status: 400 }
     );
+  }
+
+  const normalizedReporterName =
+    typeof reporterName === "string" && reporterName.trim()
+      ? reporterName.trim()
+      : "Pelapor";
+
+  const existingReporterKey = parseCookie(req, REPORTER_COOKIE);
+  const reporterKey = existingReporterKey || crypto.randomUUID();
+
+  const activeTicket = await prisma.ticket.findFirst({
+    where: {
+      status: { in: ["OPEN", "IN_PROGRESS", "WAITING"] },
+      messages: {
+        some: {
+          sender: REPORTER_META_SENDER,
+          message: `${REPORTER_META_PREFIX}${reporterKey}`,
+        },
+      },
+    },
+    select: {
+      id: true,
+      code: true,
+      status: true,
+    },
+  });
+
+  if (activeTicket) {
+    const blocked = NextResponse.json(
+      {
+        error:
+          "Masih ada tiket aktif. Selesaikan tiket sebelumnya sebelum membuat tiket baru.",
+        activeTicketCode: activeTicket.code,
+        activeTicketId: activeTicket.id,
+        activeTicketStatus: activeTicket.status,
+      },
+      { status: 409 }
+    );
+    blocked.headers.set(
+      "Set-Cookie",
+      `${REPORTER_COOKIE}=${encodeURIComponent(
+        reporterKey
+      )}; Path=/; Max-Age=${60 * 60 * 24 * 365}; SameSite=Lax`
+    );
+    return blocked;
   }
 
   // 1. Fetch SLA policy by priority
@@ -92,18 +154,54 @@ export async function POST(req: Request) {
 
   // 3. Create ticket
   try {
-    const ticket = await prisma.ticket.create({
-      data: {
-        code: generateTicketCode(),
-        title,
-        description,
-        priority,
-        category,
-        responseDueAt,
-        resolveDueAt,
-      },
+    const ticket = await prisma.$transaction(async (tx) => {
+      const created = await tx.ticket.create({
+        data: {
+          code: generateTicketCode(),
+          title,
+          description,
+          priority,
+          category,
+          responseDueAt,
+          resolveDueAt,
+        },
+      });
+
+      await tx.ticketMessage.create({
+        data: {
+          ticketId: created.id,
+          sender: REPORTER_META_SENDER,
+          message: `${REPORTER_META_PREFIX}${reporterKey}`,
+        },
+      });
+
+      await tx.ticketMessage.create({
+        data: {
+          ticketId: created.id,
+          sender: REPORTER_META_SENDER,
+          message: `${REPORTER_NAME_META_PREFIX}${normalizedReporterName}`,
+        },
+      });
+
+      return created;
     });
-    return NextResponse.json(ticket);
+    publishAdminEvent({
+      id: `ticket_created:${ticket.id}`,
+      type: "ticket_created",
+      ticketId: ticket.id,
+      ticketCode: ticket.code,
+      title: ticket.title,
+      message: "Tiket baru masuk",
+      createdAt: ticket.createdAt.toISOString(),
+    });
+    const response = NextResponse.json(ticket);
+    response.headers.set(
+      "Set-Cookie",
+      `${REPORTER_COOKIE}=${encodeURIComponent(
+        reporterKey
+      )}; Path=/; Max-Age=${60 * 60 * 24 * 365}; SameSite=Lax`
+    );
+    return response;
   } catch (err) {
     console.error(err);
     return NextResponse.json(

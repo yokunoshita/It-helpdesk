@@ -1,0 +1,75 @@
+# name: CI
+
+# on:
+#   push:
+#     branches:
+#       - main
+#       - master
+#   pull_request:
+
+# jobs:
+#   lint-and-smoke:
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 20
+#     services:
+#       postgres:
+#         image: postgres:16
+#         env:
+#           POSTGRES_DB: eticketing
+#           POSTGRES_USER: eticketing_user
+#           POSTGRES_PASSWORD: eticketing_pass
+#         ports:
+#           - 5432:5432
+#         options: >-
+#           --health-cmd="pg_isready -U eticketing_user -d eticketing"
+#           --health-interval=10s
+#           --health-timeout=5s
+#           --health-retries=10
+
+#     env:
+#       DATABASE_URL: postgresql://eticketing_user:eticketing_pass@localhost:5432/eticketing
+#       ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+#       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+#       QA_BASE_URL: http://localhost:3000
+
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 20
+#           cache: npm
+
+#       - name: Install dependencies
+#         run: npm ci
+
+#       - name: Prisma generate
+#         run: npx prisma generate
+
+#       - name: Prisma migrate
+#         run: npx prisma migrate deploy
+
+#       - name: Seed database
+#         run: npx tsx prisma/seed.ts
+
+#       - name: Lint
+#         run: npm run lint
+
+#       - name: Start app and wait
+#         run: |
+#           npm run dev > /tmp/next-dev.log 2>&1 &
+#           for i in {1..60}; do
+#             if curl -sf http://localhost:3000/api/ping >/dev/null; then
+#               echo "App is up"
+#               exit 0
+#             fi
+#             sleep 2
+#           done
+#           echo "App failed to start"
+#           cat /tmp/next-dev.log
+#           exit 1
+
+#       - name: QA smoke
+#         run: npm run qa:smoke

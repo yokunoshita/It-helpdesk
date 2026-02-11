@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useRouter } from "next/navigation";
 import { PlusCircle, Search, HelpCircle, ShieldCheck, Clock, Zap } from "lucide-react";
 
 interface LandingPageProps {
@@ -27,18 +30,23 @@ export const LandingPage = ({
 
       {hasActiveChat && (
         <div className="max-w-4xl mx-auto">
-          <button
-            type="button"
-            onClick={onResumeChat}
-            className="w-full rounded-2xl border border-blue-200 bg-blue-50 px-6 py-4 text-left transition hover:bg-blue-100 dark:border-blue-500/30 dark:bg-blue-500/10 dark:hover:bg-blue-500/20"
-          >
+          <div className="rounded-2xl border border-blue-200 bg-blue-50 px-6 py-4 transition dark:border-blue-500/30 dark:bg-blue-500/10">
             <p className="text-sm font-bold text-blue-700 dark:text-blue-300">
-              Lanjutkan Chat Terakhir
+              Anda masih punya chat tiket aktif
             </p>
-            <p className="text-xs text-blue-600/90 dark:text-blue-200/90">
-              Anda masih punya percakapan tiket aktif. Klik untuk kembali ke chat.
+            <p className="text-xs text-blue-600/90 dark:text-blue-200/90 mt-1">
+              Anda perlu menyelesaikan tiket ini dulu sebelum membuat tiket baru.
             </p>
-          </button>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={onResumeChat}
+                className="rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700"
+              >
+                Lanjutkan Chat
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -106,9 +114,22 @@ export const LandingPage = ({
         <div className="flex flex-col items-center gap-4">
           <HelpCircle className="size-10 text-blue-400 dark:text-white opacity-80" />
           <h3 className="text-xl font-bold">Butuh bantuan darurat?</h3>
-          <p className="text-slate-400 dark:text-blue-50 max-w-md">Untuk masalah kritis yang menghentikan operasional satu divisi, silakan hubungi Hotline IT di : +6285155477496.</p>
+          <p className="text-slate-400 dark:text-blue-50 max-w-md">Untuk masalah kritis yang menghentikan operasional satu divisi, silakan hubungi Hotline IT di : 113.</p>
         </div>
       </div>
     </div>
   );
 };
+
+export default function LandingRoutePage() {
+  const router = useRouter();
+
+  return (
+    <LandingPage
+      onCreateClick={() => router.push("/ticket")}
+      onDashboardClick={() => router.push("/dashboard")}
+      onResumeChat={() => router.push("/chat")}
+      hasActiveChat={false}
+    />
+  );
+}

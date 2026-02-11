@@ -1,5 +1,8 @@
+"use client";
+
 import * as React from "react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { SimpleNavbar } from "@/app/layouting/user-layout";
 import { LandingPage } from "@/app/landing-page/page";
 import { TicketForm } from "@/app/ticket/ticket-form";
@@ -73,6 +76,7 @@ const formatCategoryLabel = (category: RecentTicket["category"]) => {
 };
 
 export default function App() {
+    const router = useRouter();
     const [currentPage, setCurrentPage] = useState("home");
     const [activeTicketId, setActiveTicketId] = useState<string | null>(null);
     const [activeTicketStatus, setActiveTicketStatus] = useState<
@@ -114,6 +118,11 @@ export default function App() {
       };
       localStorage.setItem(LAST_CHAT_STORAGE_KEY, JSON.stringify(payload));
     }, [activeTicketId, activeTicketData]);
+
+    const persistChatState = (ticketId: string, ticketData: ActiveTicketData | null) => {
+      const payload: PersistedChatState = { ticketId, ticketData };
+      localStorage.setItem(LAST_CHAT_STORAGE_KEY, JSON.stringify(payload));
+    };
 
     useEffect(() => {
       if (!activeTicketId) {
@@ -229,9 +238,33 @@ export default function App() {
       activeTicketId && activeTicketStatus && activeTicketStatus !== "CLOSED"
     );
 
+    const navigateTo = (page: string) => {
+      if (page === "home") {
+        router.push("/");
+        return;
+      }
+      if (page === "create") {
+        router.push("/ticket");
+        return;
+      }
+      if (page === "dashboard") {
+        router.push("/dashboard");
+        return;
+      }
+      if (page === "admin") {
+        router.push("/admin");
+        return;
+      }
+      if (page === "chat") {
+        router.push("/chat");
+        return;
+      }
+      setCurrentPage(page);
+    };
+
     const openActiveChat = () => {
       if (!activeTicketId) return;
-      setCurrentPage("chat");
+      router.push("/chat");
     };
 
     const renderContent = () => {
@@ -239,8 +272,8 @@ export default function App() {
             case "home":
                 return (
                 <LandingPage 
-                    onCreateClick={() => setCurrentPage("create")}
-                    onDashboardClick={() => setCurrentPage("dashboard")}
+                    onCreateClick={() => router.push("/ticket")}
+                    onDashboardClick={() => router.push("/dashboard")}
                     onResumeChat={openActiveChat}
                     hasActiveChat={hasActiveChat}
                 />
@@ -252,7 +285,8 @@ export default function App() {
             onSuccess={(id, data) => {
               setActiveTicketId(id);
               setActiveTicketData(data);
-              setCurrentPage("chat");
+              persistChatState(id, data);
+              router.push("/chat");
             }}
           />
         );
@@ -274,13 +308,13 @@ export default function App() {
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <button 
-                  onClick={() => setCurrentPage("create")}
+                  onClick={() => router.push("/ticket")}
                   className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
                 >
                   Buat Laporan Baru
                 </button>
                 <button
-                  onClick={() => setCurrentPage("admin")}
+                  onClick={() => router.push("/admin")}
                   className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-300/30 dark:bg-slate-700 dark:hover:bg-slate-600 dark:shadow-black/30 active:scale-95"
                 >
                   Mode Admin
@@ -378,8 +412,8 @@ export default function App() {
         return <AdminDashboard onBackHome={() => setCurrentPage("home")} />;
       default:
         return <LandingPage 
-          onCreateClick={() => setCurrentPage("create")}
-          onDashboardClick={() => setCurrentPage("dashboard")}
+          onCreateClick={() => router.push("/ticket")}
+          onDashboardClick={() => router.push("/dashboard")}
           onResumeChat={openActiveChat}
           hasActiveChat={hasActiveChat}
         />;
@@ -391,7 +425,7 @@ export default function App() {
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-100 dark:selection:bg-blue-900 transition-colors duration-300">
         <Toaster position="top-center" richColors theme={isDarkMode ? "dark" : "light"} />
         <SimpleNavbar 
-          onNavigate={setCurrentPage} 
+          onNavigate={navigateTo} 
           activePage={currentPage} 
           isDarkMode={isDarkMode}
           toggleDarkMode={toggleDarkMode}

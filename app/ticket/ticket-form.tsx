@@ -21,6 +21,16 @@ type CreatedTicket = {
   code: string;
 };
 
+const parseJsonSafe = async <T,>(res: Response): Promise<T | null> => {
+  const raw = await res.text();
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+};
+
 export const TicketForm = ({ onBack, onSuccess }: TicketFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FormDataState>({
@@ -55,6 +65,7 @@ export const TicketForm = ({ onBack, onSuccess }: TicketFormProps) => {
       description: formData.detail,
       priority: priorityMap[formData.urgency] || "MEDIUM",
       category: categoryMap[formData.category] || "HARDWARE",
+      reporterName: formData.name.trim(),
     }
     
     try{
@@ -65,13 +76,16 @@ export const TicketForm = ({ onBack, onSuccess }: TicketFormProps) => {
       })
 
       if (!res.ok){
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Gagal membuat tiket");
+        const errorData = await parseJsonSafe<{ error?: string }>(res);
+        throw new Error(errorData?.error || "Gagal membuat tiket");
       }
 
-      const ticket: CreatedTicket = await res.json();
+      const ticket = await parseJsonSafe<CreatedTicket>(res);
+      if (!ticket?.id && !ticket?.code) {
+        throw new Error("Respons server tidak valid.");
+      }
       toast.success("Laporan Berhasil Dikirimkan !");
-      onSuccess(ticket.code || ticket.id, formData);
+      onSuccess((ticket.code || ticket.id) as string, formData);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Terjadi kesalahan";
       toast.error("Error : " + message)

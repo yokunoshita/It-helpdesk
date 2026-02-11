@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { RefreshCw, Send, Shield, Ticket, UserCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Download, RefreshCw, Send, Shield, Ticket, UserCheck } from "lucide-react";
+import { toast } from "sonner";
 
 type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
 type TicketCategory = "HARDWARE" | "SOFTWARE" | "NETWORK" | "ACCOUNT" | "OTHER";
@@ -27,12 +29,13 @@ type AdminTicketSummary = {
 type TicketMessage = {
   id: string;
   ticketId: string;
-  sender: TicketSender;
+  sender: TicketSender | "system";
   message: string;
   createdAt: string;
 };
 
 type AdminTicketDetail = AdminTicketSummary & {
+  reporterName?: string | null;
   firstReplyAt: string | null;
   responseDueAt: string;
   resolveDueAt: string;
@@ -49,6 +52,16 @@ type AdminSessionResponse = {
   authenticated: boolean;
   user?: string;
   role?: string;
+};
+
+type AdminNotificationEvent = {
+  id: string;
+  type: "ticket_created" | "user_message";
+  ticketId: string;
+  ticketCode: string;
+  title: string;
+  message: string;
+  createdAt: string;
 };
 
 const statusLabel: Record<TicketStatus, string> = {
@@ -102,6 +115,10 @@ const isDetail = (data: unknown): data is AdminTicketDetail => {
   );
 };
 
+const isChatSender = (
+  sender: TicketMessage["sender"]
+): sender is TicketSender => sender === "user" || sender === "admin";
+
 interface AdminDashboardProps {
   onBackHome: () => void;
 }
@@ -134,8 +151,11 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [assigning, setAssigning] = useState(false);
+  const [downloadingReport, setDownloadingReport] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<TicketStatus>("OPEN");
   const lastDetailMessageAtRef = useRef<string>(new Date(0).toISOString());
+  const notifiedEventIdsRef = useRef<Set<string>>(new Set());
+  const lastAdminNotifAtRef = useRef<string>(new Date().toISOString());
 
   const queryString = useMemo(() => {
     const params = new URLSearchParams();
@@ -146,6 +166,14 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
     if (query) params.set("q", query);
     return params.toString();
   }, [page, status, assignedFilter, query]);
+
+  const exportQueryString = useMemo(() => {
+    const params = new URLSearchParams();
+    if (status !== "ALL") params.set("status", status);
+    if (assignedFilter !== "all") params.set("assigned", assignedFilter);
+    if (query) params.set("q", query);
+    return params.toString();
+  }, [status, assignedFilter, query]);
 
   const checkSession = useCallback(async () => {
     try {
@@ -226,11 +254,17 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
           return;
         }
 
-        setTicketDetail(data);
+        const filteredMessages = data.messages.filter((msg) =>
+          isChatSender(msg.sender)
+        );
+        setTicketDetail({
+          ...data,
+          messages: filteredMessages,
+        });
         setSelectedStatus(data.status);
-        if (data.messages.length > 0) {
+        if (filteredMessages.length > 0) {
           lastDetailMessageAtRef.current =
-            data.messages[data.messages.length - 1].createdAt;
+            filteredMessages[filteredMessages.length - 1].createdAt;
         } else {
           lastDetailMessageAtRef.current = new Date(0).toISOString();
         }
@@ -264,6 +298,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
     source.addEventListener("message", (event) => {
       try {
         const data = JSON.parse((event as MessageEvent).data) as TicketMessage;
+        if (!isChatSender(data.sender)) return;
         setTicketDetail((prev) => {
           if (!prev) return prev;
           if (prev.messages.some((msg) => msg.id === data.id)) return prev;
@@ -286,6 +321,87 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
       source.close();
     };
   }, [authenticated, ticketDetail?.id, ticketDetail?.code]);
+
+  useEffect(() => {
+    if (!authenticated) return;
+
+    if (typeof window !== "undefined" && "Notification" in window) {
+      if (Notification.permission === "default") {
+        void Notification.requestPermission();
+      }
+    }
+
+    const source = new EventSource(
+      `/api/admin/notifications/stream?after=${encodeURIComponent(lastAdminNotifAtRef.current)}`
+    );
+
+    source.addEventListener("notification", (event) => {
+      try {
+        const payload = JSON.parse(
+          (event as MessageEvent).data
+        ) as AdminNotificationEvent;
+
+        if (notifiedEventIdsRef.current.has(payload.id)) return;
+        notifiedEventIdsRef.current.add(payload.id);
+        lastAdminNotifAtRef.current = payload.createdAt;
+
+        if (payload.type === "ticket_created") {
+          toast("Tiket Baru Masuk", {
+            description: `${payload.ticketCode} - ${payload.title}`,
+          });
+          void loadTickets();
+        }
+
+        if (payload.type === "user_message") {
+          toast("Pesan User Baru", {
+            description: `${payload.ticketCode}: ${payload.message.slice(0, 80)}`,
+          });
+          setTickets((prev) => {
+            const found = prev.some((ticket) => ticket.id === payload.ticketId);
+            if (!found) return prev;
+            return prev.map((ticket) =>
+              ticket.id === payload.ticketId
+                ? {
+                    ...ticket,
+                    unreadUserMessages:
+                      selectedTicketId === payload.ticketId
+                        ? ticket.unreadUserMessages
+                        : ticket.unreadUserMessages + 1,
+                    updatedAt: payload.createdAt,
+                  }
+                : ticket
+            );
+          });
+        }
+
+        if (
+          typeof window !== "undefined" &&
+          "Notification" in window &&
+          Notification.permission === "granted"
+        ) {
+          const title =
+            payload.type === "ticket_created"
+              ? `Tiket Baru ${payload.ticketCode}`
+              : `Pesan Baru ${payload.ticketCode}`;
+          const body =
+            payload.type === "ticket_created"
+              ? payload.title
+              : payload.message;
+          new Notification(title, { body });
+        }
+      } catch {
+        // Ignore malformed notification event.
+      }
+    });
+
+    source.addEventListener("error", () => {
+      source.close();
+    });
+
+    return () => {
+      source.close();
+    };
+  }, [authenticated, loadTickets, selectedTicketId]);
 
   const submitLogin = async () => {
     setAuthError(null);
@@ -407,12 +523,20 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
           ticket.id === ticketDetail.id
             ? {
                 ...ticket,
+                status:
+                  ticket.status === "OPEN" ? "IN_PROGRESS" : ticket.status,
                 unreadUserMessages: 0,
                 updatedAt: created.createdAt,
               }
             : ticket
         )
       );
+      if (ticketDetail.status === "OPEN") {
+        setSelectedStatus("IN_PROGRESS");
+        setTicketDetail((prev) =>
+          prev ? { ...prev, status: "IN_PROGRESS" } : prev
+        );
+      }
       void markRead(ticketDetail.id);
     } catch {
       setDetailError("Koneksi terputus saat mengirim pesan.");
@@ -421,8 +545,9 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
     }
   };
 
-  const submitStatusUpdate = async () => {
+  const submitStatusUpdate = async (nextStatus: TicketStatus) => {
     if (!ticketDetail) return;
+    setSelectedStatus(nextStatus);
     setUpdatingStatus(true);
     setDetailError(null);
 
@@ -430,7 +555,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
       const res = await fetch(`/api/admin/tickets/${ticketDetail.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: selectedStatus }),
+        body: JSON.stringify({ status: nextStatus }),
       });
 
       if (!res.ok) {
@@ -438,12 +563,56 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
         return;
       }
 
+      setTicketDetail((prev) =>
+        prev ? { ...prev, status: nextStatus } : prev
+      );
+      setTickets((prev) =>
+        prev.map((ticket) =>
+          ticket.id === ticketDetail.id
+            ? { ...ticket, status: nextStatus }
+            : ticket
+        )
+      );
       await loadTicketDetail(ticketDetail.id);
       await loadTickets();
     } catch {
       setDetailError("Koneksi terputus saat update status.");
     } finally {
       setUpdatingStatus(false);
+    }
+  };
+
+  const downloadReport = async () => {
+    if (!authenticated) return;
+    setDownloadingReport(true);
+    try {
+      const url = exportQueryString
+        ? `/api/admin/reports/export?${exportQueryString}`
+        : "/api/admin/reports/export";
+
+      const res = await fetch(url);
+      if (!res.ok) {
+        toast.error("Gagal mengunduh laporan.");
+        return;
+      }
+
+      const blob = await res.blob();
+      const contentDisposition = res.headers.get("content-disposition") || "";
+      const filenameMatch = contentDisposition.match(/filename="([^"]+)"/);
+      const filename = filenameMatch?.[1] || "ticket-report.csv";
+      const downloadUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = downloadUrl;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(downloadUrl);
+      toast.success("Laporan berhasil diunduh.");
+    } catch {
+      toast.error("Koneksi terputus saat download laporan.");
+    } finally {
+      setDownloadingReport(false);
     }
   };
 
@@ -512,6 +681,15 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={downloadReport}
+            disabled={downloadingReport}
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+          >
+            <Download className="size-4" />
+            {downloadingReport ? "Mengunduh..." : "Download Laporan"}
+          </button>
           <button
             type="button"
             onClick={loadTickets}
@@ -697,7 +875,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                     <div className="space-y-1">
                       <div className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-300">
                         <Ticket className="size-3.5" />
-                        {ticketDetail.code}
+                        {ticketDetail.code} / {ticketDetail.reporterName || "Pelapor"}
                       </div>
                       <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                         {ticketDetail.title}
@@ -749,7 +927,12 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                       <div className="mt-3 flex items-center gap-2">
                         <select
                           value={selectedStatus}
-                          onChange={(e) => setSelectedStatus(e.target.value as TicketStatus)}
+                          onChange={(e) =>
+                            void submitStatusUpdate(
+                              e.target.value as TicketStatus
+                            )
+                          }
+                          disabled={updatingStatus}
                           className="w-full rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs font-semibold outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                         >
                           <option value="OPEN">OPEN</option>
@@ -757,14 +940,6 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                           <option value="WAITING">WAITING</option>
                           <option value="CLOSED">CLOSED</option>
                         </select>
-                        <button
-                          type="button"
-                          onClick={submitStatusUpdate}
-                          disabled={updatingStatus}
-                          className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
-                        >
-                          Save
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -789,6 +964,9 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                               : "border border-slate-200 bg-white text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                           }`}
                         >
+                          <p className="mb-1 text-[10px] font-semibold opacity-80">
+                            {msg.sender === "admin" ? "Admin" : "Pelapor"}
+                          </p>
                           <p>{msg.message}</p>
                           <p className="mt-1 text-[10px] opacity-75">{formatRelative(msg.createdAt)}</p>
                         </div>
@@ -837,3 +1015,8 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
     </div>
   );
 };
+
+export default function AdminRoutePage() {
+  const router = useRouter();
+  return <AdminDashboard onBackHome={() => router.push("/")} />;
+}

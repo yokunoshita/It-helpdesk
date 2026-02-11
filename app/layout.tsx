@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { SiteShell } from "@/app/layouting/site-shell";
 import "@/styles/index.css"
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <body className={inter.className}>
-        {children}
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );

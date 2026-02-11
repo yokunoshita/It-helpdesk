@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { 
   Send, 
   User, 
@@ -33,12 +34,39 @@ interface Message {
 }
 
 type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
+type ChatTicketData = {
+  name: string;
+  location: string;
+  title: string;
+  category: string;
+  urgency: string;
+  detail?: string;
+};
 type StreamMessage = {
   id: string;
   ticketId: string;
   sender: "user" | "admin";
   message: string;
   createdAt: string;
+};
+type PersistedChatState = {
+  ticketId: string;
+  ticketData: ChatTicketData | null;
+};
+
+const LAST_CHAT_STORAGE_KEY = "hd_last_chat_state";
+const WELCOME_PREFIX = "welcome:";
+const WELCOME_TEXT =
+  "Halo,Tim IT kami akan segera meninjau masalah anda Anda.";
+
+const parseJsonSafe = async <T,>(res: Response): Promise<T | null> => {
+  const raw = await res.text();
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
 };
 
 const getStatusLabel = (status: TicketStatus | null) => {
@@ -79,62 +107,95 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
   useEffect(() => {
     const loadMessages = async () => {
       setLoading(true);
+      try {
+        const [messagesRes, ticketRes] = await Promise.all([
+          fetch(`/api/tickets/${ticketId}/messages`),
+          fetch(`/api/tickets/${ticketId}`),
+        ]);
+        const data = await parseJsonSafe<
+          Array<{
+            id: string;
+            message: string;
+            sender: "user" | "admin";
+            createdAt: string;
+          }>
+        >(messagesRes);
 
-      const [messagesRes, ticketRes] = await Promise.all([
-        fetch(`/api/tickets/${ticketId}/messages`),
-        fetch(`/api/tickets/${ticketId}`),
-      ]);
-      const data = await messagesRes.json();
-
-      if (!messagesRes.ok) {
-        throw new Error(data.error || "Gagal mengambil data dari server");
-      }
-
-      if (!Array.isArray(data)) {
-        console.error("Invalid messages response:", data);
-        setMessages([]);
-        setLoading(false);
-        return;
-      }
-
-      const mapped = data.map((m: {
-        id: string;
-        message: string;
-        sender: "user" | "admin";
-        createdAt: string;
-      }) => ({
-        id: m.id,
-        text: m.message,
-        sender: m.sender,
-        timestamp: new Date(m.createdAt).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        createdAt: m.createdAt,
-      }));
-
-      const unique = Array.from(
-        new Map(mapped.map((message) => [message.id, message])).values()
-      );
-      setMessages(unique);
-      if (data.length > 0) {
-        const last = data[data.length - 1] as { createdAt: string };
-        lastMessageAtRef.current = last.createdAt;
-      }
-
-      if (ticketRes.ok) {
-        const ticket = (await ticketRes.json()) as { status?: TicketStatus };
-        if (
-          ticket.status === "OPEN" ||
-          ticket.status === "IN_PROGRESS" ||
-          ticket.status === "WAITING" ||
-          ticket.status === "CLOSED"
-        ) {
-          setTicketStatus(ticket.status);
+        if (!messagesRes.ok || !data) {
+          setMessages([]);
+          return;
         }
-      }
 
-      setLoading(false);
+        if (!Array.isArray(data)) {
+          console.error("Invalid messages response:", data);
+          setMessages([]);
+          return;
+        }
+
+        const mapped = data.map((m: {
+          id: string;
+          message: string;
+          sender: "user" | "admin";
+          createdAt: string;
+        }) => ({
+          id: m.id,
+          text: m.message,
+          sender: m.sender,
+          timestamp: new Date(m.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          createdAt: m.createdAt,
+        }));
+
+        const unique = Array.from(
+          new Map(mapped.map((message) => [message.id, message])).values()
+        );
+        const hasAdminMessage = unique.some((msg) => msg.sender === "admin");
+        const withWelcome = hasAdminMessage
+          ? unique
+          : [
+              {
+                id: `${WELCOME_PREFIX}${ticketId}`,
+                text: WELCOME_TEXT,
+                sender: "admin" as const,
+                timestamp: new Date().toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+                createdAt: new Date().toISOString(),
+              },
+              ...unique,
+            ];
+
+        setMessages(withWelcome);
+        if (data.length > 0) {
+          const last = data[data.length - 1] as { createdAt: string };
+          lastMessageAtRef.current = last.createdAt;
+        }
+
+        if (ticketRes.ok) {
+          const ticket = await parseJsonSafe<{ status?: TicketStatus }>(
+            ticketRes
+          );
+          if (!ticket) {
+            setTicketStatus(null);
+            return;
+          }
+          if (
+            ticket.status === "OPEN" ||
+            ticket.status === "IN_PROGRESS" ||
+            ticket.status === "WAITING" ||
+            ticket.status === "CLOSED"
+          ) {
+            setTicketStatus(ticket.status);
+          }
+        }
+      } catch {
+        setMessages([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadMessages();
@@ -189,10 +250,21 @@ const handleSendMessage = async (e: React.FormEvent) => {
     }),
   });
 
-  const saved = await res.json();
+  const saved = await parseJsonSafe<{
+    id: string;
+    message: string;
+    sender: "user" | "admin";
+    createdAt: string;
+    error?: string;
+  }>(res);
 
   if (!res.ok) {
-    alert(saved.error || "Gagal mengirim pesan");
+    alert(saved?.error || "Gagal mengirim pesan");
+    return;
+  }
+
+  if (!saved?.id || !saved?.message || !saved?.sender || !saved?.createdAt) {
+    alert("Respons server tidak valid. Coba kirim ulang.");
     return;
   }
 
@@ -218,7 +290,8 @@ const handleSendMessage = async (e: React.FormEvent) => {
 
   const ticketRes = await fetch(`/api/tickets/${ticketId}`);
   if (ticketRes.ok) {
-    const ticket = (await ticketRes.json()) as { status?: TicketStatus };
+    const ticket = await parseJsonSafe<{ status?: TicketStatus }>(ticketRes);
+    if (!ticket) return;
     if (
       ticket.status === "OPEN" ||
       ticket.status === "IN_PROGRESS" ||
@@ -253,13 +326,22 @@ const handleSendMessage = async (e: React.FormEvent) => {
               </p>
             </div>
           </div>
-          <div className={`hidden sm:flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border ${
-            ticketStatus === "CLOSED"
-              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20"
-              : "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-500/20"
-          }`}>
-            <CheckCircle2 className="size-3" />
-            {getStatusLabel(ticketStatus)}
+          <div className="hidden sm:flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onBack()}
+              className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            >
+              Beranda
+            </button>
+            <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border ${
+              ticketStatus === "CLOSED"
+                ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20"
+                : "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-500/20"
+            }`}>
+              <CheckCircle2 className="size-3" />
+              {getStatusLabel(ticketStatus)}
+            </div>
           </div>
         </div>
 
@@ -350,3 +432,73 @@ const handleSendMessage = async (e: React.FormEvent) => {
     </div>
   );
 };
+
+export default function ChatRoutePage() {
+  const router = useRouter();
+  const [state, setState] = useState<PersistedChatState | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(LAST_CHAT_STORAGE_KEY);
+      if (!raw) {
+        setState(null);
+      } else {
+        const parsed = JSON.parse(raw) as Partial<PersistedChatState>;
+        if (typeof parsed.ticketId === "string" && parsed.ticketId) {
+          setState({
+            ticketId: parsed.ticketId,
+            ticketData: parsed.ticketData ?? null,
+          });
+        } else {
+          setState(null);
+        }
+      }
+    } catch {
+      setState(null);
+    } finally {
+      setReady(true);
+    }
+  }, []);
+
+  if (!ready) {
+    return (
+      <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+        Memuat chat...
+      </div>
+    );
+  }
+
+  if (!state?.ticketId) {
+    return (
+      <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 text-sm dark:border-slate-800 dark:bg-slate-900">
+        <p className="text-slate-700 dark:text-slate-200">
+          Belum ada tiket aktif untuk dibuka di halaman chat.
+        </p>
+        <button
+          type="button"
+          onClick={() => router.push("/")}
+          className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700"
+        >
+          Kembali ke Beranda
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <ChatPage
+      onBack={() => router.push("/")}
+      ticketId={state.ticketId}
+      ticketData={
+        state.ticketData || {
+          name: "User",
+          location: "-",
+          title: "Kendala IT",
+          category: "Lainnya",
+          urgency: "Biasa",
+        }
+      }
+    />
+  );
+}
