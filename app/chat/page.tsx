@@ -29,17 +29,44 @@ interface Message {
   text: string;
   sender: "user" | "admin";
   timestamp: string;
+  createdAt: string;
 }
+
+type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
+type StreamMessage = {
+  id: string;
+  ticketId: string;
+  sender: "user" | "admin";
+  message: string;
+  createdAt: string;
+};
+
+const getStatusLabel = (status: TicketStatus | null) => {
+  switch (status) {
+    case "OPEN":
+      return "Baru";
+    case "IN_PROGRESS":
+      return "Diproses";
+    case "WAITING":
+      return "Menunggu";
+    case "CLOSED":
+      return "Selesai";
+    default:
+      return "Tidak diketahui";
+  }
+};
 
 export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
   const [ticketStatus, setTicketStatus] = useState<
-  "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED" | null >(null);
+    TicketStatus | null
+  >(null);
 
   const [inputText, setInputText] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastMessageAtRef = useRef<string>(new Date(0).toISOString());
 
   // const scrollToBottom = () => {
   //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -50,40 +77,100 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
   // }, [messages]);
 
   useEffect(() => {
-  const loadMessages = async () => {
-    setLoading(true);
+    const loadMessages = async () => {
+      setLoading(true);
 
-    const res = await fetch(`/api/tickets/${ticketId}/messages`);
-    const data = await res.json();
+      const [messagesRes, ticketRes] = await Promise.all([
+        fetch(`/api/tickets/${ticketId}/messages`),
+        fetch(`/api/tickets/${ticketId}`),
+      ]);
+      const data = await messagesRes.json();
 
-    if (!res.ok) {
+      if (!messagesRes.ok) {
         throw new Error(data.error || "Gagal mengambil data dari server");
       }
 
-    if (!Array.isArray(data)) {
-      console.error("Invalid messages response:", data);
-      setMessages([]);
-      setLoading(false);
-      return;
-    }
+      if (!Array.isArray(data)) {
+        console.error("Invalid messages response:", data);
+        setMessages([]);
+        setLoading(false);
+        return;
+      }
 
-    setMessages(
-      data.map((m: any) => ({
-        id: m.id,
-        text: m.message,
-        sender: m.sender,
-        timestamp: new Date(m.createdAt).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      }))
+      setMessages(
+        data.map((m: {
+          id: string;
+          message: string;
+          sender: "user" | "admin";
+          createdAt: string;
+        }) => ({
+          id: m.id,
+          text: m.message,
+          sender: m.sender,
+          timestamp: new Date(m.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          createdAt: m.createdAt,
+        }))
+      );
+      if (data.length > 0) {
+        const last = data[data.length - 1] as { createdAt: string };
+        lastMessageAtRef.current = last.createdAt;
+      }
+
+      if (ticketRes.ok) {
+        const ticket = (await ticketRes.json()) as { status?: TicketStatus };
+        if (
+          ticket.status === "OPEN" ||
+          ticket.status === "IN_PROGRESS" ||
+          ticket.status === "WAITING" ||
+          ticket.status === "CLOSED"
+        ) {
+          setTicketStatus(ticket.status);
+        }
+      }
+
+      setLoading(false);
+    };
+
+    loadMessages();
+  }, [ticketId]);
+
+  useEffect(() => {
+    const source = new EventSource(
+      `/api/tickets/${ticketId}/messages/stream?after=${encodeURIComponent(lastMessageAtRef.current)}`
     );
 
-    setLoading(false);
-  };
+    source.addEventListener("message", (event) => {
+      try {
+        const payload = JSON.parse((event as MessageEvent).data) as StreamMessage;
+        setMessages((prev) => {
+          if (prev.some((msg) => msg.id === payload.id)) return prev;
+          lastMessageAtRef.current = payload.createdAt;
+          return [
+            ...prev,
+            {
+              id: payload.id,
+              text: payload.message,
+              sender: payload.sender,
+              timestamp: new Date(payload.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+              createdAt: payload.createdAt,
+            },
+          ];
+        });
+      } catch {
+        // Ignore malformed stream payloads.
+      }
+    });
 
-  loadMessages();
-}, [ticketId]);
+    return () => {
+      source.close();
+    };
+  }, [ticketId]);
 
 
 const handleSendMessage = async (e: React.FormEvent) => {
@@ -116,13 +203,26 @@ const handleSendMessage = async (e: React.FormEvent) => {
         hour: "2-digit",
         minute: "2-digit",
       }),
+      createdAt: saved.createdAt,
     },
   ]);
+  lastMessageAtRef.current = saved.createdAt;
 
   setInputText("");
+
+  const ticketRes = await fetch(`/api/tickets/${ticketId}`);
+  if (ticketRes.ok) {
+    const ticket = (await ticketRes.json()) as { status?: TicketStatus };
+    if (
+      ticket.status === "OPEN" ||
+      ticket.status === "IN_PROGRESS" ||
+      ticket.status === "WAITING" ||
+      ticket.status === "CLOSED"
+    ) {
+      setTicketStatus(ticket.status);
+    }
+  }
 };
-
-
 
   return (
     <div className="max-w-3xl mx-auto h-[calc(100vh-200px)] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -147,9 +247,13 @@ const handleSendMessage = async (e: React.FormEvent) => {
               </p>
             </div>
           </div>
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold border border-blue-100 dark:border-blue-500/20">
+          <div className={`hidden sm:flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border ${
+            ticketStatus === "CLOSED"
+              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20"
+              : "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-500/20"
+          }`}>
             <CheckCircle2 className="size-3" />
-            Aktif
+            {getStatusLabel(ticketStatus)}
           </div>
         </div>
 
@@ -221,11 +325,13 @@ const handleSendMessage = async (e: React.FormEvent) => {
             type="text" 
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder="Ketik pesan balasan di sini..." 
+            placeholder={ticketStatus === "CLOSED" ? "Tiket sudah selesai." : "Ketik pesan balasan di sini..."} 
             className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 transition-all dark:text-white"
+            disabled={ticketStatus === "CLOSED"}
           />
           <button 
             type="submit"
+            disabled={ticketStatus === "CLOSED"}
             className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20"
           >
             <Send className="size-5" />

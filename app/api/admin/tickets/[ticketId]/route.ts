@@ -4,23 +4,24 @@ import prisma from "@/lib/prisma";
 
 export async function GET(
   req: Request,
-  context: { params: Promise<{ ticketId: string }> }
+  { params }: { params: Promise<{ ticketId: string }> }
 ) {
-  const { ticketId } = await context.params;
-  const { searchParams } = new URL(req.url);
-  const includeMessages = searchParams.get("includeMessages") === "1";
+  const session = getAdminSessionFromRequest(req);
+  if (!session) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  const { ticketId } = await params;
 
   const ticket = await prisma.ticket.findFirst({
     where: {
       OR: [{ id: ticketId }, { code: ticketId }],
     },
-    include: includeMessages
-      ? {
-          messages: {
-            orderBy: { createdAt: "asc" },
-          },
-        }
-      : undefined,
+    include: {
+      messages: {
+        orderBy: { createdAt: "asc" },
+      },
+    },
   });
 
   if (!ticket) {
@@ -30,21 +31,34 @@ export async function GET(
     );
   }
 
-  return NextResponse.json(ticket);
+  const unreadUserMessages = await prisma.ticketMessage.count({
+    where: {
+      ticketId: ticket.id,
+      sender: "user",
+      createdAt: ticket.lastAdminReadAt
+        ? { gt: ticket.lastAdminReadAt }
+        : undefined,
+    },
+  });
+
+  return NextResponse.json({
+    ...ticket,
+    unreadUserMessages,
+    isAssignedToMe: ticket.assignedAdminId === session.username,
+  });
 }
 
 export async function PATCH(
   req: Request,
-  context: { params: Promise<{ ticketId: string }> }
+  { params }: { params: Promise<{ ticketId: string }> }
 ) {
   const session = getAdminSessionFromRequest(req);
   if (!session) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const { ticketId } = await context.params;
+  const { ticketId } = await params;
   const body: unknown = await req.json();
-
   const status =
     typeof body === "object" && body !== null && "status" in body
       ? (body as { status?: unknown }).status
@@ -58,32 +72,26 @@ export async function PATCH(
     );
   }
 
-  const existing = await prisma.ticket.findFirst({
+  const ticket = await prisma.ticket.findFirst({
     where: {
       OR: [{ id: ticketId }, { code: ticketId }],
     },
     select: { id: true },
   });
 
-  if (!existing) {
+  if (!ticket) {
     return NextResponse.json(
       { error: "Ticket not found" },
       { status: 404 }
     );
   }
 
-  const updateData: {
-    status: "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
-    closedAt?: Date | null;
-  } = {
-    status: status as "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED",
-  };
-
-  updateData.closedAt = status === "CLOSED" ? new Date() : null;
-
   const updated = await prisma.ticket.update({
-    where: { id: existing.id },
-    data: updateData,
+    where: { id: ticket.id },
+    data: {
+      status: status as "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED",
+      closedAt: status === "CLOSED" ? new Date() : null,
+    },
   });
 
   return NextResponse.json(updated);

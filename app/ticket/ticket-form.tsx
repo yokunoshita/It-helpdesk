@@ -72,8 +72,9 @@ export const TicketForm = ({ onBack, onSuccess }: TicketFormProps) => {
       const ticket: CreatedTicket = await res.json();
       toast.success("Laporan Berhasil Dikirimkan !");
       onSuccess(ticket.code || ticket.id, formData);
-    }catch (err: any){
-      toast.error("Error : " + err.message)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Terjadi kesalahan";
+      toast.error("Error : " + message)
     }finally{
       setIsSubmitting(false)
     }

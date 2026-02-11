@@ -132,6 +132,9 @@ exports.Prisma.TicketScalarFieldEnum = {
   resolveDueAt: 'resolveDueAt',
   firstReplyAt: 'firstReplyAt',
   closedAt: 'closedAt',
+  assignedAdminId: 'assignedAdminId',
+  assignedAt: 'assignedAt',
+  lastAdminReadAt: 'lastAdminReadAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

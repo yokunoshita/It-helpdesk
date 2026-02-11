@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useMemo, useState } from "react";
 import { 
   BarChart, 
   Bar, 
@@ -18,36 +20,142 @@ import {
   ArrowUpRight 
 } from "lucide-react";
 
-const data = [
-  { name: "Sen", tickets: 12 },
-  { name: "Sel", tickets: 19 },
-  { name: "Rab", tickets: 15 },
-  { name: "Kam", tickets: 22 },
-  { name: "Jum", tickets: 10 },
-];
+type DashboardStats = {
+  cards: {
+    completed: number;
+    inProgress: number;
+    needsAttention: number;
+  };
+  weeklyVolume: Array<{ name: string; tickets: number }>;
+  statusBreakdown: Array<{ name: string; value: number; color: string }>;
+};
 
-const pieData = [
-  { name: "Selesai", value: 65, color: "#10b981" },
-  { name: "Proses", value: 25, color: "#3b82f6" },
-  { name: "Tertunda", value: 10, color: "#f59e0b" },
-];
+const DEFAULT_STATS: DashboardStats = {
+  cards: {
+    completed: 0,
+    inProgress: 0,
+    needsAttention: 0,
+  },
+  weeklyVolume: [
+    { name: "Sen", tickets: 0 },
+    { name: "Sel", tickets: 0 },
+    { name: "Rab", tickets: 0 },
+    { name: "Kam", tickets: 0 },
+    { name: "Jum", tickets: 0 },
+    { name: "Sab", tickets: 0 },
+    { name: "Min", tickets: 0 },
+  ],
+  statusBreakdown: [
+    { name: "Selesai", value: 0, color: "#10b981" },
+    { name: "Proses", value: 0, color: "#3b82f6" },
+    { name: "Tertunda", value: 0, color: "#f59e0b" },
+  ],
+};
+
+const parseDashboardStats = (value: unknown): DashboardStats | null => {
+  if (typeof value !== "object" || value === null) return null;
+
+  const candidate = value as Partial<DashboardStats>;
+  if (
+    !candidate.cards ||
+    typeof candidate.cards.completed !== "number" ||
+    typeof candidate.cards.inProgress !== "number" ||
+    typeof candidate.cards.needsAttention !== "number" ||
+    !Array.isArray(candidate.weeklyVolume) ||
+    !Array.isArray(candidate.statusBreakdown)
+  ) {
+    return null;
+  }
+
+  return candidate as DashboardStats;
+};
 
 export const DashboardView = () => {
+  const [stats, setStats] = useState<DashboardStats>(DEFAULT_STATS);
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      setLoading(true);
+      setErrorMessage(null);
+
+      try {
+        const res = await fetch("/api/dashboard/stats");
+        const data: unknown = await res.json();
+
+        if (!res.ok) {
+          const fallbackError =
+            typeof data === "object" &&
+            data !== null &&
+            "error" in data &&
+            typeof (data as { error?: unknown }).error === "string"
+              ? (data as { error: string }).error
+              : "Gagal memuat statistik layanan.";
+          setErrorMessage(fallbackError);
+          return;
+        }
+
+        const parsed = parseDashboardStats(data);
+        if (!parsed) {
+          setErrorMessage("Format data statistik tidak valid.");
+          return;
+        }
+
+        setStats(parsed);
+      } catch {
+        setErrorMessage("Terjadi kendala jaringan saat memuat statistik.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStats();
+  }, []);
+
+  const cards = useMemo(
+    () => [
+      {
+        label: "Tiket Selesai",
+        value: String(stats.cards.completed).padStart(2, "0"),
+        icon: CheckCircle2,
+        color: "text-emerald-600 dark:text-emerald-400",
+        bg: "bg-emerald-50 dark:bg-emerald-500/10",
+      },
+      {
+        label: "Dalam Proses",
+        value: String(stats.cards.inProgress).padStart(2, "0"),
+        icon: Clock,
+        color: "text-blue-600 dark:text-blue-400",
+        bg: "bg-blue-50 dark:bg-blue-500/10",
+      },
+      {
+        label: "Butuh Perhatian",
+        value: String(stats.cards.needsAttention).padStart(2, "0"),
+        icon: AlertCircle,
+        color: "text-amber-600 dark:text-amber-400",
+        bg: "bg-amber-50 dark:bg-amber-500/10",
+      },
+    ],
+    [stats]
+  );
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      {errorMessage && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-300">
+          {errorMessage}
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[
-          { label: "Tiket Selesai", value: "24", icon: CheckCircle2, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-500/10" },
-          { label: "Dalam Proses", value: "08", icon: Clock, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-500/10" },
-          { label: "Butuh Perhatian", value: "03", icon: AlertCircle, color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-50 dark:bg-amber-500/10" },
-        ].map((stat, i) => (
+        {cards.map((stat, i) => (
           <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
               <div className={`p-3 rounded-xl ${stat.bg} ${stat.color}`}>
                 <stat.icon className="size-6" />
               </div>
               <span className="flex items-center text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 rounded-full">
-                +12% <ArrowUpRight className="size-3 ml-0.5" />
+                {loading ? "..." : "Live"} <ArrowUpRight className="size-3 ml-0.5" />
               </span>
             </div>
             <div className="mt-4">
@@ -63,7 +171,7 @@ export const DashboardView = () => {
           <h3 className="font-semibold text-slate-800 dark:text-white mb-6">Volume Tiket Mingguan</h3>
           <div className="h-64 w-full relative min-h-[256px]">
             <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-              <BarChart data={data}>
+              <BarChart data={stats.weeklyVolume}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.1} />
                 <XAxis 
                   dataKey="name" 
@@ -98,7 +206,7 @@ export const DashboardView = () => {
             <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <PieChart>
                 <Pie
-                  data={pieData}
+                  data={stats.statusBreakdown}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -106,7 +214,7 @@ export const DashboardView = () => {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {pieData.map((entry, index) => (
+                  {stats.statusBreakdown.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -114,7 +222,7 @@ export const DashboardView = () => {
               </PieChart>
             </ResponsiveContainer>
             <div className="space-y-3 pr-8">
-              {pieData.map((item, i) => (
+              {stats.statusBreakdown.map((item, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
                   <span className="text-xs font-medium text-slate-600 dark:text-slate-400">{item.name}</span>

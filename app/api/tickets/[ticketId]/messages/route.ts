@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { getAdminSessionFromRequest } from "@/lib/admin-auth";
 import prisma from "@/lib/prisma";
+import { publishTicketMessage } from "@/lib/realtime";
 
 export async function GET(
   _req: Request,
@@ -32,14 +34,33 @@ export async function POST(
   { params }: { params: Promise<{ ticketId: string }> }
 ) {
   const { ticketId } = await params;
-  const body = await req.json();
+  const body: unknown = await req.json();
 
-  const { sender, message } = body;
+  const sender =
+    typeof body === "object" && body !== null && "sender" in body
+      ? (body as { sender?: unknown }).sender
+      : undefined;
+  const message =
+    typeof body === "object" && body !== null && "message" in body
+      ? (body as { message?: unknown }).message
+      : undefined;
 
-  if (!sender || !message) {
+  if (
+    (sender !== "user" && sender !== "admin") ||
+    typeof message !== "string" ||
+    !message.trim()
+  ) {
     return NextResponse.json(
-      { error: "sender & message required" },
+      { error: "sender and non-empty message are required" },
       { status: 400 }
+    );
+  }
+
+  const adminSession = sender === "admin" ? getAdminSessionFromRequest(req) : null;
+  if (sender === "admin" && !adminSession) {
+    return NextResponse.json(
+      { error: "unauthorized" },
+      { status: 401 }
     );
   }
 
@@ -58,11 +79,47 @@ export async function POST(
 
   const newMessage = await prisma.ticketMessage.create({
     data: {
-      ticketId: ticket.id, 
+      ticketId: ticket.id,
       sender,
-      message,
+      message: message.trim(),
     },
   });
+
+  if (sender === "admin" && !ticket.firstReplyAt) {
+    await prisma.ticket.update({
+      where: { id: ticket.id },
+      data: {
+        firstReplyAt: new Date(),
+        status: ticket.status === "OPEN" ? "IN_PROGRESS" : ticket.status,
+        assignedAdminId: adminSession?.username || ticket.assignedAdminId,
+        assignedAt: adminSession ? new Date() : ticket.assignedAt,
+        lastAdminReadAt: new Date(),
+      },
+    });
+  }
+
+  if (sender === "admin" && ticket.firstReplyAt) {
+    await prisma.ticket.update({
+      where: { id: ticket.id },
+      data: {
+        assignedAdminId: adminSession?.username || ticket.assignedAdminId,
+        assignedAt: adminSession ? new Date() : ticket.assignedAt,
+        lastAdminReadAt: new Date(),
+      },
+    });
+  }
+
+  if (sender === "user" && ticket.status === "CLOSED") {
+    await prisma.ticket.update({
+      where: { id: ticket.id },
+      data: {
+        status: "IN_PROGRESS",
+        closedAt: null,
+      },
+    });
+  }
+
+  publishTicketMessage(ticket.id, newMessage);
 
   return NextResponse.json(newMessage, { status: 201 });
 }

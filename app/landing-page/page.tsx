@@ -4,9 +4,16 @@ import { PlusCircle, Search, HelpCircle, ShieldCheck, Clock, Zap } from "lucide-
 interface LandingPageProps {
   onCreateClick: () => void;
   onDashboardClick: () => void;
+  onResumeChat: () => void;
+  hasActiveChat: boolean;
 }
 
-export const LandingPage = ({ onCreateClick, onDashboardClick }: LandingPageProps) => {
+export const LandingPage = ({
+  onCreateClick,
+  onDashboardClick,
+  onResumeChat,
+  hasActiveChat,
+}: LandingPageProps) => {
   return (
     <div className="space-y-16 py-8 animate-in fade-in duration-700">
       <div className="text-center space-y-4">
@@ -17,6 +24,23 @@ export const LandingPage = ({ onCreateClick, onDashboardClick }: LandingPageProp
           Portal layanan mandiri untuk melaporkan masalah teknis, permintaan perangkat, atau bantuan jaringan di kantor Anda.
         </p>
       </div>
+
+      {hasActiveChat && (
+        <div className="max-w-4xl mx-auto">
+          <button
+            type="button"
+            onClick={onResumeChat}
+            className="w-full rounded-2xl border border-blue-200 bg-blue-50 px-6 py-4 text-left transition hover:bg-blue-100 dark:border-blue-500/30 dark:bg-blue-500/10 dark:hover:bg-blue-500/20"
+          >
+            <p className="text-sm font-bold text-blue-700 dark:text-blue-300">
+              Lanjutkan Chat Terakhir
+            </p>
+            <p className="text-xs text-blue-600/90 dark:text-blue-200/90">
+              Anda masih punya percakapan tiket aktif. Klik untuk kembali ke chat.
+            </p>
+          </button>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         <div 
@@ -88,4 +112,3 @@ export const LandingPage = ({ onCreateClick, onDashboardClick }: LandingPageProp
     </div>
   );
 };
-

@@ -47,6 +47,9 @@ model Ticket {
   resolveDueAt  DateTime
   firstReplyAt  DateTime?
   closedAt      DateTime?
+  assignedAdminId String?
+  assignedAt      DateTime?
+  lastAdminReadAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

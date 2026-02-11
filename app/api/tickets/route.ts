@@ -6,10 +6,54 @@ function generateTicketCode() {
   return `TIC-${rand}`;
 }
 
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const pageParam = Number(searchParams.get("page") || "1");
+    const limitParam = Number(searchParams.get("limit") || "5");
+    const page = Number.isFinite(pageParam) && pageParam > 0 ? Math.floor(pageParam) : 1;
+    const limit =
+      Number.isFinite(limitParam) && limitParam > 0
+        ? Math.min(Math.floor(limitParam), 20)
+        : 5;
+
+    const [total, tickets] = await Promise.all([
+      prisma.ticket.count(),
+      prisma.ticket.findMany({
+        orderBy: { createdAt: "desc" },
+        skip: (page - 1) * limit,
+        take: limit,
+        select: {
+          id: true,
+          code: true,
+          title: true,
+          status: true,
+          category: true,
+          createdAt: true,
+        },
+      }),
+    ]);
+
+    const totalPages = Math.max(1, Math.ceil(total / limit));
+
+    return NextResponse.json({
+      items: tickets,
+      page,
+      limit,
+      total,
+      totalPages,
+    });
+  } catch (error) {
+    console.error("Failed to load tickets:", error);
+    return NextResponse.json(
+      { error: "Failed to load tickets" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: Request) {
-  console.log("HIT")
   const body = await req.json();
-  console.log("BODY:", body);
 
   const { title, description, priority, category } = body;
 
