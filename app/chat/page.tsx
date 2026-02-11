@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import { 
   Send, 
@@ -39,13 +41,13 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
   const [inputText, setInputText] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+  // useEffect(() => {
+  //   scrollToBottom();
+  // }, [messages]);
 
   useEffect(() => {
   const loadMessages = async () => {
@@ -53,6 +55,17 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
 
     const res = await fetch(`/api/tickets/${ticketId}/messages`);
     const data = await res.json();
+
+    if (!res.ok) {
+        throw new Error(data.error || "Gagal mengambil data dari server");
+      }
+
+    if (!Array.isArray(data)) {
+      console.error("Invalid messages response:", data);
+      setMessages([]);
+      setLoading(false);
+      return;
+    }
 
     setMessages(
       data.map((m: any) => ({
@@ -88,6 +101,11 @@ const handleSendMessage = async (e: React.FormEvent) => {
 
   const saved = await res.json();
 
+  if (!res.ok) {
+    alert(saved.error || "Gagal mengirim pesan");
+    return;
+  }
+
   setMessages((prev) => [
     ...prev,
     {
@@ -103,6 +121,7 @@ const handleSendMessage = async (e: React.FormEvent) => {
 
   setInputText("");
 };
+
 
 
   return (
@@ -172,7 +191,7 @@ const handleSendMessage = async (e: React.FormEvent) => {
             Memuat percakapan...
           </p>
         )}
-        {loading && 
+        {!loading && 
         messages.map((msg) => (
           <div 
             key={msg.id} 

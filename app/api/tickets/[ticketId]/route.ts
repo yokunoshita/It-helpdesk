@@ -2,15 +2,18 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 export async function GET(
-  req: Request,
+  _req: Request,
   context: { params: Promise<{ ticketId: string }> }
 ) {
   const { ticketId } = await context.params;
 
-  const ticket = await prisma.ticket.findUnique({
-    where: { id: ticketId },
+  const ticket = await prisma.ticket.findFirst({
+    where: {
+      OR: [{ id: ticketId }, { code: ticketId }],
+    },
     select: {
       id: true,
+      code: true,
       status: true,
     },
   });

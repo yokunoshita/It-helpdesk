@@ -4,12 +4,26 @@ import { toast } from "sonner";
 
 interface TicketFormProps {
   onBack: () => void;
-  onSuccess: (ticketId: string, data: any) => void;
+  onSuccess: (ticketId: string, data: FormDataState) => void;
 }
+
+type FormDataState = {
+  name: string;
+  location: string;
+  title: string;
+  category: string;
+  urgency: string;
+  detail: string;
+};
+
+type CreatedTicket = {
+  id: string;
+  code: string;
+};
 
 export const TicketForm = ({ onBack, onSuccess }: TicketFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataState>({
     name: "",
     location: "",
     title: "",
@@ -55,23 +69,14 @@ export const TicketForm = ({ onBack, onSuccess }: TicketFormProps) => {
         throw new Error(errorData.error || "Gagal membuat tiket");
       }
 
-      const ticket = await res.json();
+      const ticket: CreatedTicket = await res.json();
       toast.success("Laporan Berhasil Dikirimkan !");
-      onSuccess(ticket.id, formData);
+      onSuccess(ticket.code || ticket.id, formData);
     }catch (err: any){
       toast.error("Error : " + err.message)
     }finally{
       setIsSubmitting(false)
     }
-
-    setTimeout(() => {
-      const generatedId = `TIC-${Math.floor(1000 + Math.random() * 9000)}`;
-      setIsSubmitting(false);
-      toast.success("Laporan Berhasil Dikirim!", {
-        description: `Mohon catat ID Tiket Anda: ${generatedId}`,
-      });
-      onSuccess(generatedId, formData);
-    }, 1500);
   };
 
   return (
@@ -206,4 +211,3 @@ export const TicketForm = ({ onBack, onSuccess }: TicketFormProps) => {
     </div>
   );
 };
-
