@@ -1,16 +1,10 @@
 services:
-  postgres:
-    image: postgres:15
-    container_name: eticketing-postgres
-    restart: unless-stopped
+  app:
+    build: .
+    container_name: it-helpdesk-app
     ports:
-      - "5432:5432"
+      - "3006:3000"
     environment:
-      POSTGRES_DB: eticketing
-      POSTGRES_USER: eticketing_user
-      POSTGRES_PASSWORD: eticketing_pass
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-volumes:
-  pgdata:
+      DATABASE_URL: postgresql://dev:dev_rahasiasekali@192.168.3.13:5434/db_itheldesk
+      ADMIN_USERNAME: a1 # ubah jadi rahasia sendiri
+      ADMIN_PASSWORD: rahasia
