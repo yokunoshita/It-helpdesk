@@ -282,6 +282,17 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
     return () => clearInterval(interval);
   }, [ticketId]);
 
+  useEffect(() => {
+    if (!showCloseConfirm) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !closingTicket) {
+        setShowCloseConfirm(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [showCloseConfirm, closingTicket]);
+
 
 const handleSendMessage = async (e: React.FormEvent) => {
   e.preventDefault();
@@ -577,7 +588,11 @@ const submitFeedback = async () => {
           </div>
         )}
         <form onSubmit={handleSendMessage} className="flex gap-3">
+          <label htmlFor="chat-input" className="sr-only">
+            Tulis pesan chat
+          </label>
           <input 
+            id="chat-input"
             type="text" 
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
@@ -587,6 +602,7 @@ const submitFeedback = async () => {
           />
           <button 
             type="submit"
+            aria-label="Kirim pesan"
             disabled={ticketStatus === "CLOSED"}
             className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20"
           >
@@ -599,12 +615,18 @@ const submitFeedback = async () => {
       </div>
 
       {showCloseConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 px-4">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="close-ticket-title"
+          aria-describedby="close-ticket-desc"
+        >
           <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-xl dark:border-slate-700 dark:bg-slate-900">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+            <h3 id="close-ticket-title" className="text-base font-bold text-slate-900 dark:text-white">
               Selesaikan Tiket?
             </h3>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            <p id="close-ticket-desc" className="mt-2 text-sm text-slate-600 dark:text-slate-300">
               Setelah tiket diselesaikan, chat akan dikunci dan Anda diminta memberi feedback layanan.
             </p>
             <div className="mt-5 flex items-center justify-end gap-2">

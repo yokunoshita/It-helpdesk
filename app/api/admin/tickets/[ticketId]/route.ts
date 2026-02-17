@@ -121,6 +121,8 @@ export async function PATCH(
     data: {
       status: status as "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED",
       closedAt: status === "CLOSED" ? new Date() : null,
+      assignedAdminId: session.name,
+      assignedAt: new Date(),
     },
   });
 

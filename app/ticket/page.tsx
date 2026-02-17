@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { TicketForm } from "@/app/ticket/ticket-form";
+import { NoticeCard } from "@/app/components/system/ux";
 
 type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
 type PersistedChatState = {
@@ -73,15 +74,18 @@ export default function TicketPage() {
 
   if (gateState === "checking") {
     return (
-      <div className="mx-auto max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
+      <NoticeCard className="mx-auto max-w-2xl text-slate-500 dark:text-slate-300">
         Memeriksa status tiket aktif...
-      </div>
+      </NoticeCard>
     );
   }
 
   if (gateState === "blocked") {
     return (
-      <div className="mx-auto max-w-2xl rounded-2xl border border-amber-200 bg-amber-50 p-6 shadow-sm dark:border-amber-500/30 dark:bg-amber-500/10">
+      <NoticeCard
+        tone="warning"
+        className="mx-auto max-w-2xl rounded-2xl p-6 shadow-sm"
+      >
         <h2 className="text-lg font-bold text-amber-800 dark:text-amber-200">
           Anda masih punya tiket yang perlu ditindaklanjuti
         </h2>
@@ -104,7 +108,7 @@ export default function TicketPage() {
             Kembali
           </button>
         </div>
-      </div>
+      </NoticeCard>
     );
   }
 
