@@ -27,7 +27,7 @@ npm run qa:smoke
 Optional environment overrides:
 
 ```bash
-QA_BASE_URL=http://localhost:3000 ADMIN_USERNAME=227 ADMIN_PASSWORD=rahasia npm run qa:smoke
+QA_BASE_URL=http://localhost:3000 ADMIN_USERNAME= ADMIN_PASSWORD= npm run qa:smoke
 ```
 
 Manual QA checklist:
