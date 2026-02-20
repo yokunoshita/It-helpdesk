@@ -159,3 +159,83 @@ export async function PATCH(req: Request, { params }: Params) {
     );
   }
 }
+
+export async function DELETE(req: Request, { params }: Params) {
+  const session = getAdminSessionFromRequest(req);
+  if (!session) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  const { adminId } = await params;
+  if (!adminId) {
+    return NextResponse.json({ error: "adminId is required" }, { status: 400 });
+  }
+
+  try {
+    const existing = await prisma.adminUser.findUnique({
+      where: { id: adminId },
+      select: {
+        id: true,
+        username: true,
+        name: true,
+        active: true,
+        isOnline: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Admin tidak ditemukan." },
+        { status: 404 }
+      );
+    }
+
+    if (existing.username === session.username) {
+      return NextResponse.json(
+        { error: "Akun sendiri tidak bisa dihapus." },
+        { status: 400 }
+      );
+    }
+
+    if (existing.isOnline) {
+      return NextResponse.json(
+        { error: "Admin masih online. Minta logout dulu sebelum dihapus." },
+        { status: 400 }
+      );
+    }
+
+    const totalCount = await prisma.adminUser.count();
+    if (totalCount <= 1) {
+      return NextResponse.json(
+        { error: "Minimal harus ada 1 admin tersisa." },
+        { status: 400 }
+      );
+    }
+
+    await prisma.adminUser.delete({
+      where: { id: adminId },
+    });
+
+    // Emit an update marker so clients can react/reload if needed.
+    publishAdminPresenceEvent({
+      id: `presence:${existing.id}:deleted:${new Date().toISOString()}`,
+      adminId: existing.id,
+      username: existing.username,
+      name: existing.name,
+      active: false,
+      isOnline: false,
+      createdAt: existing.createdAt.toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("Failed to delete admin user:", error);
+    return NextResponse.json(
+      { error: "Failed to delete admin user" },
+      { status: 500 }
+    );
+  }
+}

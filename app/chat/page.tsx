@@ -46,7 +46,7 @@ type ChatTicketData = {
 type StreamMessage = {
   id: string;
   ticketId: string;
-  sender: "user" | "admin";
+  sender: "user" | "admin" | "system";
   message: string;
   createdAt: string;
 };
@@ -84,6 +84,9 @@ const getStatusLabel = (status: TicketStatus | null) => {
       return "Tidak diketahui";
   }
 };
+
+const isChatSender = (sender: StreamMessage["sender"]): sender is "user" | "admin" =>
+  sender === "user" || sender === "admin";
 
 export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -225,6 +228,7 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
     source.addEventListener("message", (event) => {
       try {
         const payload = JSON.parse((event as MessageEvent).data) as StreamMessage;
+        if (!isChatSender(payload.sender)) return;
         setMessages((prev) => {
           if (prev.some((msg) => msg.id === payload.id)) return prev;
           lastMessageAtRef.current = payload.createdAt;
@@ -642,8 +646,7 @@ const submitFeedback = async () => {
                 type="button"
                 onClick={closeTicketByUser}
                 disabled={closingTicket}
-                className="rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
-              >
+                className="rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"              >
                 {closingTicket ? "Menyelesaikan..." : "Ya, Selesaikan"}
               </button>
             </div>

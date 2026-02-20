@@ -58,6 +58,7 @@ export default function AdminUsersPage() {
   const [editingName, setEditingName] = useState("");
   const [resettingAdminId, setResettingAdminId] = useState<string | null>(null);
   const [resetPassword, setResetPassword] = useState("");
+  const [deletingAdminId, setDeletingAdminId] = useState<string | null>(null);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const lastPresenceAtRef = useRef<string>(new Date(0).toISOString());
 
@@ -239,6 +240,31 @@ export default function AdminUsersPage() {
     [checkSession, loadUsers]
   );
 
+  const deleteAdminUser = useCallback(
+    async (adminId: string) => {
+      setActionLoadingId(adminId);
+      try {
+        const res = await fetch(`/api/admin/users/${adminId}`, {
+          method: "DELETE",
+        });
+        const data = (await res.json()) as { error?: string };
+        if (!res.ok) {
+          toast.error(data.error || "Gagal menghapus admin.");
+          return false;
+        }
+        toast.success("Admin berhasil dihapus.");
+        await loadUsers();
+        return true;
+      } catch {
+        toast.error("Koneksi terputus saat menghapus admin.");
+        return false;
+      } finally {
+        setActionLoadingId(null);
+      }
+    },
+    [loadUsers]
+  );
+
   const filteredUsers = users.filter((admin) => {
     const keyword = search.trim().toLowerCase();
     if (!keyword) return true;
@@ -304,7 +330,7 @@ export default function AdminUsersPage() {
               <input
                 value={newAdminName}
                 onChange={(e) => setNewAdminName(e.target.value)}
-                placeholder="Contoh: Hanabi Putri"
+                placeholder="Contoh: Hanabi"
                 className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
               />
             </div>
@@ -313,7 +339,7 @@ export default function AdminUsersPage() {
               <input
                 value={newAdminUsername}
                 onChange={(e) => setNewAdminUsername(e.target.value)}
-                placeholder="Contoh: hanabi"
+                placeholder="Contoh: rahasia"
                 className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
               />
             </div>
@@ -380,6 +406,7 @@ export default function AdminUsersPage() {
                 const isSelf = admin.username === adminUsername;
                 const isEditing = editingAdminId === admin.id;
                 const isResetting = resettingAdminId === admin.id;
+                const isDeleting = deletingAdminId === admin.id;
                 const isBusy = actionLoadingId === admin.id;
                 return (
                 <div
@@ -423,6 +450,7 @@ export default function AdminUsersPage() {
                       onClick={() => {
                         setResettingAdminId(null);
                         setResetPassword("");
+                        setDeletingAdminId(null);
                         if (isEditing) {
                           setEditingAdminId(null);
                           setEditingName("");
@@ -441,6 +469,7 @@ export default function AdminUsersPage() {
                       onClick={() => {
                         setEditingAdminId(null);
                         setEditingName("");
+                        setDeletingAdminId(null);
                         if (isResetting) {
                           setResettingAdminId(null);
                           setResetPassword("");
@@ -452,6 +481,24 @@ export default function AdminUsersPage() {
                       className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[10px] font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-700"
                     >
                       {isResetting ? "Batal Reset" : "Reset Password"}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isBusy || isSelf}
+                      onClick={() => {
+                        setEditingAdminId(null);
+                        setEditingName("");
+                        setResettingAdminId(null);
+                        setResetPassword("");
+                        if (isDeleting) {
+                          setDeletingAdminId(null);
+                          return;
+                        }
+                        setDeletingAdminId(admin.id);
+                      }}
+                      className="rounded-lg border border-red-200 bg-red-50 px-2.5 py-1 text-[10px] font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
+                    >
+                      {isDeleting ? "Batal Hapus" : "Hapus Admin"}
                     </button>
                   </div>
 
@@ -519,6 +566,37 @@ export default function AdminUsersPage() {
                       >
                         Simpan
                       </button>
+                    </div>
+                  )}
+
+                  {isDeleting && (
+                    <div className="mt-2 rounded-lg border border-red-200 bg-red-50 px-2.5 py-2 dark:border-red-500/30 dark:bg-red-500/10">
+                      <p className="text-[11px] font-medium text-red-700 dark:text-red-300">
+                        Yakin hapus admin ini? Aksi ini tidak bisa dibatalkan.
+                      </p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <button
+                          type="button"
+                          disabled={isBusy}
+                          onClick={async () => {
+                            const ok = await deleteAdminUser(admin.id);
+                            if (ok) {
+                              setDeletingAdminId(null);
+                            }
+                          }}
+                          className="rounded-lg bg-red-600 px-2.5 py-1.5 text-[10px] font-semibold text-white hover:bg-red-700 disabled:opacity-60"
+                        >
+                          Ya, Hapus
+                        </button>
+                        <button
+                          type="button"
+                          disabled={isBusy}
+                          onClick={() => setDeletingAdminId(null)}
+                          className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[10px] font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-700"
+                        >
+                          Batal
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>

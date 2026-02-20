@@ -15,7 +15,7 @@ const LAST_CHAT_STORAGE_KEY = "hd_last_chat_state";
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [hasActiveChat, setHasActiveChat] = useState(false);
 
   useEffect(() => {
