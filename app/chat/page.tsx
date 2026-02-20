@@ -435,29 +435,29 @@ const submitFeedback = async () => {
 };
 
   return (
-    <div className="max-w-3xl mx-auto h-[calc(100vh-200px)] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="mx-auto flex h-[calc(100dvh-130px)] w-full max-w-3xl flex-col animate-in fade-in slide-in-from-bottom-4 duration-500 md:h-[calc(100vh-200px)]">
       {/* Header Chat */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl overflow-hidden shadow-sm">
-        <div className="p-6 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-4">
+      <div className="overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 md:rounded-t-3xl">
+        <div className="flex flex-col gap-3 border-b border-slate-100 p-3 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between md:p-6">
+          <div className="flex min-w-0 items-center gap-3 md:gap-4">
             <button 
               onClick={onBack}
               className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
             >
               <ArrowLeft className="size-5 text-slate-500" />
             </button>
-            <div>
-              <h2 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <div className="min-w-0">
+              <h2 className="flex items-center gap-2 truncate text-sm font-bold text-slate-900 dark:text-white md:text-base">
                 Diskusi Tiket {ticketId}
                 <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
               </h2>
-              <p className="text-xs text-slate-500 flex items-center gap-1">
+              <p className="flex items-center gap-1 text-[11px] text-slate-500 md:text-xs">
                 <Clock className="size-3" />
                 Biasanya membalas dalam 5 menit
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {ticketStatus !== "CLOSED" && (
               <button
                 type="button"
@@ -487,24 +487,24 @@ const submitFeedback = async () => {
         </div>
 
         {/* Detail Tiket Section */}
-        <div className="bg-slate-50/50 dark:bg-slate-800/30 p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-[11px] border-b border-slate-100 dark:border-slate-800">
+        <div className="grid grid-cols-2 gap-3 border-b border-slate-100 bg-slate-50/50 p-3 text-[11px] dark:border-slate-800 dark:bg-slate-800/30 md:grid-cols-4 md:gap-4 md:p-4">
           <div className="space-y-1">
             <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
               <User className="size-3" /> Pelapor
             </p>
-            <p className="font-bold text-slate-700 dark:text-slate-200">{ticketData.name}</p>
+            <p className="break-words font-bold text-slate-700 dark:text-slate-200">{ticketData.name}</p>
           </div>
           <div className="space-y-1">
             <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
               <MapPin className="size-3" /> Lokasi
             </p>
-            <p className="font-bold text-slate-700 dark:text-slate-200">{ticketData.location}</p>
+            <p className="break-words font-bold text-slate-700 dark:text-slate-200">{ticketData.location}</p>
           </div>
           <div className="space-y-1">
             <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
               <Tag className="size-3" /> Kategori
             </p>
-            <p className="font-bold text-slate-700 dark:text-slate-200">{ticketData.category.split(' ')[0]}</p>
+            <p className="break-words font-bold text-slate-700 dark:text-slate-200">{ticketData.category.split(' ')[0]}</p>
           </div>
           <div className="space-y-1">
             <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
@@ -518,7 +518,7 @@ const submitFeedback = async () => {
       </div>
 
       {/* Area Pesan */}
-      <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 dark:bg-slate-950/50 border-x border-slate-200 dark:border-slate-800 space-y-4 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800">
+      <div className="flex-1 space-y-3 overflow-y-auto border-x border-slate-200 bg-slate-50/50 p-3 scrollbar-thin scrollbar-thumb-slate-200 dark:border-slate-800 dark:bg-slate-950/50 dark:scrollbar-thumb-slate-800 md:space-y-4 md:p-6">
         {loading && (
           <p className="text-center text-xs text-slate-400">
             Memuat percakapan...
@@ -530,9 +530,9 @@ const submitFeedback = async () => {
             key={msg.id} 
             className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
           >
-            <div className={`max-w-[80%] flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"}`}>
+            <div className={`flex max-w-[90%] flex-col md:max-w-[80%] ${msg.sender === "user" ? "items-end" : "items-start"}`}>
               <div 
-                className={`px-4 py-3 rounded-2xl text-sm ${
+                className={`rounded-2xl px-3 py-2.5 text-sm md:px-4 md:py-3 ${
                   msg.sender === "user" 
                     ? "bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-500/10" 
                     : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm"
@@ -548,7 +548,7 @@ const submitFeedback = async () => {
       </div>
 
       {/* Input Chat */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-b-3xl p-4 shadow-lg">
+      <div className="rounded-b-2xl border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-800 dark:bg-slate-900 md:rounded-b-3xl md:p-4">
         {ticketStatus === "CLOSED" && (
           <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-500/30 dark:bg-amber-500/10">
             <p className="text-xs font-semibold text-amber-800 dark:text-amber-300">
@@ -587,7 +587,7 @@ const submitFeedback = async () => {
             </div>
           </div>
         )}
-        <form onSubmit={handleSendMessage} className="flex gap-3">
+        <form onSubmit={handleSendMessage} className="flex flex-col gap-2 sm:flex-row sm:gap-3">
           <label htmlFor="chat-input" className="sr-only">
             Tulis pesan chat
           </label>
@@ -597,16 +597,17 @@ const submitFeedback = async () => {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder={ticketStatus === "CLOSED" ? "Tiket sudah selesai." : "Ketik pesan balasan di sini..."} 
-            className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 transition-all dark:text-white"
+            className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm transition-all focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             disabled={ticketStatus === "CLOSED"}
           />
           <button 
             type="submit"
             aria-label="Kirim pesan"
             disabled={ticketStatus === "CLOSED"}
-            className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-700 active:scale-95 sm:w-auto"
           >
             <Send className="size-5" />
+            <span className="sm:hidden">Kirim</span>
           </button>
         </form>
         <p className="text-[10px] text-slate-400 text-center mt-3">

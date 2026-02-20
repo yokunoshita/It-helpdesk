@@ -301,9 +301,9 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Manajemen Admin</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white md:text-3xl">Manajemen Admin</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Login sebagai: <span className="font-semibold">{adminUser}</span>
           </p>
@@ -311,7 +311,7 @@ export default function AdminUsersPage() {
         <button
           type="button"
           onClick={() => router.push("/admin")}
-          className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 sm:w-auto"
         >
           Kembali ke Dashboard
         </button>
@@ -368,7 +368,7 @@ export default function AdminUsersPage() {
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col min-h-0">
-          <div className="mb-4 flex items-center justify-between gap-2">
+          <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <Users className="size-4 text-blue-500" />
               <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100">Daftar Admin</h3>
@@ -379,7 +379,7 @@ export default function AdminUsersPage() {
             <button
               type="button"
               onClick={loadUsers}
-              className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              className="w-full rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 sm:w-auto"
             >
               Reload
             </button>
@@ -503,7 +503,7 @@ export default function AdminUsersPage() {
                   </div>
 
                   {isEditing && (
-                    <div className="mt-2 flex items-center gap-2">
+                    <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
                       <input
                         value={editingName}
                         onChange={(e) => setEditingName(e.target.value)}
@@ -536,7 +536,7 @@ export default function AdminUsersPage() {
                   )}
 
                   {isResetting && (
-                    <div className="mt-2 flex items-center gap-2">
+                    <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
                       <input
                         type="password"
                         value={resetPassword}
@@ -574,7 +574,7 @@ export default function AdminUsersPage() {
                       <p className="text-[11px] font-medium text-red-700 dark:text-red-300">
                         Yakin hapus admin ini? Aksi ini tidak bisa dibatalkan.
                       </p>
-                      <div className="mt-2 flex items-center gap-2">
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
                         <button
                           type="button"
                           disabled={isBusy}
