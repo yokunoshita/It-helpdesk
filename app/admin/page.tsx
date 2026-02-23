@@ -55,6 +55,7 @@ type TicketMessage = {
 
 type AdminTicketDetail = AdminTicketSummary & {
   reporterName?: string | null;
+  reporterLocation?: string | null;
   firstReplyAt: string | null;
   responseDueAt: string;
   resolveDueAt: string;
@@ -1099,6 +1100,9 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                         </span>
                         <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
                           Kategori: {ticketDetail.category}
+                        </span>
+                        <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+                          Lokasi: {ticketDetail.reporterLocation || "-"}
                         </span>
                         <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
                           Assigned: {ticketDetail.assignedAdminId || "-"}

@@ -39,6 +39,8 @@ model Ticket {
   code        String         @unique
   title       String
   description String
+  reporterName String?
+  reporterLocation String?
   priority    TicketPriority
   category    TicketCategory @default(HARDWARE)
   status      TicketStatus   @default(OPEN)

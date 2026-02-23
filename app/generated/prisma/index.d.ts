@@ -1237,6 +1237,8 @@ export namespace Prisma {
     code: string | null
     title: string | null
     description: string | null
+    reporterName: string | null
+    reporterLocation: string | null
     priority: $Enums.TicketPriority | null
     category: $Enums.TicketCategory | null
     status: $Enums.TicketStatus | null
@@ -1258,6 +1260,8 @@ export namespace Prisma {
     code: string | null
     title: string | null
     description: string | null
+    reporterName: string | null
+    reporterLocation: string | null
     priority: $Enums.TicketPriority | null
     category: $Enums.TicketCategory | null
     status: $Enums.TicketStatus | null
@@ -1279,6 +1283,8 @@ export namespace Prisma {
     code: number
     title: number
     description: number
+    reporterName: number
+    reporterLocation: number
     priority: number
     category: number
     status: number
@@ -1310,6 +1316,8 @@ export namespace Prisma {
     code?: true
     title?: true
     description?: true
+    reporterName?: true
+    reporterLocation?: true
     priority?: true
     category?: true
     status?: true
@@ -1331,6 +1339,8 @@ export namespace Prisma {
     code?: true
     title?: true
     description?: true
+    reporterName?: true
+    reporterLocation?: true
     priority?: true
     category?: true
     status?: true
@@ -1352,6 +1362,8 @@ export namespace Prisma {
     code?: true
     title?: true
     description?: true
+    reporterName?: true
+    reporterLocation?: true
     priority?: true
     category?: true
     status?: true
@@ -1460,6 +1472,8 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterName: string | null
+    reporterLocation: string | null
     priority: $Enums.TicketPriority
     category: $Enums.TicketCategory
     status: $Enums.TicketStatus
@@ -1500,6 +1514,8 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterName?: boolean
+    reporterLocation?: boolean
     priority?: boolean
     category?: boolean
     status?: boolean
@@ -1523,6 +1539,8 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterName?: boolean
+    reporterLocation?: boolean
     priority?: boolean
     category?: boolean
     status?: boolean
@@ -1544,6 +1562,8 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterName?: boolean
+    reporterLocation?: boolean
     priority?: boolean
     category?: boolean
     status?: boolean
@@ -1565,6 +1585,8 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterName?: boolean
+    reporterLocation?: boolean
     priority?: boolean
     category?: boolean
     status?: boolean
@@ -1581,7 +1603,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "title" | "description" | "priority" | "category" | "status" | "responseDueAt" | "resolveDueAt" | "firstReplyAt" | "closedAt" | "feedbackRating" | "feedbackSubmittedAt" | "assignedAdminId" | "assignedAt" | "lastAdminReadAt" | "createdAt" | "updatedAt", ExtArgs["result"]["ticket"]>
+  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "title" | "description" | "reporterName" | "reporterLocation" | "priority" | "category" | "status" | "responseDueAt" | "resolveDueAt" | "firstReplyAt" | "closedAt" | "feedbackRating" | "feedbackSubmittedAt" | "assignedAdminId" | "assignedAt" | "lastAdminReadAt" | "createdAt" | "updatedAt", ExtArgs["result"]["ticket"]>
   export type TicketInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | Ticket$messagesArgs<ExtArgs>
     _count?: boolean | TicketCountOutputTypeDefaultArgs<ExtArgs>
@@ -1599,6 +1621,8 @@ export namespace Prisma {
       code: string
       title: string
       description: string
+      reporterName: string | null
+      reporterLocation: string | null
       priority: $Enums.TicketPriority
       category: $Enums.TicketCategory
       status: $Enums.TicketStatus
@@ -2041,6 +2065,8 @@ export namespace Prisma {
     readonly code: FieldRef<"Ticket", 'String'>
     readonly title: FieldRef<"Ticket", 'String'>
     readonly description: FieldRef<"Ticket", 'String'>
+    readonly reporterName: FieldRef<"Ticket", 'String'>
+    readonly reporterLocation: FieldRef<"Ticket", 'String'>
     readonly priority: FieldRef<"Ticket", 'TicketPriority'>
     readonly category: FieldRef<"Ticket", 'TicketCategory'>
     readonly status: FieldRef<"Ticket", 'TicketStatus'>
@@ -5629,6 +5655,8 @@ export namespace Prisma {
     code: 'code',
     title: 'title',
     description: 'description',
+    reporterName: 'reporterName',
+    reporterLocation: 'reporterLocation',
     priority: 'priority',
     category: 'category',
     status: 'status',
@@ -5829,6 +5857,8 @@ export namespace Prisma {
     code?: StringFilter<"Ticket"> | string
     title?: StringFilter<"Ticket"> | string
     description?: StringFilter<"Ticket"> | string
+    reporterName?: StringNullableFilter<"Ticket"> | string | null
+    reporterLocation?: StringNullableFilter<"Ticket"> | string | null
     priority?: EnumTicketPriorityFilter<"Ticket"> | $Enums.TicketPriority
     category?: EnumTicketCategoryFilter<"Ticket"> | $Enums.TicketCategory
     status?: EnumTicketStatusFilter<"Ticket"> | $Enums.TicketStatus
@@ -5851,6 +5881,8 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterName?: SortOrderInput | SortOrder
+    reporterLocation?: SortOrderInput | SortOrder
     priority?: SortOrder
     category?: SortOrder
     status?: SortOrder
@@ -5876,6 +5908,8 @@ export namespace Prisma {
     NOT?: TicketWhereInput | TicketWhereInput[]
     title?: StringFilter<"Ticket"> | string
     description?: StringFilter<"Ticket"> | string
+    reporterName?: StringNullableFilter<"Ticket"> | string | null
+    reporterLocation?: StringNullableFilter<"Ticket"> | string | null
     priority?: EnumTicketPriorityFilter<"Ticket"> | $Enums.TicketPriority
     category?: EnumTicketCategoryFilter<"Ticket"> | $Enums.TicketCategory
     status?: EnumTicketStatusFilter<"Ticket"> | $Enums.TicketStatus
@@ -5898,6 +5932,8 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterName?: SortOrderInput | SortOrder
+    reporterLocation?: SortOrderInput | SortOrder
     priority?: SortOrder
     category?: SortOrder
     status?: SortOrder
@@ -5927,6 +5963,8 @@ export namespace Prisma {
     code?: StringWithAggregatesFilter<"Ticket"> | string
     title?: StringWithAggregatesFilter<"Ticket"> | string
     description?: StringWithAggregatesFilter<"Ticket"> | string
+    reporterName?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
+    reporterLocation?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
     priority?: EnumTicketPriorityWithAggregatesFilter<"Ticket"> | $Enums.TicketPriority
     category?: EnumTicketCategoryWithAggregatesFilter<"Ticket"> | $Enums.TicketCategory
     status?: EnumTicketStatusWithAggregatesFilter<"Ticket"> | $Enums.TicketStatus
@@ -6124,6 +6162,8 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterName?: string | null
+    reporterLocation?: string | null
     priority: $Enums.TicketPriority
     category?: $Enums.TicketCategory
     status?: $Enums.TicketStatus
@@ -6146,6 +6186,8 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterName?: string | null
+    reporterLocation?: string | null
     priority: $Enums.TicketPriority
     category?: $Enums.TicketCategory
     status?: $Enums.TicketStatus
@@ -6168,6 +6210,8 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
@@ -6190,6 +6234,8 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
@@ -6212,6 +6258,8 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterName?: string | null
+    reporterLocation?: string | null
     priority: $Enums.TicketPriority
     category?: $Enums.TicketCategory
     status?: $Enums.TicketStatus
@@ -6233,6 +6281,8 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
@@ -6254,6 +6304,8 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
@@ -6473,6 +6525,21 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type EnumTicketPriorityFilter<$PrismaModel = never> = {
     equals?: $Enums.TicketPriority | EnumTicketPriorityFieldRefInput<$PrismaModel>
     in?: $Enums.TicketPriority[] | ListEnumTicketPriorityFieldRefInput<$PrismaModel>
@@ -6527,21 +6594,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type TicketMessageListRelationFilter = {
     every?: TicketMessageWhereInput
     some?: TicketMessageWhereInput
@@ -6562,6 +6614,8 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterName?: SortOrder
+    reporterLocation?: SortOrder
     priority?: SortOrder
     category?: SortOrder
     status?: SortOrder
@@ -6587,6 +6641,8 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterName?: SortOrder
+    reporterLocation?: SortOrder
     priority?: SortOrder
     category?: SortOrder
     status?: SortOrder
@@ -6608,6 +6664,8 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterName?: SortOrder
+    reporterLocation?: SortOrder
     priority?: SortOrder
     category?: SortOrder
     status?: SortOrder
@@ -6644,6 +6702,24 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumTicketPriorityWithAggregatesFilter<$PrismaModel = never> = {
@@ -6718,24 +6794,6 @@ export namespace Prisma {
     _sum?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedIntNullableFilter<$PrismaModel>
     _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type TicketScalarRelationFilter = {
@@ -6892,6 +6950,10 @@ export namespace Prisma {
     set?: string
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type EnumTicketPriorityFieldUpdateOperationsInput = {
     set?: $Enums.TicketPriority
   }
@@ -6918,10 +6980,6 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type TicketMessageUpdateManyWithoutTicketNestedInput = {
@@ -6992,6 +7050,20 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedEnumTicketPriorityFilter<$PrismaModel = never> = {
     equals?: $Enums.TicketPriority | EnumTicketPriorityFieldRefInput<$PrismaModel>
     in?: $Enums.TicketPriority[] | ListEnumTicketPriorityFieldRefInput<$PrismaModel>
@@ -7046,20 +7118,6 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -7086,6 +7144,23 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumTicketPriorityWithAggregatesFilter<$PrismaModel = never> = {
@@ -7171,23 +7246,6 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -7286,6 +7344,8 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterName?: string | null
+    reporterLocation?: string | null
     priority: $Enums.TicketPriority
     category?: $Enums.TicketCategory
     status?: $Enums.TicketStatus
@@ -7307,6 +7367,8 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterName?: string | null
+    reporterLocation?: string | null
     priority: $Enums.TicketPriority
     category?: $Enums.TicketCategory
     status?: $Enums.TicketStatus
@@ -7344,6 +7406,8 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
@@ -7365,6 +7429,8 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus

@@ -35,13 +35,15 @@ enum TicketStatus {
 }
 
 model Ticket {
-  id          String         @id @default(uuid())
-  code        String         @unique
-  title       String
-  description String
-  priority    TicketPriority
-  category    TicketCategory @default(HARDWARE)
-  status      TicketStatus   @default(OPEN)
+  id               String         @id @default(uuid())
+  code             String         @unique
+  title            String
+  description      String
+  reporterName     String?
+  reporterLocation String?
+  priority         TicketPriority
+  category         TicketCategory @default(HARDWARE)
+  status           TicketStatus   @default(OPEN)
 
   responseDueAt       DateTime
   resolveDueAt        DateTime

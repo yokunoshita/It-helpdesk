@@ -50,9 +50,31 @@ export async function GET(
       message: true,
     },
   });
-  const reporterName = reporterMeta?.message
+  const reporterNameFromMeta = reporterMeta?.message
     ? reporterMeta.message.replace(/^reporter_name:/, "").trim()
     : null;
+
+  const locationMeta = await prisma.ticketMessage.findFirst({
+    where: {
+      ticketId: ticket.id,
+      sender: "system",
+      message: {
+        startsWith: "reporter_location:",
+      },
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+    select: {
+      message: true,
+    },
+  });
+  const reporterLocationFromMeta = locationMeta?.message
+    ? locationMeta.message.replace(/^reporter_location:/, "").trim()
+    : null;
+
+  const reporterName = ticket.reporterName || reporterNameFromMeta;
+  const reporterLocation = ticket.reporterLocation || reporterLocationFromMeta;
 
   const unreadUserMessages = await prisma.ticketMessage.count({
     where: {
@@ -67,6 +89,7 @@ export async function GET(
   return NextResponse.json({
     ...ticket,
     reporterName,
+    reporterLocation,
     unreadUserMessages,
     isAssignedToMe: ticket.assignedAdminId === session.name,
     ...deriveTicketSlaState({

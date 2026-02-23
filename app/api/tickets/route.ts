@@ -5,6 +5,7 @@ import { publishAdminEvent } from "@/lib/realtime";
 const REPORTER_COOKIE = "hd_reporter_key";
 const REPORTER_META_PREFIX = "reporter:";
 const REPORTER_NAME_META_PREFIX = "reporter_name:";
+const REPORTER_LOCATION_META_PREFIX = "reporter_location:";
 const REPORTER_META_SENDER = "system";
 
 function generateTicketCode() {
@@ -72,7 +73,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const { title, description, priority, category, reporterName } = body;
+  const { title, description, priority, category, reporterName, reporterLocation } = body;
 
   if (!title || !description || !priority || !category) {
     return NextResponse.json(
@@ -85,6 +86,10 @@ export async function POST(req: Request) {
     typeof reporterName === "string" && reporterName.trim()
       ? reporterName.trim()
       : "Pelapor";
+  const normalizedReporterLocation =
+    typeof reporterLocation === "string" && reporterLocation.trim()
+      ? reporterLocation.trim()
+      : "-";
 
   const existingReporterKey = parseCookie(req, REPORTER_COOKIE);
   const reporterKey = existingReporterKey || crypto.randomUUID();
@@ -169,6 +174,8 @@ export async function POST(req: Request) {
           code: generateTicketCode(),
           title,
           description,
+          reporterName: normalizedReporterName,
+          reporterLocation: normalizedReporterLocation,
           priority,
           category,
           responseDueAt,
@@ -189,6 +196,13 @@ export async function POST(req: Request) {
           ticketId: created.id,
           sender: REPORTER_META_SENDER,
           message: `${REPORTER_NAME_META_PREFIX}${normalizedReporterName}`,
+        },
+      });
+      await tx.ticketMessage.create({
+        data: {
+          ticketId: created.id,
+          sender: REPORTER_META_SENDER,
+          message: `${REPORTER_LOCATION_META_PREFIX}${normalizedReporterLocation}`,
         },
       });
 
