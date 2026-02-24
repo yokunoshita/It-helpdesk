@@ -122,23 +122,12 @@ export async function GET(req: Request) {
       return true;
     });
 
-    const priorityRank: Record<"HIGH" | "MEDIUM" | "LOW", number> = {
-      HIGH: 0,
-      MEDIUM: 1,
-      LOW: 2,
-    };
-
     const sorted = urgencyFiltered.sort((a, b) => {
-      const isNewA = a.status === "OPEN" ? 0 : 1;
-      const isNewB = b.status === "OPEN" ? 0 : 1;
-      if (isNewA !== isNewB) return isNewA - isNewB;
-
-      if (a.status === "CLOSED" && b.status === "CLOSED") {
-        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
-      }
-
-      const priorityDelta = priorityRank[a.priority] - priorityRank[b.priority];
-      if (priorityDelta !== 0) return priorityDelta;
+      const isUnassignedNewA =
+        a.status === "OPEN" && (a.assignedAdminId === null || a.assignedAdminId === "");
+      const isUnassignedNewB =
+        b.status === "OPEN" && (b.assignedAdminId === null || b.assignedAdminId === "");
+      if (isUnassignedNewA !== isUnassignedNewB) return isUnassignedNewA ? -1 : 1;
 
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
