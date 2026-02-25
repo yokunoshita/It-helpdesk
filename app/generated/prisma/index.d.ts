@@ -1237,6 +1237,7 @@ export namespace Prisma {
     code: string | null
     title: string | null
     description: string | null
+    reporterKey: string | null
     reporterName: string | null
     reporterLocation: string | null
     priority: $Enums.TicketPriority | null
@@ -1260,6 +1261,7 @@ export namespace Prisma {
     code: string | null
     title: string | null
     description: string | null
+    reporterKey: string | null
     reporterName: string | null
     reporterLocation: string | null
     priority: $Enums.TicketPriority | null
@@ -1283,6 +1285,7 @@ export namespace Prisma {
     code: number
     title: number
     description: number
+    reporterKey: number
     reporterName: number
     reporterLocation: number
     priority: number
@@ -1316,6 +1319,7 @@ export namespace Prisma {
     code?: true
     title?: true
     description?: true
+    reporterKey?: true
     reporterName?: true
     reporterLocation?: true
     priority?: true
@@ -1339,6 +1343,7 @@ export namespace Prisma {
     code?: true
     title?: true
     description?: true
+    reporterKey?: true
     reporterName?: true
     reporterLocation?: true
     priority?: true
@@ -1362,6 +1367,7 @@ export namespace Prisma {
     code?: true
     title?: true
     description?: true
+    reporterKey?: true
     reporterName?: true
     reporterLocation?: true
     priority?: true
@@ -1472,6 +1478,7 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterKey: string | null
     reporterName: string | null
     reporterLocation: string | null
     priority: $Enums.TicketPriority
@@ -1514,6 +1521,7 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterKey?: boolean
     reporterName?: boolean
     reporterLocation?: boolean
     priority?: boolean
@@ -1539,6 +1547,7 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterKey?: boolean
     reporterName?: boolean
     reporterLocation?: boolean
     priority?: boolean
@@ -1562,6 +1571,7 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterKey?: boolean
     reporterName?: boolean
     reporterLocation?: boolean
     priority?: boolean
@@ -1585,6 +1595,7 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterKey?: boolean
     reporterName?: boolean
     reporterLocation?: boolean
     priority?: boolean
@@ -1603,7 +1614,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "title" | "description" | "reporterName" | "reporterLocation" | "priority" | "category" | "status" | "responseDueAt" | "resolveDueAt" | "firstReplyAt" | "closedAt" | "feedbackRating" | "feedbackSubmittedAt" | "assignedAdminId" | "assignedAt" | "lastAdminReadAt" | "createdAt" | "updatedAt", ExtArgs["result"]["ticket"]>
+  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "title" | "description" | "reporterKey" | "reporterName" | "reporterLocation" | "priority" | "category" | "status" | "responseDueAt" | "resolveDueAt" | "firstReplyAt" | "closedAt" | "feedbackRating" | "feedbackSubmittedAt" | "assignedAdminId" | "assignedAt" | "lastAdminReadAt" | "createdAt" | "updatedAt", ExtArgs["result"]["ticket"]>
   export type TicketInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | Ticket$messagesArgs<ExtArgs>
     _count?: boolean | TicketCountOutputTypeDefaultArgs<ExtArgs>
@@ -1621,6 +1632,7 @@ export namespace Prisma {
       code: string
       title: string
       description: string
+      reporterKey: string | null
       reporterName: string | null
       reporterLocation: string | null
       priority: $Enums.TicketPriority
@@ -2065,6 +2077,7 @@ export namespace Prisma {
     readonly code: FieldRef<"Ticket", 'String'>
     readonly title: FieldRef<"Ticket", 'String'>
     readonly description: FieldRef<"Ticket", 'String'>
+    readonly reporterKey: FieldRef<"Ticket", 'String'>
     readonly reporterName: FieldRef<"Ticket", 'String'>
     readonly reporterLocation: FieldRef<"Ticket", 'String'>
     readonly priority: FieldRef<"Ticket", 'TicketPriority'>
@@ -5655,6 +5668,7 @@ export namespace Prisma {
     code: 'code',
     title: 'title',
     description: 'description',
+    reporterKey: 'reporterKey',
     reporterName: 'reporterName',
     reporterLocation: 'reporterLocation',
     priority: 'priority',
@@ -5857,6 +5871,7 @@ export namespace Prisma {
     code?: StringFilter<"Ticket"> | string
     title?: StringFilter<"Ticket"> | string
     description?: StringFilter<"Ticket"> | string
+    reporterKey?: StringNullableFilter<"Ticket"> | string | null
     reporterName?: StringNullableFilter<"Ticket"> | string | null
     reporterLocation?: StringNullableFilter<"Ticket"> | string | null
     priority?: EnumTicketPriorityFilter<"Ticket"> | $Enums.TicketPriority
@@ -5881,6 +5896,7 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterKey?: SortOrderInput | SortOrder
     reporterName?: SortOrderInput | SortOrder
     reporterLocation?: SortOrderInput | SortOrder
     priority?: SortOrder
@@ -5908,6 +5924,7 @@ export namespace Prisma {
     NOT?: TicketWhereInput | TicketWhereInput[]
     title?: StringFilter<"Ticket"> | string
     description?: StringFilter<"Ticket"> | string
+    reporterKey?: StringNullableFilter<"Ticket"> | string | null
     reporterName?: StringNullableFilter<"Ticket"> | string | null
     reporterLocation?: StringNullableFilter<"Ticket"> | string | null
     priority?: EnumTicketPriorityFilter<"Ticket"> | $Enums.TicketPriority
@@ -5932,6 +5949,7 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterKey?: SortOrderInput | SortOrder
     reporterName?: SortOrderInput | SortOrder
     reporterLocation?: SortOrderInput | SortOrder
     priority?: SortOrder
@@ -5963,6 +5981,7 @@ export namespace Prisma {
     code?: StringWithAggregatesFilter<"Ticket"> | string
     title?: StringWithAggregatesFilter<"Ticket"> | string
     description?: StringWithAggregatesFilter<"Ticket"> | string
+    reporterKey?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
     reporterName?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
     reporterLocation?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
     priority?: EnumTicketPriorityWithAggregatesFilter<"Ticket"> | $Enums.TicketPriority
@@ -6162,6 +6181,7 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterKey?: string | null
     reporterName?: string | null
     reporterLocation?: string | null
     priority: $Enums.TicketPriority
@@ -6186,6 +6206,7 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterKey?: string | null
     reporterName?: string | null
     reporterLocation?: string | null
     priority: $Enums.TicketPriority
@@ -6210,6 +6231,7 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
     reporterName?: NullableStringFieldUpdateOperationsInput | string | null
     reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
@@ -6234,6 +6256,7 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
     reporterName?: NullableStringFieldUpdateOperationsInput | string | null
     reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
@@ -6258,6 +6281,7 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterKey?: string | null
     reporterName?: string | null
     reporterLocation?: string | null
     priority: $Enums.TicketPriority
@@ -6281,6 +6305,7 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
     reporterName?: NullableStringFieldUpdateOperationsInput | string | null
     reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
@@ -6304,6 +6329,7 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
     reporterName?: NullableStringFieldUpdateOperationsInput | string | null
     reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
@@ -6614,6 +6640,7 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterKey?: SortOrder
     reporterName?: SortOrder
     reporterLocation?: SortOrder
     priority?: SortOrder
@@ -6641,6 +6668,7 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterKey?: SortOrder
     reporterName?: SortOrder
     reporterLocation?: SortOrder
     priority?: SortOrder
@@ -6664,6 +6692,7 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterKey?: SortOrder
     reporterName?: SortOrder
     reporterLocation?: SortOrder
     priority?: SortOrder
@@ -7344,6 +7373,7 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterKey?: string | null
     reporterName?: string | null
     reporterLocation?: string | null
     priority: $Enums.TicketPriority
@@ -7367,6 +7397,7 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterKey?: string | null
     reporterName?: string | null
     reporterLocation?: string | null
     priority: $Enums.TicketPriority
@@ -7406,6 +7437,7 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
     reporterName?: NullableStringFieldUpdateOperationsInput | string | null
     reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
@@ -7429,6 +7461,7 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
     reporterName?: NullableStringFieldUpdateOperationsInput | string | null
     reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority

@@ -33,10 +33,54 @@ export async function GET(
   let heartbeat: ReturnType<typeof setInterval> | null = null;
   let unsubscribe: (() => void) | null = null;
   let pollFallback: ReturnType<typeof setInterval> | null = null;
+  let isClosed = false;
+  let abortHandler: (() => void) | null = null;
+
+  const cleanup = () => {
+    if (abortHandler) {
+      req.signal.removeEventListener("abort", abortHandler);
+      abortHandler = null;
+    }
+    if (heartbeat) {
+      clearInterval(heartbeat);
+      heartbeat = null;
+    }
+    if (unsubscribe) {
+      unsubscribe();
+      unsubscribe = null;
+    }
+    if (pollFallback) {
+      clearInterval(pollFallback);
+      pollFallback = null;
+    }
+  };
+
+  const safeEnqueue = (
+    controller: ReadableStreamDefaultController<Uint8Array>,
+    chunk: Uint8Array
+  ) => {
+    if (isClosed || req.signal.aborted) return false;
+    try {
+      controller.enqueue(chunk);
+      return true;
+    } catch {
+      isClosed = true;
+      cleanup();
+      return false;
+    }
+  };
 
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      controller.enqueue(toSseMessage("connected", { ok: true }));
+      abortHandler = () => {
+        isClosed = true;
+        cleanup();
+      };
+      req.signal.addEventListener("abort", abortHandler, { once: true });
+
+      if (!safeEnqueue(controller, toSseMessage("connected", { ok: true }))) {
+        return;
+      }
 
       const missed = await prisma.ticketMessage.findMany({
         where: {
@@ -48,24 +92,29 @@ export async function GET(
       });
 
       for (const message of missed) {
-        controller.enqueue(toSseMessage("message", message));
+        if (!safeEnqueue(controller, toSseMessage("message", message))) {
+          return;
+        }
         lastCursor = message.createdAt;
       }
 
       heartbeat = setInterval(() => {
-        controller.enqueue(encoder.encode(": ping\n\n"));
+        if (isClosed || req.signal.aborted) return;
+        safeEnqueue(controller, encoder.encode(": ping\n\n"));
       }, 20000);
 
       unsubscribe = subscribeTicketMessages(ticket.id, (message) => {
+        if (isClosed || req.signal.aborted) return;
         if (message.sender !== "user" && message.sender !== "admin") return;
         if (message.createdAt > lastCursor) {
           lastCursor = message.createdAt;
         }
-        controller.enqueue(toSseMessage("message", message));
+        safeEnqueue(controller, toSseMessage("message", message));
       });
 
       // Fallback polling for environments where in-memory pub/sub doesn't cross workers.
       pollFallback = setInterval(async () => {
+        if (isClosed || req.signal.aborted) return;
         try {
           const updates = await prisma.ticketMessage.findMany({
             where: {
@@ -77,7 +126,9 @@ export async function GET(
           });
 
           for (const message of updates) {
-            controller.enqueue(toSseMessage("message", message));
+            if (!safeEnqueue(controller, toSseMessage("message", message))) {
+              return;
+            }
             if (message.createdAt > lastCursor) {
               lastCursor = message.createdAt;
             }
@@ -88,9 +139,8 @@ export async function GET(
       }, 3000);
     },
     cancel() {
-      if (heartbeat) clearInterval(heartbeat);
-      if (unsubscribe) unsubscribe();
-      if (pollFallback) clearInterval(pollFallback);
+      isClosed = true;
+      cleanup();
     },
   });
 

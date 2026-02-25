@@ -125,6 +125,7 @@ exports.Prisma.TicketScalarFieldEnum = {
   code: 'code',
   title: 'title',
   description: 'description',
+  reporterKey: 'reporterKey',
   reporterName: 'reporterName',
   reporterLocation: 'reporterLocation',
   priority: 'priority',

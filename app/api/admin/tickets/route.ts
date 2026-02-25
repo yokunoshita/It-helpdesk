@@ -70,6 +70,7 @@ export async function GET(req: Request) {
         code: true,
         title: true,
         description: true,
+        reporterName: true,
         status: true,
         category: true,
         priority: true,

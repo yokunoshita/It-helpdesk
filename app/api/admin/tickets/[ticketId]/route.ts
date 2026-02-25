@@ -151,3 +151,39 @@ export async function PATCH(
 
   return NextResponse.json(updated);
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ ticketId: string }> }
+) {
+  const session = getAdminSessionFromRequest(req);
+  if (!session) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  const { ticketId } = await params;
+
+  const ticket = await prisma.ticket.findFirst({
+    where: {
+      OR: [{ id: ticketId }, { code: ticketId }],
+    },
+    select: { id: true, code: true },
+  });
+
+  if (!ticket) {
+    return NextResponse.json(
+      { error: "Ticket not found" },
+      { status: 404 }
+    );
+  }
+
+  await prisma.ticket.delete({
+    where: { id: ticket.id },
+  });
+
+  return NextResponse.json({
+    ok: true,
+    deletedTicketId: ticket.id,
+    deletedTicketCode: ticket.code,
+  });
+}

@@ -39,6 +39,7 @@ model Ticket {
   code        String         @unique
   title       String
   description String
+  reporterKey String?
   reporterName String?
   reporterLocation String?
   priority    TicketPriority

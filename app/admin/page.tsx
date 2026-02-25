@@ -11,6 +11,7 @@ import {
   Shield,
   SlidersHorizontal,
   Ticket,
+  Trash2,
   UserCheck,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -27,6 +28,7 @@ type AdminTicketSummary = {
   code: string;
   title: string;
   description: string;
+  reporterName?: string | null;
   status: TicketStatus;
   category: TicketCategory;
   priority: TicketPriority;
@@ -76,12 +78,17 @@ type AdminSessionResponse = {
 
 type AdminNotificationEvent = {
   id: string;
-  type: "ticket_created" | "user_message" | "sla_breach";
+  type:
+    | "ticket_created"
+    | "user_message"
+    | "sla_breach"
+    | "ticket_status_changed";
   ticketId: string;
   ticketCode: string;
   title: string;
   message: string;
   createdAt: string;
+  status?: TicketStatus;
 };
 
 const statusLabel: Record<TicketStatus, string> = {
@@ -217,7 +224,9 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [downloadingReport, setDownloadingReport] = useState(false);
-  const [isTicketDetailCollapsed, setIsTicketDetailCollapsed] = useState(false);
+  const [deletingTicket, setDeletingTicket] = useState(false);
+  const [showDeleteTicketConfirm, setShowDeleteTicketConfirm] = useState(false);
+  const [isTicketDetailCollapsed, setIsTicketDetailCollapsed] = useState(true);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<TicketStatus>("OPEN");
   const lastDetailMessageAtRef = useRef<string>(new Date(0).toISOString());
@@ -389,6 +398,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
 
   useEffect(() => {
     setIsDescriptionExpanded(false);
+    setIsTicketDetailCollapsed(true);
   }, [ticketDetail?.id]);
 
   useEffect(() => {
@@ -489,6 +499,33 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
           }
         }
 
+        if (payload.type === "ticket_status_changed") {
+          const nextStatus = payload.status || "CLOSED";
+          setTickets((prev) =>
+            prev.map((ticket) =>
+              ticket.id === payload.ticketId
+                ? {
+                    ...ticket,
+                    status: nextStatus,
+                    updatedAt: payload.createdAt,
+                  }
+                : ticket
+            )
+          );
+          setTicketDetail((prev) =>
+            prev && prev.id === payload.ticketId
+              ? {
+                  ...prev,
+                  status: nextStatus,
+                  updatedAt: payload.createdAt,
+                }
+              : prev
+          );
+          if (selectedTicketId === payload.ticketId) {
+            setSelectedStatus(nextStatus);
+          }
+        }
+
         if (
           typeof window !== "undefined" &&
           "Notification" in window &&
@@ -499,6 +536,8 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
               ? `Tiket Baru ${payload.ticketCode}`
               : payload.type === "sla_breach"
               ? `SLA Breach ${payload.ticketCode}`
+              : payload.type === "ticket_status_changed"
+              ? `Status Tiket ${payload.ticketCode}`
               : `Pesan Baru ${payload.ticketCode}`;
           const body =
             payload.type === "ticket_created"
@@ -682,6 +721,34 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
       setDetailError("Koneksi terputus saat update status.");
     } finally {
       setUpdatingStatus(false);
+    }
+  };
+
+  const deleteSelectedTicket = async () => {
+    if (!ticketDetail || deletingTicket) return;
+
+    setDeletingTicket(true);
+    setDetailError(null);
+    try {
+      const res = await fetch(`/api/admin/tickets/${ticketDetail.id}`, {
+        method: "DELETE",
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setDetailError(data.error || "Gagal menghapus tiket.");
+        return;
+      }
+
+      toast.success(`Tiket ${ticketDetail.code} berhasil dihapus.`);
+      setTicketDetail(null);
+      setSelectedTicketId(null);
+      setMessageInput("");
+      setShowDeleteTicketConfirm(false);
+      await loadTickets();
+    } catch {
+      setDetailError("Koneksi terputus saat menghapus tiket.");
+    } finally {
+      setDeletingTicket(false);
     }
   };
 
@@ -1011,7 +1078,9 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-300">{ticket.code}</span>
+                    <span className="max-w-[72%] truncate text-xs font-bold text-slate-500 dark:text-slate-300">
+                      {ticket.code} / {ticket.reporterName || "Pelapor"}
+                    </span>
                     <span
                       className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${statusBadgeClass[ticket.status]}`}
                     >
@@ -1131,21 +1200,33 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                         <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                           Status Tiket
                         </p>
-                        <select
-                          value={selectedStatus}
-                          onChange={(e) =>
-                            void submitStatusUpdate(
-                              e.target.value as TicketStatus
-                            )
-                          }
-                          disabled={updatingStatus}
-                          className={`w-full rounded-lg border px-2.5 py-2 text-xs font-bold outline-none focus:border-blue-500 disabled:opacity-60 ${statusSelectClass[selectedStatus]}`}
-                        >
-                          <option value="OPEN">OPEN</option>
-                          <option value="IN_PROGRESS">IN_PROGRESS</option>
-                          <option value="WAITING">WAITING</option>
-                          <option value="CLOSED">CLOSED</option>
-                        </select>
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={selectedStatus}
+                            onChange={(e) =>
+                              void submitStatusUpdate(
+                                e.target.value as TicketStatus
+                              )
+                            }
+                            disabled={updatingStatus || deletingTicket}
+                            className={`w-full rounded-lg border px-2.5 py-2 text-xs font-bold outline-none focus:border-blue-500 disabled:opacity-60 ${statusSelectClass[selectedStatus]}`}
+                          >
+                            <option value="OPEN">OPEN</option>
+                            <option value="IN_PROGRESS">IN_PROGRESS</option>
+                            <option value="WAITING">WAITING</option>
+                            <option value="CLOSED">CLOSED</option>
+                          </select>
+                          <button
+                            type="button"
+                            onClick={() => setShowDeleteTicketConfirm(true)}
+                            disabled={deletingTicket || updatingStatus}
+                            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-red-200 bg-red-50 px-2.5 py-2 text-red-700 hover:bg-red-100 disabled:opacity-60 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
+                            title="Hapus tiket"
+                            aria-label="Hapus tiket"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -1180,20 +1261,20 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                             <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
                               Assigned: {ticketDetail.assignedAdminId || "-"}
                             </span>
-                            <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+                            {/* <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
                               Unread user msg: {ticketDetail.unreadUserMessages}
-                            </span>
+                            </span> */}
                             <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
                               Respons SLA: {formatRelative(ticketDetail.responseDueAt)}
                             </span>
                             <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
                               Resolve SLA: {formatRelative(ticketDetail.resolveDueAt)}
                             </span>
-                            <span
+                            {/* <span
                               className={`rounded-md border px-2 py-1 font-bold ${slaBadgeClass[ticketDetail.slaState]}`}
                             >
                               SLA: {slaLabel[ticketDetail.slaState]}
-                            </span>
+                            </span> */}
                           </div>
                         </div>
                       )}
@@ -1268,6 +1349,42 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
           )}
         </div>
       </div>
+      {showDeleteTicketConfirm && ticketDetail && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-ticket-title"
+          aria-describedby="delete-ticket-desc"
+        >
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-xl dark:border-slate-700 dark:bg-slate-900">
+            <h3 id="delete-ticket-title" className="text-base font-bold text-slate-900 dark:text-white">
+              Hapus Tiket {ticketDetail.code}?
+            </h3>
+            <p id="delete-ticket-desc" className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              Tindakan ini permanen. Semua chat pada tiket ini juga akan ikut terhapus.
+            </p>
+            <div className="mt-5 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowDeleteTicketConfirm(false)}
+                disabled={deletingTicket}
+                className="rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={deleteSelectedTicket}
+                disabled={deletingTicket}
+                className="rounded-lg border border-red-200 bg-red-50 px-3.5 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
+              >
+                {deletingTicket ? "Menghapus..." : "Ya, Hapus"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
