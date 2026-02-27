@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getAdminSessionFromRequest } from "@/lib/admin-auth";
 import prisma from "@/lib/prisma";
 import { deriveTicketSlaState } from "@/lib/sla";
+import { toMessageResponse } from "@/lib/message-shape";
+import { signMessageAttachmentUrlWithSdk } from "@/lib/s3-upload-sdk";
 
 export async function GET(
   req: Request,
@@ -22,6 +24,12 @@ export async function GET(
       messages: {
         where: {
           sender: { in: ["user", "admin"] },
+        },
+        include: {
+          attachments: {
+            orderBy: { createdAt: "asc" },
+            take: 1,
+          },
         },
         orderBy: { createdAt: "asc" },
       },
@@ -86,8 +94,15 @@ export async function GET(
     },
   });
 
+  const messages = await Promise.all(
+    ticket.messages.map((message) =>
+      signMessageAttachmentUrlWithSdk(toMessageResponse(message))
+    )
+  );
+
   return NextResponse.json({
     ...ticket,
+    messages,
     reporterName,
     reporterLocation,
     unreadUserMessages,
@@ -129,7 +144,7 @@ export async function PATCH(
     where: {
       OR: [{ id: ticketId }, { code: ticketId }],
     },
-    select: { id: true },
+    select: { id: true, status: true, assignedAdminId: true },
   });
 
   if (!ticket) {
@@ -139,15 +154,48 @@ export async function PATCH(
     );
   }
 
-  const updated = await prisma.ticket.update({
-    where: { id: ticket.id },
-    data: {
-      status: status as "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED",
-      closedAt: status === "CLOSED" ? new Date() : null,
-      assignedAdminId: session.name,
-      assignedAt: new Date(),
-    },
-  });
+  const nextStatus = status as "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
+  const now = new Date();
+  const statusChanged = ticket.status !== nextStatus;
+  const assignmentChanged = ticket.assignedAdminId !== session.name;
+
+  const [updated] = await prisma.$transaction([
+    prisma.ticket.update({
+      where: { id: ticket.id },
+      data: {
+        status: nextStatus,
+        closedAt: nextStatus === "CLOSED" ? now : null,
+        assignedAdminId: session.name,
+        assignedAt: now,
+      },
+    }),
+    ...(statusChanged
+      ? [
+          prisma.ticketStatusHistory.create({
+            data: {
+              ticketId: ticket.id,
+              fromStatus: ticket.status,
+              toStatus: nextStatus,
+              changedBy: session.name,
+              note: "manual status update from admin dashboard",
+            },
+          }),
+        ]
+      : []),
+    ...(assignmentChanged
+      ? [
+          prisma.ticketAssignmentHistory.create({
+            data: {
+              ticketId: ticket.id,
+              fromAdminId: ticket.assignedAdminId,
+              toAdminId: session.name,
+              changedBy: session.name,
+              trigger: "status_change",
+            },
+          }),
+        ]
+      : []),
+  ]);
 
   return NextResponse.json(updated);
 }

@@ -4,6 +4,11 @@ type RealtimeMessage = {
   sender: string;
   message: string;
   createdAt: Date;
+  attachmentUrl?: string | null;
+  attachmentCaption?: string | null;
+  attachmentMimeType?: string | null;
+  attachmentFileName?: string | null;
+  attachmentSize?: number | null;
 };
 
 type Subscriber = (message: RealtimeMessage) => void;

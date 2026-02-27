@@ -152,6 +152,37 @@ exports.Prisma.TicketMessageScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.MessageAttachmentScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  url: 'url',
+  caption: 'caption',
+  mimeType: 'mimeType',
+  fileName: 'fileName',
+  size: 'size',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TicketStatusHistoryScalarFieldEnum = {
+  id: 'id',
+  ticketId: 'ticketId',
+  fromStatus: 'fromStatus',
+  toStatus: 'toStatus',
+  changedBy: 'changedBy',
+  note: 'note',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TicketAssignmentHistoryScalarFieldEnum = {
+  id: 'id',
+  ticketId: 'ticketId',
+  fromAdminId: 'fromAdminId',
+  toAdminId: 'toAdminId',
+  changedBy: 'changedBy',
+  trigger: 'trigger',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SlaPolicyScalarFieldEnum = {
   id: 'id',
   priority: 'priority',
@@ -209,6 +240,9 @@ exports.TicketStatus = exports.$Enums.TicketStatus = {
 exports.Prisma.ModelName = {
   Ticket: 'Ticket',
   TicketMessage: 'TicketMessage',
+  MessageAttachment: 'MessageAttachment',
+  TicketStatusHistory: 'TicketStatusHistory',
+  TicketAssignmentHistory: 'TicketAssignmentHistory',
   SlaPolicy: 'SlaPolicy',
   AdminUser: 'AdminUser'
 };

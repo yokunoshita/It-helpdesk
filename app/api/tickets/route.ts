@@ -238,6 +238,15 @@ export async function POST(req: Request) {
             resolveDueAt,
           },
         });
+        await prisma.ticketStatusHistory.create({
+          data: {
+            ticketId: ticket.id,
+            fromStatus: null,
+            toStatus: "OPEN",
+            changedBy: "system",
+            note: "ticket created",
+          },
+        });
       } catch (error) {
         if (!isMissingReporterKeyColumn(error)) throw error;
         reporterKeyColumnAvailable = false;
@@ -265,6 +274,15 @@ export async function POST(req: Request) {
             ticketId: created.id,
             sender: REPORTER_META_SENDER,
             message: `${REPORTER_META_PREFIX}${reporterKey}`,
+          },
+        });
+        await tx.ticketStatusHistory.create({
+          data: {
+            ticketId: created.id,
+            fromStatus: null,
+            toStatus: "OPEN",
+            changedBy: "system",
+            note: "ticket created",
           },
         });
 

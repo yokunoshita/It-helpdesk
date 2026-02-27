@@ -52,8 +52,12 @@ type TicketMessage = {
   ticketId: string;
   sender: TicketSender | "system";
   message: string;
+  attachmentUrl?: string | null;
+  attachmentCaption?: string | null;
+  attachmentMimeType?: string | null;
   createdAt: string;
 };
+
 
 type AdminTicketDetail = AdminTicketSummary & {
   reporterName?: string | null;
@@ -230,6 +234,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<TicketStatus>("OPEN");
   const lastDetailMessageAtRef = useRef<string>(new Date(0).toISOString());
+  const sendingMessageLockRef = useRef(false);
   const notifiedEventIdsRef = useRef<Set<string>>(new Set());
   const lastAdminNotifAtRef = useRef<string>(new Date().toISOString());
   const statusSummary = useMemo(() => {
@@ -619,6 +624,8 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
 
   const submitAdminReply = async () => {
     if (!ticketDetail || !messageInput.trim()) return;
+    if (sendingMessageLockRef.current) return;
+    sendingMessageLockRef.current = true;
     setSendingMessage(true);
     setDetailError(null);
 
@@ -683,6 +690,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
     } catch {
       setDetailError("Koneksi terputus saat mengirim pesan.");
     } finally {
+      sendingMessageLockRef.current = false;
       setSendingMessage(false);
     }
   };
@@ -1304,7 +1312,21 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                           <p className="mb-1 text-[10px] font-semibold opacity-80">
                             {msg.sender === "admin" ? "Admin" : "Pelapor"}
                           </p>
-                          <p>{msg.message}</p>
+                          {msg.message ? <p>{msg.message}</p> : null}
+                          {msg.attachmentUrl && (
+                            <div className={msg.message ? "mt-2" : ""}>
+                              <img
+                                src={msg.attachmentUrl}
+                                alt="Attachment"
+                                className="max-h-64 w-auto rounded-lg border border-slate-200 object-contain dark:border-slate-700"
+                              />
+                              {msg.attachmentCaption && (
+                                <p className="mt-1 text-xs opacity-90">
+                                  {msg.attachmentCaption}
+                                </p>
+                              )}
+                            </div>
+                          )}
                           <p className="mt-1 text-[10px] opacity-75">{formatRelative(msg.createdAt)}</p>
                         </div>
                       </div>

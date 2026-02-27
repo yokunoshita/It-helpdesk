@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 import { subscribeTicketMessages } from "@/lib/realtime";
+import { toMessageResponse } from "@/lib/message-shape";
+import { signMessageAttachmentUrlWithSdk } from "@/lib/s3-upload-sdk";
 
 export const runtime = "nodejs";
 
@@ -88,11 +90,20 @@ export async function GET(
           sender: { in: ["user", "admin"] },
           createdAt: { gt: lastCursor },
         },
+        include: {
+          attachments: {
+            orderBy: { createdAt: "asc" },
+            take: 1,
+          },
+        },
         orderBy: { createdAt: "asc" },
       });
 
       for (const message of missed) {
-        if (!safeEnqueue(controller, toSseMessage("message", message))) {
+        const signed = await signMessageAttachmentUrlWithSdk(
+          toMessageResponse(message)
+        );
+        if (!safeEnqueue(controller, toSseMessage("message", signed))) {
           return;
         }
         lastCursor = message.createdAt;
@@ -103,13 +114,16 @@ export async function GET(
         safeEnqueue(controller, encoder.encode(": ping\n\n"));
       }, 20000);
 
-      unsubscribe = subscribeTicketMessages(ticket.id, (message) => {
+      unsubscribe = subscribeTicketMessages(ticket.id, async (message) => {
         if (isClosed || req.signal.aborted) return;
         if (message.sender !== "user" && message.sender !== "admin") return;
         if (message.createdAt > lastCursor) {
           lastCursor = message.createdAt;
         }
-        safeEnqueue(controller, toSseMessage("message", message));
+        const signed = await signMessageAttachmentUrlWithSdk(
+          toMessageResponse(message)
+        );
+        safeEnqueue(controller, toSseMessage("message", signed));
       });
 
       // Fallback polling for environments where in-memory pub/sub doesn't cross workers.
@@ -122,11 +136,20 @@ export async function GET(
               sender: { in: ["user", "admin"] },
               createdAt: { gt: lastCursor },
             },
+            include: {
+              attachments: {
+                orderBy: { createdAt: "asc" },
+                take: 1,
+              },
+            },
             orderBy: { createdAt: "asc" },
           });
 
           for (const message of updates) {
-            if (!safeEnqueue(controller, toSseMessage("message", message))) {
+            const signed = await signMessageAttachmentUrlWithSdk(
+              toMessageResponse(message)
+            );
+            if (!safeEnqueue(controller, toSseMessage("message", signed))) {
               return;
             }
             if (message.createdAt > lastCursor) {

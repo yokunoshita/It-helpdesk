@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getAdminSessionFromRequest } from "@/lib/admin-auth";
 import prisma from "@/lib/prisma";
+import { toMessageResponse } from "@/lib/message-shape";
+import { signMessageAttachmentUrlWithSdk } from "@/lib/s3-upload-sdk";
 
 export async function GET(
   req: Request,
@@ -10,20 +12,50 @@ export async function GET(
   const { searchParams } = new URL(req.url);
   const includeMessages = searchParams.get("includeMessages") === "1";
 
+  if (includeMessages) {
+    const ticketWithMessages = await prisma.ticket.findFirst({
+      where: {
+        OR: [{ id: ticketId }, { code: ticketId }],
+      },
+      include: {
+        messages: {
+          where: {
+            sender: { in: ["user", "admin"] },
+          },
+          include: {
+            attachments: {
+              orderBy: { createdAt: "asc" },
+              take: 1,
+            },
+          },
+          orderBy: { createdAt: "asc" },
+        },
+      },
+    });
+
+    if (!ticketWithMessages) {
+      return NextResponse.json(
+        { error: "Ticket not found" },
+        { status: 404 }
+      );
+    }
+
+    const messages = await Promise.all(
+      ticketWithMessages.messages.map((message) =>
+        signMessageAttachmentUrlWithSdk(toMessageResponse(message))
+      )
+    );
+
+    return NextResponse.json({
+      ...ticketWithMessages,
+      messages,
+    });
+  }
+
   const ticket = await prisma.ticket.findFirst({
     where: {
       OR: [{ id: ticketId }, { code: ticketId }],
     },
-    include: includeMessages
-      ? {
-          messages: {
-            where: {
-              sender: { in: ["user", "admin"] },
-            },
-            orderBy: { createdAt: "asc" },
-          },
-        }
-      : undefined,
   });
 
   if (!ticket) {
@@ -65,7 +97,7 @@ export async function PATCH(
     where: {
       OR: [{ id: ticketId }, { code: ticketId }],
     },
-    select: { id: true },
+    select: { id: true, status: true },
   });
 
   if (!existing) {
@@ -90,10 +122,26 @@ export async function PATCH(
     updateData.feedbackSubmittedAt = null;
   }
 
-  const updated = await prisma.ticket.update({
-    where: { id: existing.id },
-    data: updateData,
-  });
+  const nextStatus = status as "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
+  const [updated] = await prisma.$transaction([
+    prisma.ticket.update({
+      where: { id: existing.id },
+      data: updateData,
+    }),
+    ...(existing.status !== nextStatus
+      ? [
+          prisma.ticketStatusHistory.create({
+            data: {
+              ticketId: existing.id,
+              fromStatus: existing.status,
+              toStatus: nextStatus,
+              changedBy: session.name,
+              note: "status updated via ticket route",
+            },
+          }),
+        ]
+      : []),
+  ]);
 
   return NextResponse.json(updated);
 }

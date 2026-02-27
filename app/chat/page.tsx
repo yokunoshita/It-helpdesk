@@ -11,7 +11,9 @@ import {
   MapPin, 
   Tag, 
   AlertTriangle,
-  Star
+  Star,
+  Paperclip,
+  X
 } from "lucide-react";
 
 interface ChatPageProps {
@@ -32,6 +34,9 @@ interface Message {
   sender: "user" | "admin";
   timestamp: string;
   createdAt: string;
+  attachmentUrl?: string | null;
+  attachmentCaption?: string | null;
+  attachmentMimeType?: string | null;
 }
 
 type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
@@ -49,6 +54,9 @@ type StreamMessage = {
   sender: "user" | "admin";
   message: string;
   createdAt: string;
+  attachmentUrl?: string | null;
+  attachmentCaption?: string | null;
+  attachmentMimeType?: string | null;
 };
 type PersistedChatState = {
   ticketId: string;
@@ -85,6 +93,19 @@ const getStatusLabel = (status: TicketStatus | null) => {
   }
 };
 
+const formatFileSize = (bytes: number) => {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+};
+
+const formatMimeShort = (mimeType: string | undefined) => {
+  if (!mimeType) return "IMAGE";
+  const part = mimeType.split("/")[1];
+  if (!part) return "IMAGE";
+  return part.toUpperCase();
+};
+
 export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,10 +118,14 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [closingTicket, setClosingTicket] = useState(false);
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+  const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
+  const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<string | null>(null);
+  const [assignedAdminName, setAssignedAdminName] = useState<string | null>(null);
 
   const [inputText, setInputText] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastMessageAtRef = useRef<string>(new Date(0).toISOString());
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
 
   // const scrollToBottom = () => {
   //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -124,6 +149,9 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
             message: string;
             sender: "user" | "admin";
             createdAt: string;
+            attachmentUrl?: string | null;
+            attachmentCaption?: string | null;
+            attachmentMimeType?: string | null;
           }>
         >(messagesRes);
 
@@ -143,6 +171,9 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
           message: string;
           sender: "user" | "admin";
           createdAt: string;
+          attachmentUrl?: string | null;
+          attachmentCaption?: string | null;
+          attachmentMimeType?: string | null;
         }) => ({
           id: m.id,
           text: m.message,
@@ -152,6 +183,9 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
             minute: "2-digit",
           }),
           createdAt: m.createdAt,
+          attachmentUrl: m.attachmentUrl || null,
+          attachmentCaption: m.attachmentCaption || null,
+          attachmentMimeType: m.attachmentMimeType || null,
         }));
 
         const unique = Array.from(
@@ -170,6 +204,9 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
                   minute: "2-digit",
                 }),
                 createdAt: new Date().toISOString(),
+                attachmentUrl: null,
+                attachmentCaption: null,
+                attachmentMimeType: null,
               },
               ...unique,
             ];
@@ -184,6 +221,7 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
           const ticket = await parseJsonSafe<{
             status?: TicketStatus;
             feedbackRating?: number | null;
+            assignedAdminId?: string | null;
           }>(
             ticketRes
           );
@@ -205,6 +243,11 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
           } else {
             setFeedbackRating(null);
             setDraftRating(0);
+          }
+          if (typeof ticket.assignedAdminId === "string" && ticket.assignedAdminId.trim()) {
+            setAssignedAdminName(ticket.assignedAdminId.trim());
+          } else {
+            setAssignedAdminName(null);
           }
         }
       } catch {
@@ -239,6 +282,9 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
                 minute: "2-digit",
               }),
               createdAt: payload.createdAt,
+              attachmentUrl: payload.attachmentUrl || null,
+              attachmentCaption: payload.attachmentCaption || null,
+              attachmentMimeType: payload.attachmentMimeType || null,
             },
           ];
         });
@@ -254,12 +300,14 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
 
   useEffect(() => {
     const interval = setInterval(async () => {
+      if (document.visibilityState !== "visible") return;
       try {
         const ticketRes = await fetch(`/api/tickets/${ticketId}`);
         if (!ticketRes.ok) return;
         const ticket = await parseJsonSafe<{
           status?: TicketStatus;
           feedbackRating?: number | null;
+          assignedAdminId?: string | null;
         }>(ticketRes);
         if (!ticket) return;
         if (
@@ -274,10 +322,15 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
           setFeedbackRating(ticket.feedbackRating);
           setDraftRating(ticket.feedbackRating);
         }
+        if (typeof ticket.assignedAdminId === "string" && ticket.assignedAdminId.trim()) {
+          setAssignedAdminName(ticket.assignedAdminId.trim());
+        } else {
+          setAssignedAdminName(null);
+        }
       } catch {
         // Ignore transient polling errors.
       }
-    }, 10000);
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [ticketId]);
@@ -296,80 +349,219 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
 
 const handleSendMessage = async (e: React.FormEvent) => {
   e.preventDefault();
-  if (!inputText.trim()) return;
+  const text = inputText.trim();
+  if (!text && !attachmentFile) return;
 
-  const res = await fetch(`/api/tickets/${ticketId}/messages`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      sender: "user",
-      message: inputText,
-    }),
-  });
+  let uploadedAttachment: {
+    attachmentUrl: string;
+    attachmentMimeType: string;
+    attachmentFileName: string;
+    attachmentSize: number;
+  } | null = null;
 
-  const saved = await parseJsonSafe<{
-    id: string;
-    message: string;
-    sender: "user" | "admin";
-    createdAt: string;
-    error?: string;
-  }>(res);
-
-  if (!res.ok) {
-    alert(saved?.error || "Gagal mengirim pesan");
-    if (res.status === 409) {
-      setTicketStatus("CLOSED");
-    }
-    return;
-  }
-
-  if (!saved?.id || !saved?.message || !saved?.sender || !saved?.createdAt) {
-    alert("Respons server tidak valid. Coba kirim ulang.");
-    return;
-  }
-
-  setMessages((prev) => {
-    if (prev.some((msg) => msg.id === saved.id)) return prev;
-    return [
-      ...prev,
-      {
-        id: saved.id,
-        text: saved.message,
-        sender: saved.sender,
-        timestamp: new Date(saved.createdAt).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
+  try {
+    if (attachmentFile) {
+      const presignRes = await fetch("/api/storage/presign-upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ticketId,
+          fileName: attachmentFile.name,
+          mimeType: attachmentFile.type,
+          size: attachmentFile.size,
         }),
-        createdAt: saved.createdAt,
-      },
-    ];
-  });
-  lastMessageAtRef.current = saved.createdAt;
+      });
+      const presignPayload = await parseJsonSafe<{
+        uploadUrl?: string;
+        fileUrl?: string;
+        error?: string;
+      }>(presignRes);
+      if (!presignRes.ok || !presignPayload?.uploadUrl || !presignPayload.fileUrl) {
+        alert(presignPayload?.error || "Gagal membuat URL upload gambar.");
+        return;
+      }
 
-  setInputText("");
+      try {
+        const uploadRes = await fetch(presignPayload.uploadUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": attachmentFile.type,
+          },
+          body: attachmentFile,
+        });
+        if (!uploadRes.ok) {
+          const uploadErrorText = await uploadRes.text().catch(() => "");
+          throw new Error(uploadErrorText || "Upload browser ke storage gagal.");
+        }
 
-  const ticketRes = await fetch(`/api/tickets/${ticketId}`);
-  if (ticketRes.ok) {
-    const ticket = await parseJsonSafe<{
-      status?: TicketStatus;
-      feedbackRating?: number | null;
-    }>(ticketRes);
-    if (!ticket) return;
+        uploadedAttachment = {
+          attachmentUrl: presignPayload.fileUrl,
+          attachmentMimeType: attachmentFile.type,
+          attachmentFileName: attachmentFile.name,
+          attachmentSize: attachmentFile.size,
+        };
+      } catch {
+        const fallbackForm = new FormData();
+        fallbackForm.append("ticketId", ticketId);
+        fallbackForm.append("attachment", attachmentFile);
+        const fallbackRes = await fetch("/api/storage/upload", {
+          method: "POST",
+          body: fallbackForm,
+        });
+        const fallbackPayload = await parseJsonSafe<{
+          fileUrl?: string;
+          attachmentMimeType?: string;
+          attachmentFileName?: string;
+          attachmentSize?: number;
+          error?: string;
+        }>(fallbackRes);
+        if (!fallbackRes.ok || !fallbackPayload?.fileUrl) {
+          throw new Error(
+            fallbackPayload?.error ||
+              "Upload gambar gagal. Cek CORS bucket atau koneksi server ke storage."
+          );
+        }
+        uploadedAttachment = {
+          attachmentUrl: fallbackPayload.fileUrl,
+          attachmentMimeType: fallbackPayload.attachmentMimeType || attachmentFile.type,
+          attachmentFileName: fallbackPayload.attachmentFileName || attachmentFile.name,
+          attachmentSize: fallbackPayload.attachmentSize || attachmentFile.size,
+        };
+      }
+    }
+
+    const res = await fetch(`/api/tickets/${ticketId}/messages`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sender: "user",
+        message: attachmentFile ? "" : text,
+        attachmentCaption: attachmentFile ? text : null,
+        attachmentUrl: uploadedAttachment?.attachmentUrl || null,
+        attachmentMimeType: uploadedAttachment?.attachmentMimeType || null,
+        attachmentFileName: uploadedAttachment?.attachmentFileName || null,
+        attachmentSize: uploadedAttachment?.attachmentSize || null,
+      }),
+    });
+
+    const saved = await parseJsonSafe<{
+      id: string;
+      message: string;
+      sender: "user" | "admin";
+      createdAt: string;
+      attachmentUrl?: string | null;
+      attachmentCaption?: string | null;
+      attachmentMimeType?: string | null;
+      error?: string;
+    }>(res);
+
+    if (!res.ok) {
+      alert(saved?.error || "Gagal mengirim pesan");
+      if (res.status === 409) {
+        setTicketStatus("CLOSED");
+      }
+      return;
+    }
+
     if (
-      ticket.status === "OPEN" ||
-      ticket.status === "IN_PROGRESS" ||
-      ticket.status === "WAITING" ||
-      ticket.status === "CLOSED"
+      !saved?.id ||
+      !saved?.sender ||
+      !saved?.createdAt ||
+      (!saved?.message && !saved?.attachmentUrl)
     ) {
-      setTicketStatus(ticket.status);
+      alert("Respons server tidak valid. Coba kirim ulang.");
+      return;
     }
-    if (typeof ticket.feedbackRating === "number") {
-      setFeedbackRating(ticket.feedbackRating);
-      setDraftRating(ticket.feedbackRating);
-    } else {
-      setFeedbackRating(null);
-      setDraftRating(0);
+
+    setMessages((prev) => {
+      if (prev.some((msg) => msg.id === saved.id)) return prev;
+      return [
+        ...prev,
+        {
+          id: saved.id,
+          text: saved.message,
+          sender: saved.sender,
+          timestamp: new Date(saved.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          createdAt: saved.createdAt,
+          attachmentUrl: saved.attachmentUrl || null,
+          attachmentCaption: saved.attachmentCaption || null,
+          attachmentMimeType: saved.attachmentMimeType || null,
+        },
+      ];
+    });
+    lastMessageAtRef.current = saved.createdAt;
+
+    setInputText("");
+    if (attachmentPreviewUrl) {
+      URL.revokeObjectURL(attachmentPreviewUrl);
     }
+    setAttachmentPreviewUrl(null);
+    setAttachmentFile(null);
+    if (attachmentInputRef.current) {
+      attachmentInputRef.current.value = "";
+    }
+
+    const ticketRes = await fetch(`/api/tickets/${ticketId}`);
+    if (ticketRes.ok) {
+      const ticket = await parseJsonSafe<{
+        status?: TicketStatus;
+        feedbackRating?: number | null;
+      }>(ticketRes);
+      if (!ticket) return;
+      if (
+        ticket.status === "OPEN" ||
+        ticket.status === "IN_PROGRESS" ||
+        ticket.status === "WAITING" ||
+        ticket.status === "CLOSED"
+      ) {
+        setTicketStatus(ticket.status);
+      }
+      if (typeof ticket.feedbackRating === "number") {
+        setFeedbackRating(ticket.feedbackRating);
+        setDraftRating(ticket.feedbackRating);
+      } else {
+        setFeedbackRating(null);
+        setDraftRating(0);
+      }
+    }
+  } catch (error) {
+    const message =
+      error instanceof Error && error.message.trim()
+        ? error.message
+        : "Gagal upload/kirim pesan. Cek CORS bucket dan konfigurasi S3.";
+    alert(message);
+  }
+};
+
+const onPickAttachment = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    alert("Attachment harus berupa gambar.");
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Ukuran gambar maksimal 5MB.");
+    return;
+  }
+  if (attachmentPreviewUrl) {
+    URL.revokeObjectURL(attachmentPreviewUrl);
+  }
+  setAttachmentFile(file);
+  setAttachmentPreviewUrl(URL.createObjectURL(file));
+};
+
+const clearAttachment = () => {
+  if (attachmentPreviewUrl) {
+    URL.revokeObjectURL(attachmentPreviewUrl);
+  }
+  setAttachmentPreviewUrl(null);
+  setAttachmentFile(null);
+  if (attachmentInputRef.current) {
+    attachmentInputRef.current.value = "";
   }
 };
 
@@ -435,7 +627,7 @@ const submitFeedback = async () => {
 };
 
   return (
-    <div className="mx-auto flex h-[calc(100dvh-130px)] w-full max-w-3xl flex-col animate-in fade-in slide-in-from-bottom-4 duration-500 md:h-[calc(100vh-200px)]">
+    <div className="mx-auto flex h-[calc(100dvh-96px)] w-full max-w-3xl flex-col animate-in fade-in slide-in-from-bottom-4 duration-500 md:h-[calc(100dvh-120px)]">
       {/* Header Chat */}
       <div className="overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 md:rounded-t-3xl">
         <div className="flex flex-col gap-3 border-b border-slate-100 p-3 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between md:p-6">
@@ -486,33 +678,54 @@ const submitFeedback = async () => {
           </div>
         </div>
 
-        {/* Detail Tiket Section */}
-        <div className="grid grid-cols-2 gap-3 border-b border-slate-100 bg-slate-50/50 p-3 text-[11px] dark:border-slate-800 dark:bg-slate-800/30 md:grid-cols-4 md:gap-4 md:p-4">
-          <div className="space-y-1">
-            <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
-              <User className="size-3" /> Pelapor
-            </p>
-            <p className="break-words font-bold text-slate-700 dark:text-slate-200">{ticketData.name}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
-              <MapPin className="size-3" /> Lokasi
-            </p>
-            <p className="break-words font-bold text-slate-700 dark:text-slate-200">{ticketData.location}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
-              <Tag className="size-3" /> Kategori
-            </p>
-            <p className="break-words font-bold text-slate-700 dark:text-slate-200">{ticketData.category.split(' ')[0]}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
-              <AlertTriangle className="size-3" /> Urgensi
-            </p>
-            <p className={`font-bold ${ticketData.urgency.includes('Mendesak') ? 'text-red-500' : 'text-slate-700 dark:text-slate-200'}`}>
-              {ticketData.urgency.split(' ')[0]}
-            </p>
+        <div className="border-b border-slate-100 px-3 py-2 dark:border-slate-800 md:px-6">
+          <div className="grid w-full grid-cols-2 gap-x-4 gap-y-2 md:grid-cols-5">
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Pelapor
+              </p>
+              <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                {ticketData.name}
+              </p>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Lokasi
+              </p>
+              <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                {ticketData.location}
+              </p>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Kategori
+              </p>
+              <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                {ticketData.category.split(" ")[0]}
+              </p>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Urgensi
+              </p>
+              <p
+                className={`truncate text-sm font-medium ${
+                  ticketData.urgency.includes("Mendesak")
+                    ? "text-red-500"
+                    : "text-slate-700 dark:text-slate-200"
+                }`}
+              >
+                {ticketData.urgency.split(" ")[0]}
+              </p>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Admin
+              </p>
+              <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                {assignedAdminName || "Belum ditugaskan"}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -538,7 +751,19 @@ const submitFeedback = async () => {
                     : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm"
                 }`}
               >
-                {msg.text}
+                {msg.text ? <p>{msg.text}</p> : null}
+                {msg.attachmentUrl ? (
+                  <div className={msg.text ? "mt-2" : ""}>
+                    <img
+                      src={msg.attachmentUrl}
+                      alt={msg.attachmentCaption || "Attachment"}
+                      className="max-h-72 w-auto max-w-full rounded-lg border border-slate-200/40 object-contain dark:border-slate-700/50"
+                    />
+                    {msg.attachmentCaption ? (
+                      <p className="mt-1 text-xs opacity-90">{msg.attachmentCaption}</p>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
               <span className="text-[10px] text-slate-400 mt-1 px-1">{msg.timestamp}</span>
             </div>
@@ -548,7 +773,7 @@ const submitFeedback = async () => {
       </div>
 
       {/* Input Chat */}
-      <div className="rounded-b-2xl border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-800 dark:bg-slate-900 md:rounded-b-3xl md:p-4">
+      <div className="relative rounded-b-2xl border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-800 dark:bg-slate-900 md:rounded-b-3xl md:p-4">
         {ticketStatus === "CLOSED" && (
           <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-500/30 dark:bg-amber-500/10">
             <p className="text-xs font-semibold text-amber-800 dark:text-amber-300">
@@ -587,7 +812,52 @@ const submitFeedback = async () => {
             </div>
           </div>
         )}
-        <form onSubmit={handleSendMessage} className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+        {attachmentPreviewUrl && (
+          <div className="absolute inset-x-3 bottom-full z-20 mb-2 rounded-xl border border-slate-200 bg-slate-50 p-2.5 shadow-md dark:border-slate-700 dark:bg-slate-800 md:inset-x-4">
+            <div className="flex items-start gap-3">
+              <img
+                src={attachmentPreviewUrl}
+                alt="Preview attachment"
+                className="h-16 w-16 rounded-md border border-slate-200 object-cover dark:border-slate-700"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-semibold text-slate-700 dark:text-slate-200">
+                  {attachmentFile?.name}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                  {attachmentFile
+                    ? `${formatMimeShort(attachmentFile.type)} • ${formatFileSize(attachmentFile.size)}`
+                    : ""}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={clearAttachment}
+                className="rounded-md p-1 text-slate-500 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                aria-label="Hapus attachment"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+          </div>
+        )}
+        <form onSubmit={handleSendMessage} className="flex items-end gap-2 sm:gap-3">
+          <input
+            ref={attachmentInputRef}
+            type="file"
+            accept="image/*"
+            onChange={onPickAttachment}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => attachmentInputRef.current?.click()}
+            disabled={ticketStatus === "CLOSED"}
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+            aria-label="Tambah gambar"
+          >
+            <Paperclip className="size-4" />
+          </button>
           <label htmlFor="chat-input" className="sr-only">
             Tulis pesan chat
           </label>
@@ -596,18 +866,23 @@ const submitFeedback = async () => {
             type="text" 
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder={ticketStatus === "CLOSED" ? "Tiket sudah selesai." : "Ketik pesan balasan di sini..."} 
-            className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm transition-all focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+            placeholder={
+              ticketStatus === "CLOSED"
+                ? "Tiket sudah selesai."
+                : attachmentFile
+                  ? "Tulis caption gambar..."
+                  : "Ketik pesan..."
+            } 
+            className="h-11 flex-1 rounded-full border border-slate-200 bg-slate-50 px-4 text-sm transition-all focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             disabled={ticketStatus === "CLOSED"}
           />
           <button 
             type="submit"
             aria-label="Kirim pesan"
             disabled={ticketStatus === "CLOSED"}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-700 active:scale-95 sm:w-auto"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-700 active:scale-95"
           >
             <Send className="size-5" />
-            <span className="sm:hidden">Kirim</span>
           </button>
         </form>
         <p className="text-[10px] text-slate-400 text-center mt-3">
