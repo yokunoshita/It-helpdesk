@@ -40,6 +40,11 @@ interface Message {
   sending?: boolean;
 }
 
+type ImageViewerState = {
+  url: string;
+  caption?: string | null;
+};
+
 type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
 type ChatTicketData = {
   name: string;
@@ -122,6 +127,7 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
   const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
   const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<string | null>(null);
   const [assignedAdminName, setAssignedAdminName] = useState<string | null>(null);
+  const [viewerImage, setViewerImage] = useState<ImageViewerState | null>(null);
 
   const [inputText, setInputText] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -374,6 +380,17 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [showCloseConfirm, closingTicket]);
+
+  useEffect(() => {
+    if (!viewerImage) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setViewerImage(null);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [viewerImage]);
 
 
 const handleSendMessage = async (e: React.FormEvent) => {
@@ -815,11 +832,23 @@ const submitFeedback = async () => {
                 {msg.text ? <p>{msg.text}</p> : null}
                 {msg.attachmentUrl ? (
                   <div className={msg.text ? "mt-2" : ""}>
-                    <img
-                      src={msg.attachmentUrl}
-                      alt={msg.attachmentCaption || "Attachment"}
-                      className="max-h-72 w-auto max-w-full rounded-lg border border-slate-200/40 object-contain dark:border-slate-700/50"
-                    />
+                    <button
+                      type="button"
+                      className="block"
+                      onClick={() =>
+                        setViewerImage({
+                          url: msg.attachmentUrl || "",
+                          caption: msg.attachmentCaption || null,
+                        })
+                      }
+                      aria-label="Lihat gambar"
+                    >
+                      <img
+                        src={msg.attachmentUrl}
+                        alt={msg.attachmentCaption || "Attachment"}
+                        className="max-h-72 w-auto max-w-full rounded-lg border border-slate-200/40 object-contain dark:border-slate-700/50"
+                      />
+                    </button>
                     {msg.attachmentCaption ? (
                       <p className="mt-1 text-xs opacity-90">{msg.attachmentCaption}</p>
                     ) : null}
@@ -985,6 +1014,40 @@ const submitFeedback = async () => {
                 {closingTicket ? "Menyelesaikan..." : "Ya, Selesaikan"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {viewerImage && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Pratinjau gambar"
+          onClick={() => setViewerImage(null)}
+        >
+          <div
+            className="relative w-full max-w-5xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setViewerImage(null)}
+              className="absolute right-0 top-0 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80"
+              aria-label="Tutup pratinjau"
+            >
+              <X className="size-5" />
+            </button>
+            <img
+              src={viewerImage.url}
+              alt={viewerImage.caption || "Preview gambar"}
+              className="max-h-[80dvh] w-full rounded-xl object-contain"
+            />
+            {viewerImage.caption ? (
+              <p className="mt-2 text-center text-sm text-slate-100">
+                {viewerImage.caption}
+              </p>
+            ) : null}
           </div>
         </div>
       )}

@@ -13,6 +13,7 @@ import {
   Ticket,
   Trash2,
   UserCheck,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { EmptyState, FieldGroup, NoticeCard } from "@/app/components/system/ux";
@@ -93,6 +94,11 @@ type AdminNotificationEvent = {
   message: string;
   createdAt: string;
   status?: TicketStatus;
+};
+
+type ImageViewerState = {
+  url: string;
+  caption?: string | null;
 };
 
 const statusLabel: Record<TicketStatus, string> = {
@@ -233,6 +239,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
   const [isTicketDetailCollapsed, setIsTicketDetailCollapsed] = useState(true);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<TicketStatus>("OPEN");
+  const [viewerImage, setViewerImage] = useState<ImageViewerState | null>(null);
   const lastDetailMessageAtRef = useRef<string>(new Date(0).toISOString());
   const sendingMessageLockRef = useRef(false);
   const notifiedEventIdsRef = useRef<Set<string>>(new Set());
@@ -405,6 +412,17 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
     setIsDescriptionExpanded(false);
     setIsTicketDetailCollapsed(true);
   }, [ticketDetail?.id]);
+
+  useEffect(() => {
+    if (!viewerImage) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setViewerImage(null);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [viewerImage]);
 
   useEffect(() => {
     if (!authenticated || !ticketDetail?.code) return;
@@ -1315,11 +1333,23 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                           {msg.message ? <p>{msg.message}</p> : null}
                           {msg.attachmentUrl && (
                             <div className={msg.message ? "mt-2" : ""}>
-                              <img
-                                src={msg.attachmentUrl}
-                                alt="Attachment"
-                                className="max-h-64 w-auto rounded-lg border border-slate-200 object-contain dark:border-slate-700"
-                              />
+                              <button
+                                type="button"
+                                className="block"
+                                onClick={() =>
+                                  setViewerImage({
+                                    url: msg.attachmentUrl || "",
+                                    caption: msg.attachmentCaption || null,
+                                  })
+                                }
+                                aria-label="Lihat gambar"
+                              >
+                                <img
+                                  src={msg.attachmentUrl}
+                                  alt={msg.attachmentCaption || "Attachment"}
+                                  className="max-h-64 w-auto rounded-lg border border-slate-200 object-contain dark:border-slate-700"
+                                />
+                              </button>
                               {msg.attachmentCaption && (
                                 <p className="mt-1 text-xs opacity-90">
                                   {msg.attachmentCaption}
@@ -1404,6 +1434,39 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                 {deletingTicket ? "Menghapus..." : "Ya, Hapus"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {viewerImage && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Pratinjau gambar"
+          onClick={() => setViewerImage(null)}
+        >
+          <div
+            className="relative w-full max-w-5xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setViewerImage(null)}
+              className="absolute right-0 top-0 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80"
+              aria-label="Tutup pratinjau"
+            >
+              <X className="size-5" />
+            </button>
+            <img
+              src={viewerImage.url}
+              alt={viewerImage.caption || "Preview gambar"}
+              className="max-h-[80dvh] w-full rounded-xl object-contain"
+            />
+            {viewerImage.caption ? (
+              <p className="mt-2 text-center text-sm text-slate-100">
+                {viewerImage.caption}
+              </p>
+            ) : null}
           </div>
         </div>
       )}
