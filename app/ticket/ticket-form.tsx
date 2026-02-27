@@ -66,6 +66,7 @@ export const TicketForm = ({ onBack, onSuccess }: TicketFormProps) => {
       priority: priorityMap[formData.urgency] || "MEDIUM",
       category: categoryMap[formData.category] || "HARDWARE",
       reporterName: formData.name.trim(),
+      reporterLocation: formData.location.trim(),
     }
     
     try{

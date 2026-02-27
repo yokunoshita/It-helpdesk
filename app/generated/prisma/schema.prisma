@@ -35,13 +35,16 @@ enum TicketStatus {
 }
 
 model Ticket {
-  id          String         @id @default(uuid())
-  code        String         @unique
-  title       String
-  description String
-  priority    TicketPriority
-  category    TicketCategory @default(HARDWARE)
-  status      TicketStatus   @default(OPEN)
+  id               String         @id @default(uuid())
+  code             String         @unique
+  title            String
+  description      String
+  reporterKey      String?
+  reporterName     String?
+  reporterLocation String?
+  priority         TicketPriority
+  category         TicketCategory @default(HARDWARE)
+  status           TicketStatus   @default(OPEN)
 
   responseDueAt       DateTime
   resolveDueAt        DateTime
@@ -56,7 +59,9 @@ model Ticket {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  messages TicketMessage[]
+  messages          TicketMessage[]
+  statusHistory     TicketStatusHistory[]
+  assignmentHistory TicketAssignmentHistory[]
 }
 
 model TicketMessage {
@@ -66,6 +71,44 @@ model TicketMessage {
   message  String
 
   createdAt DateTime @default(now())
+
+  ticket      Ticket              @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  attachments MessageAttachment[]
+}
+
+model MessageAttachment {
+  id        String   @id @default(uuid())
+  messageId String
+  url       String
+  caption   String?
+  mimeType  String?
+  fileName  String?
+  size      Int?
+  createdAt DateTime @default(now())
+
+  message TicketMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+
+model TicketStatusHistory {
+  id         String        @id @default(uuid())
+  ticketId   String
+  fromStatus TicketStatus?
+  toStatus   TicketStatus
+  changedBy  String?
+  note       String?
+  createdAt  DateTime      @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model TicketAssignmentHistory {
+  id          String   @id @default(uuid())
+  ticketId    String
+  fromAdminId String?
+  toAdminId   String?
+  changedBy   String?
+  trigger     String?
+  createdAt   DateTime @default(now())
 
   ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }

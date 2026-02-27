@@ -27,14 +27,50 @@ export async function GET(req: Request) {
   let heartbeat: ReturnType<typeof setInterval> | null = null;
   let unsubscribe: (() => void) | null = null;
   let fallbackPoll: ReturnType<typeof setInterval> | null = null;
+  let isClosed = false;
+  let abortHandler: (() => void) | null = null;
+
+  const cleanup = () => {
+    if (abortHandler) {
+      req.signal.removeEventListener("abort", abortHandler);
+      abortHandler = null;
+    }
+    if (heartbeat) {
+      clearInterval(heartbeat);
+      heartbeat = null;
+    }
+    if (unsubscribe) {
+      unsubscribe();
+      unsubscribe = null;
+    }
+    if (fallbackPoll) {
+      clearInterval(fallbackPoll);
+      fallbackPoll = null;
+    }
+  };
+
+  const safeEnqueue = (
+    controller: ReadableStreamDefaultController<Uint8Array>,
+    chunk: Uint8Array
+  ) => {
+    if (isClosed || req.signal.aborted) return false;
+    try {
+      controller.enqueue(chunk);
+      return true;
+    } catch {
+      isClosed = true;
+      cleanup();
+      return false;
+    }
+  };
 
   const emitEvent = (
     controller: ReadableStreamDefaultController<Uint8Array>,
     event: AdminRealtimeEvent
   ) => {
     if (emitted.has(event.id)) return;
+    if (!safeEnqueue(controller, toSseMessage("notification", event))) return;
     emitted.add(event.id);
-    controller.enqueue(toSseMessage("notification", event));
     const eventDate = new Date(event.createdAt);
     if (!Number.isNaN(eventDate.getTime()) && eventDate > lastCursor) {
       lastCursor = eventDate;
@@ -43,7 +79,15 @@ export async function GET(req: Request) {
 
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      controller.enqueue(toSseMessage("connected", { ok: true }));
+      abortHandler = () => {
+        isClosed = true;
+        cleanup();
+      };
+      req.signal.addEventListener("abort", abortHandler, { once: true });
+
+      if (!safeEnqueue(controller, toSseMessage("connected", { ok: true }))) {
+        return;
+      }
 
       const emitSlaBreachEvents = async () => {
         const tickets = await prisma.ticket.findMany({
@@ -154,15 +198,23 @@ export async function GET(req: Request) {
       await emitSlaBreachEvents();
 
       heartbeat = setInterval(() => {
-        controller.enqueue(encoder.encode(": ping\n\n"));
+        try {
+          if (isClosed || req.signal.aborted) return;
+          safeEnqueue(controller, encoder.encode(": ping\n\n"));
+        } catch {
+          isClosed = true;
+          cleanup();
+        }
       }, 20000);
 
       unsubscribe = subscribeAdminEvents((event) => {
+        if (isClosed || req.signal.aborted) return;
         emitEvent(controller, event);
       });
 
       fallbackPoll = setInterval(async () => {
         try {
+          if (isClosed || req.signal.aborted) return;
           const [newTickets, newMessages] = await Promise.all([
             prisma.ticket.findMany({
               where: { createdAt: { gt: lastCursor } },
@@ -218,14 +270,14 @@ export async function GET(req: Request) {
 
           await emitSlaBreachEvents();
         } catch {
-          // Ignore transient polling errors.
+          isClosed = true;
+          cleanup();
         }
       }, 4000);
     },
     cancel() {
-      if (heartbeat) clearInterval(heartbeat);
-      if (unsubscribe) unsubscribe();
-      if (fallbackPoll) clearInterval(fallbackPoll);
+      isClosed = true;
+      cleanup();
     },
   });
 

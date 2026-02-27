@@ -4,7 +4,6 @@ import { publishAdminEvent } from "@/lib/realtime";
 
 const REPORTER_COOKIE = "hd_reporter_key";
 const REPORTER_META_PREFIX = "reporter:";
-const REPORTER_NAME_META_PREFIX = "reporter_name:";
 const REPORTER_META_SENDER = "system";
 
 function generateTicketCode() {
@@ -22,6 +21,26 @@ function parseCookie(req: Request, name: string) {
   }
   return null;
 }
+
+const isMissingReporterKeyColumn = (error: unknown) => {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: string }).code === "P2022"
+  ) {
+    return true;
+  }
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "message" in error &&
+    typeof (error as { message?: unknown }).message === "string"
+  ) {
+    return (error as { message: string }).message.includes("reporterKey");
+  }
+  return false;
+};
 
 export async function GET(req: Request) {
   try {
@@ -72,7 +91,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const { title, description, priority, category, reporterName } = body;
+  const { title, description, priority, category, reporterName, reporterLocation } = body;
 
   if (!title || !description || !priority || !category) {
     return NextResponse.json(
@@ -85,27 +104,66 @@ export async function POST(req: Request) {
     typeof reporterName === "string" && reporterName.trim()
       ? reporterName.trim()
       : "Pelapor";
+  const normalizedReporterLocation =
+    typeof reporterLocation === "string" && reporterLocation.trim()
+      ? reporterLocation.trim()
+      : "-";
 
   const existingReporterKey = parseCookie(req, REPORTER_COOKIE);
   const reporterKey = existingReporterKey || crypto.randomUUID();
 
-  const latestReporterTicket = await prisma.ticket.findFirst({
-    where: {
-      messages: {
-        some: {
-          sender: REPORTER_META_SENDER,
-          message: `${REPORTER_META_PREFIX}${reporterKey}`,
+  let latestReporterTicket: {
+    id: string;
+    code: string;
+    status: "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
+    feedbackRating: number | null;
+  } | null = null;
+  let reporterKeyColumnAvailable = true;
+
+  try {
+    latestReporterTicket = await prisma.ticket.findFirst({
+      where: {
+        OR: [
+          { reporterKey },
+          {
+            messages: {
+              some: {
+                sender: REPORTER_META_SENDER,
+                message: `${REPORTER_META_PREFIX}${reporterKey}`,
+              },
+            },
+          },
+        ],
+      },
+      orderBy: [{ createdAt: "desc" }],
+      select: {
+        id: true,
+        code: true,
+        status: true,
+        feedbackRating: true,
+      },
+    });
+  } catch (error) {
+    if (!isMissingReporterKeyColumn(error)) throw error;
+    reporterKeyColumnAvailable = false;
+    latestReporterTicket = await prisma.ticket.findFirst({
+      where: {
+        messages: {
+          some: {
+            sender: REPORTER_META_SENDER,
+            message: `${REPORTER_META_PREFIX}${reporterKey}`,
+          },
         },
       },
-    },
-    orderBy: [{ createdAt: "desc" }],
-    select: {
-      id: true,
-      code: true,
-      status: true,
-      feedbackRating: true,
-    },
-  });
+      orderBy: [{ createdAt: "desc" }],
+      select: {
+        id: true,
+        code: true,
+        status: true,
+        feedbackRating: true,
+      },
+    });
+  }
 
   const shouldBlockCreate =
     latestReporterTicket &&
@@ -163,46 +221,87 @@ export async function POST(req: Request) {
 
   // 3. Create ticket
   try {
-    const ticket = await prisma.$transaction(async (tx) => {
-      const created = await tx.ticket.create({
-        data: {
-          code: generateTicketCode(),
-          title,
-          description,
-          priority,
-          category,
-          responseDueAt,
-          resolveDueAt,
-        },
-      });
+    let ticket;
+    if (reporterKeyColumnAvailable) {
+      try {
+        ticket = await prisma.ticket.create({
+          data: {
+            code: generateTicketCode(),
+            title,
+            description,
+            reporterKey,
+            reporterName: normalizedReporterName,
+            reporterLocation: normalizedReporterLocation,
+            priority,
+            category,
+            responseDueAt,
+            resolveDueAt,
+          },
+        });
+        await prisma.ticketStatusHistory.create({
+          data: {
+            ticketId: ticket.id,
+            fromStatus: null,
+            toStatus: "OPEN",
+            changedBy: "system",
+            note: "ticket created",
+          },
+        });
+      } catch (error) {
+        if (!isMissingReporterKeyColumn(error)) throw error;
+        reporterKeyColumnAvailable = false;
+      }
+    }
 
-      await tx.ticketMessage.create({
-        data: {
-          ticketId: created.id,
-          sender: REPORTER_META_SENDER,
-          message: `${REPORTER_META_PREFIX}${reporterKey}`,
-        },
-      });
+    if (!ticket) {
+      ticket = await prisma.$transaction(async (tx) => {
+        const created = await tx.ticket.create({
+          data: {
+            code: generateTicketCode(),
+            title,
+            description,
+            reporterName: normalizedReporterName,
+            reporterLocation: normalizedReporterLocation,
+            priority,
+            category,
+            responseDueAt,
+            resolveDueAt,
+          },
+        });
 
-      await tx.ticketMessage.create({
-        data: {
-          ticketId: created.id,
-          sender: REPORTER_META_SENDER,
-          message: `${REPORTER_NAME_META_PREFIX}${normalizedReporterName}`,
-        },
-      });
+        await tx.ticketMessage.create({
+          data: {
+            ticketId: created.id,
+            sender: REPORTER_META_SENDER,
+            message: `${REPORTER_META_PREFIX}${reporterKey}`,
+          },
+        });
+        await tx.ticketStatusHistory.create({
+          data: {
+            ticketId: created.id,
+            fromStatus: null,
+            toStatus: "OPEN",
+            changedBy: "system",
+            note: "ticket created",
+          },
+        });
 
-      return created;
-    });
-    publishAdminEvent({
-      id: `ticket_created:${ticket.id}`,
-      type: "ticket_created",
-      ticketId: ticket.id,
-      ticketCode: ticket.code,
-      title: ticket.title,
-      message: "Tiket baru masuk",
-      createdAt: ticket.createdAt.toISOString(),
-    });
+        return created;
+      });
+    }
+    try {
+      publishAdminEvent({
+        id: `ticket_created:${ticket.id}`,
+        type: "ticket_created",
+        ticketId: ticket.id,
+        ticketCode: ticket.code,
+        title: ticket.title,
+        message: "Tiket baru masuk",
+        createdAt: ticket.createdAt.toISOString(),
+      });
+    } catch (error) {
+      console.error("Failed to publish ticket_created event:", error);
+    }
     const response = NextResponse.json(ticket);
     response.headers.set(
       "Set-Cookie",

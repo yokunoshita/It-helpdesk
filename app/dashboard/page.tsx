@@ -196,9 +196,9 @@ export const DashboardView = () => {
           {errorMessage}
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6">
         {cards.map((stat, i) => (
-          <div key={i} className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md transition-shadow">
+          <div key={i} className="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
               <div className={`p-3 rounded-xl ${stat.bg} ${stat.color}`}>
                 <stat.icon className="size-6" />
@@ -208,17 +208,17 @@ export const DashboardView = () => {
               </span>
             </div>
             <div className="mt-4">
-              <p className="text-3xl font-bold text-slate-800 dark:text-white">{stat.value}</p>
+              <p className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">{stat.value}</p>
               <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{stat.label}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
+        <div className="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
           <h3 className="font-semibold text-slate-800 dark:text-white mb-6">Volume Tiket Mingguan</h3>
-          <div className="h-64 w-full min-h-[256px] min-w-0">
+          <div className="h-56 md:h-64 w-full min-h-[224px] md:min-h-[256px] min-w-0">
             <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={256}>
               <BarChart data={stats.weeklyVolume}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#334155" opacity={0.1} />
@@ -249,11 +249,11 @@ export const DashboardView = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+        <div className="bg-white dark:bg-slate-900 p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
           <h3 className="font-semibold text-slate-800 dark:text-white mb-6">Status Penyelesaian</h3>
-          <div className="h-64 w-full min-h-[256px] flex items-center gap-4">
-            <div className="h-full min-w-0 flex-1">
-              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={256}>
+          <div className="w-full min-h-[224px] md:min-h-[256px] flex flex-col md:h-64 md:flex-row md:items-center gap-4">
+            <div className="h-52 md:h-full min-w-0 flex-1">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={224}>
                 <PieChart>
                   <Pie
                     data={stats.statusBreakdown}
@@ -272,7 +272,7 @@ export const DashboardView = () => {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="w-36 shrink-0 space-y-3 pr-2">
+            <div className="w-full md:w-36 shrink-0 space-y-3 md:pr-2">
               {stats.statusBreakdown.map((item, i) => (
                 <div key={i} className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
@@ -385,12 +385,6 @@ export default function DashboardRoutePage() {
             className="px-6 py-2.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-95"
           >
             Buat Laporan Baru
-          </button>
-          <button
-            onClick={() => router.push("/admin")}
-            className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-300/30 dark:bg-slate-700 dark:hover:bg-slate-600 dark:shadow-black/30 active:scale-95"
-          >
-            Mode Admin
           </button>
         </div>
       </div>

@@ -11,7 +11,9 @@ import {
   MapPin, 
   Tag, 
   AlertTriangle,
-  Star
+  Star,
+  Paperclip,
+  X
 } from "lucide-react";
 
 interface ChatPageProps {
@@ -32,7 +34,16 @@ interface Message {
   sender: "user" | "admin";
   timestamp: string;
   createdAt: string;
+  attachmentUrl?: string | null;
+  attachmentCaption?: string | null;
+  attachmentMimeType?: string | null;
+  sending?: boolean;
 }
+
+type ImageViewerState = {
+  url: string;
+  caption?: string | null;
+};
 
 type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
 type ChatTicketData = {
@@ -49,6 +60,9 @@ type StreamMessage = {
   sender: "user" | "admin";
   message: string;
   createdAt: string;
+  attachmentUrl?: string | null;
+  attachmentCaption?: string | null;
+  attachmentMimeType?: string | null;
 };
 type PersistedChatState = {
   ticketId: string;
@@ -85,6 +99,19 @@ const getStatusLabel = (status: TicketStatus | null) => {
   }
 };
 
+const formatFileSize = (bytes: number) => {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+};
+
+const formatMimeShort = (mimeType: string | undefined) => {
+  if (!mimeType) return "IMAGE";
+  const part = mimeType.split("/")[1];
+  if (!part) return "IMAGE";
+  return part.toUpperCase();
+};
+
 export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,10 +124,15 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
   const [submittingFeedback, setSubmittingFeedback] = useState(false);
   const [closingTicket, setClosingTicket] = useState(false);
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+  const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
+  const [attachmentPreviewUrl, setAttachmentPreviewUrl] = useState<string | null>(null);
+  const [assignedAdminName, setAssignedAdminName] = useState<string | null>(null);
+  const [viewerImage, setViewerImage] = useState<ImageViewerState | null>(null);
 
   const [inputText, setInputText] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastMessageAtRef = useRef<string>(new Date(0).toISOString());
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
 
   // const scrollToBottom = () => {
   //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -124,6 +156,9 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
             message: string;
             sender: "user" | "admin";
             createdAt: string;
+            attachmentUrl?: string | null;
+            attachmentCaption?: string | null;
+            attachmentMimeType?: string | null;
           }>
         >(messagesRes);
 
@@ -143,6 +178,9 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
           message: string;
           sender: "user" | "admin";
           createdAt: string;
+          attachmentUrl?: string | null;
+          attachmentCaption?: string | null;
+          attachmentMimeType?: string | null;
         }) => ({
           id: m.id,
           text: m.message,
@@ -152,6 +190,9 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
             minute: "2-digit",
           }),
           createdAt: m.createdAt,
+          attachmentUrl: m.attachmentUrl || null,
+          attachmentCaption: m.attachmentCaption || null,
+          attachmentMimeType: m.attachmentMimeType || null,
         }));
 
         const unique = Array.from(
@@ -170,6 +211,9 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
                   minute: "2-digit",
                 }),
                 createdAt: new Date().toISOString(),
+                attachmentUrl: null,
+                attachmentCaption: null,
+                attachmentMimeType: null,
               },
               ...unique,
             ];
@@ -184,6 +228,7 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
           const ticket = await parseJsonSafe<{
             status?: TicketStatus;
             feedbackRating?: number | null;
+            assignedAdminId?: string | null;
           }>(
             ticketRes
           );
@@ -206,6 +251,11 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
             setFeedbackRating(null);
             setDraftRating(0);
           }
+          if (typeof ticket.assignedAdminId === "string" && ticket.assignedAdminId.trim()) {
+            setAssignedAdminName(ticket.assignedAdminId.trim());
+          } else {
+            setAssignedAdminName(null);
+          }
         }
       } catch {
         setMessages([]);
@@ -226,8 +276,35 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
       try {
         const payload = JSON.parse((event as MessageEvent).data) as StreamMessage;
         setMessages((prev) => {
-          if (prev.some((msg) => msg.id === payload.id)) return prev;
+          if (prev.some((msg) => msg.id === payload.id)) {
+            return prev.filter((msg) => !msg.sending);
+          }
           lastMessageAtRef.current = payload.createdAt;
+          const optimisticIndex = prev.findIndex(
+            (msg) =>
+              msg.sending &&
+              msg.sender === "user" &&
+              msg.text === payload.message &&
+              !!msg.attachmentUrl === !!payload.attachmentUrl
+          );
+          if (optimisticIndex >= 0) {
+            const next = [...prev];
+            next[optimisticIndex] = {
+              id: payload.id,
+              text: payload.message,
+              sender: payload.sender,
+              timestamp: new Date(payload.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+              createdAt: payload.createdAt,
+              attachmentUrl: payload.attachmentUrl || null,
+              attachmentCaption: payload.attachmentCaption || null,
+              attachmentMimeType: payload.attachmentMimeType || null,
+              sending: false,
+            };
+            return next;
+          }
           return [
             ...prev,
             {
@@ -239,6 +316,10 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
                 minute: "2-digit",
               }),
               createdAt: payload.createdAt,
+              attachmentUrl: payload.attachmentUrl || null,
+              attachmentCaption: payload.attachmentCaption || null,
+              attachmentMimeType: payload.attachmentMimeType || null,
+              sending: false,
             },
           ];
         });
@@ -254,12 +335,14 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
 
   useEffect(() => {
     const interval = setInterval(async () => {
+      if (document.visibilityState !== "visible") return;
       try {
         const ticketRes = await fetch(`/api/tickets/${ticketId}`);
         if (!ticketRes.ok) return;
         const ticket = await parseJsonSafe<{
           status?: TicketStatus;
           feedbackRating?: number | null;
+          assignedAdminId?: string | null;
         }>(ticketRes);
         if (!ticket) return;
         if (
@@ -274,10 +357,15 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
           setFeedbackRating(ticket.feedbackRating);
           setDraftRating(ticket.feedbackRating);
         }
+        if (typeof ticket.assignedAdminId === "string" && ticket.assignedAdminId.trim()) {
+          setAssignedAdminName(ticket.assignedAdminId.trim());
+        } else {
+          setAssignedAdminName(null);
+        }
       } catch {
         // Ignore transient polling errors.
       }
-    }, 10000);
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [ticketId]);
@@ -293,46 +381,179 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [showCloseConfirm, closingTicket]);
 
+  useEffect(() => {
+    if (!viewerImage) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setViewerImage(null);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [viewerImage]);
+
 
 const handleSendMessage = async (e: React.FormEvent) => {
   e.preventDefault();
-  if (!inputText.trim()) return;
+  const text = inputText.trim();
+  if (!text && !attachmentFile) return;
+  const selectedFile = attachmentFile;
+  const selectedPreviewUrl = attachmentPreviewUrl;
+  const optimisticId = `temp:${Date.now().toString(36)}:${Math.random()
+    .toString(36)
+    .slice(2, 8)}`;
+  const optimisticCreatedAt = new Date().toISOString();
 
-  const res = await fetch(`/api/tickets/${ticketId}/messages`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+  setMessages((prev) => [
+    ...prev,
+    {
+      id: optimisticId,
+      text: selectedFile ? "" : text,
       sender: "user",
-      message: inputText,
-    }),
-  });
+      timestamp: "Mengirim...",
+      createdAt: optimisticCreatedAt,
+      attachmentUrl: selectedPreviewUrl || null,
+      attachmentCaption: selectedFile ? text : null,
+      attachmentMimeType: selectedFile?.type || null,
+      sending: true,
+    },
+  ]);
+  setInputText("");
+  setAttachmentPreviewUrl(null);
+  setAttachmentFile(null);
+  if (attachmentInputRef.current) {
+    attachmentInputRef.current.value = "";
+  }
 
-  const saved = await parseJsonSafe<{
-    id: string;
-    message: string;
-    sender: "user" | "admin";
-    createdAt: string;
-    error?: string;
-  }>(res);
+  let uploadedAttachment: {
+    attachmentUrl: string;
+    attachmentMimeType: string;
+    attachmentFileName: string;
+    attachmentSize: number;
+  } | null = null;
 
-  if (!res.ok) {
-    alert(saved?.error || "Gagal mengirim pesan");
-    if (res.status === 409) {
-      setTicketStatus("CLOSED");
+  try {
+    if (selectedFile) {
+      const presignRes = await fetch("/api/storage/presign-upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ticketId,
+          fileName: selectedFile.name,
+          mimeType: selectedFile.type,
+          size: selectedFile.size,
+        }),
+      });
+      const presignPayload = await parseJsonSafe<{
+        uploadUrl?: string;
+        fileUrl?: string;
+        error?: string;
+      }>(presignRes);
+      if (!presignRes.ok || !presignPayload?.uploadUrl || !presignPayload.fileUrl) {
+        alert(presignPayload?.error || "Gagal membuat URL upload gambar.");
+        return;
+      }
+
+      try {
+        const uploadRes = await fetch(presignPayload.uploadUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": selectedFile.type,
+          },
+          body: selectedFile,
+        });
+        if (!uploadRes.ok) {
+          const uploadErrorText = await uploadRes.text().catch(() => "");
+          throw new Error(uploadErrorText || "Upload browser ke storage gagal.");
+        }
+
+        uploadedAttachment = {
+          attachmentUrl: presignPayload.fileUrl,
+          attachmentMimeType: selectedFile.type,
+          attachmentFileName: selectedFile.name,
+          attachmentSize: selectedFile.size,
+        };
+      } catch {
+        const fallbackForm = new FormData();
+        fallbackForm.append("ticketId", ticketId);
+        fallbackForm.append("attachment", selectedFile);
+        const fallbackRes = await fetch("/api/storage/upload", {
+          method: "POST",
+          body: fallbackForm,
+        });
+        const fallbackPayload = await parseJsonSafe<{
+          fileUrl?: string;
+          attachmentMimeType?: string;
+          attachmentFileName?: string;
+          attachmentSize?: number;
+          error?: string;
+        }>(fallbackRes);
+        if (!fallbackRes.ok || !fallbackPayload?.fileUrl) {
+          throw new Error(
+            fallbackPayload?.error ||
+              "Upload gambar gagal. Cek CORS bucket atau koneksi server ke storage."
+          );
+        }
+        uploadedAttachment = {
+          attachmentUrl: fallbackPayload.fileUrl,
+          attachmentMimeType: fallbackPayload.attachmentMimeType || selectedFile.type,
+          attachmentFileName: fallbackPayload.attachmentFileName || selectedFile.name,
+          attachmentSize: fallbackPayload.attachmentSize || selectedFile.size,
+        };
+      }
     }
-    return;
-  }
 
-  if (!saved?.id || !saved?.message || !saved?.sender || !saved?.createdAt) {
-    alert("Respons server tidak valid. Coba kirim ulang.");
-    return;
-  }
+    const res = await fetch(`/api/tickets/${ticketId}/messages`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sender: "user",
+        message: selectedFile ? "" : text,
+        attachmentCaption: selectedFile ? text : null,
+        attachmentUrl: uploadedAttachment?.attachmentUrl || null,
+        attachmentMimeType: uploadedAttachment?.attachmentMimeType || null,
+        attachmentFileName: uploadedAttachment?.attachmentFileName || null,
+        attachmentSize: uploadedAttachment?.attachmentSize || null,
+      }),
+    });
 
-  setMessages((prev) => {
-    if (prev.some((msg) => msg.id === saved.id)) return prev;
-    return [
-      ...prev,
-      {
+    const saved = await parseJsonSafe<{
+      id: string;
+      message: string;
+      sender: "user" | "admin";
+      createdAt: string;
+      attachmentUrl?: string | null;
+      attachmentCaption?: string | null;
+      attachmentMimeType?: string | null;
+      error?: string;
+    }>(res);
+
+    if (!res.ok) {
+      setMessages((prev) => prev.filter((msg) => msg.id !== optimisticId));
+      alert(saved?.error || "Gagal mengirim pesan");
+      if (res.status === 409) {
+        setTicketStatus("CLOSED");
+      }
+      return;
+    }
+
+    if (
+      !saved?.id ||
+      !saved?.sender ||
+      !saved?.createdAt ||
+      (!saved?.message && !saved?.attachmentUrl)
+    ) {
+      setMessages((prev) => prev.filter((msg) => msg.id !== optimisticId));
+      alert("Respons server tidak valid. Coba kirim ulang.");
+      return;
+    }
+
+    setMessages((prev) => {
+      const withoutOptimistic = prev.filter((msg) => msg.id !== optimisticId);
+      if (withoutOptimistic.some((msg) => msg.id === saved.id)) {
+        return withoutOptimistic;
+      }
+      return [...withoutOptimistic, {
         id: saved.id,
         text: saved.message,
         sender: saved.sender,
@@ -341,35 +562,84 @@ const handleSendMessage = async (e: React.FormEvent) => {
           minute: "2-digit",
         }),
         createdAt: saved.createdAt,
-      },
-    ];
-  });
-  lastMessageAtRef.current = saved.createdAt;
+        attachmentUrl: saved.attachmentUrl || null,
+        attachmentCaption: saved.attachmentCaption || null,
+        attachmentMimeType: saved.attachmentMimeType || null,
+        sending: false,
+      }];
+    });
+    lastMessageAtRef.current = saved.createdAt;
 
-  setInputText("");
+    if (selectedPreviewUrl) {
+      URL.revokeObjectURL(selectedPreviewUrl);
+    }
 
-  const ticketRes = await fetch(`/api/tickets/${ticketId}`);
-  if (ticketRes.ok) {
-    const ticket = await parseJsonSafe<{
-      status?: TicketStatus;
-      feedbackRating?: number | null;
-    }>(ticketRes);
-    if (!ticket) return;
-    if (
-      ticket.status === "OPEN" ||
-      ticket.status === "IN_PROGRESS" ||
-      ticket.status === "WAITING" ||
-      ticket.status === "CLOSED"
-    ) {
-      setTicketStatus(ticket.status);
+    const ticketRes = await fetch(`/api/tickets/${ticketId}`);
+    if (ticketRes.ok) {
+      const ticket = await parseJsonSafe<{
+        status?: TicketStatus;
+        feedbackRating?: number | null;
+      }>(ticketRes);
+      if (!ticket) return;
+      if (
+        ticket.status === "OPEN" ||
+        ticket.status === "IN_PROGRESS" ||
+        ticket.status === "WAITING" ||
+        ticket.status === "CLOSED"
+      ) {
+        setTicketStatus(ticket.status);
+      }
+      if (typeof ticket.feedbackRating === "number") {
+        setFeedbackRating(ticket.feedbackRating);
+        setDraftRating(ticket.feedbackRating);
+      } else {
+        setFeedbackRating(null);
+        setDraftRating(0);
+      }
     }
-    if (typeof ticket.feedbackRating === "number") {
-      setFeedbackRating(ticket.feedbackRating);
-      setDraftRating(ticket.feedbackRating);
-    } else {
-      setFeedbackRating(null);
-      setDraftRating(0);
+  } catch (error) {
+    setMessages((prev) => prev.filter((msg) => msg.id !== optimisticId));
+    if (selectedFile && selectedPreviewUrl) {
+      setAttachmentFile(selectedFile);
+      setAttachmentPreviewUrl(selectedPreviewUrl);
+      setInputText(text);
+    } else if (selectedPreviewUrl) {
+      URL.revokeObjectURL(selectedPreviewUrl);
     }
+    const message =
+      error instanceof Error && error.message.trim()
+        ? error.message
+        : "Gagal upload/kirim pesan. Cek CORS bucket dan konfigurasi S3.";
+    alert(message);
+  }
+};
+
+const onPickAttachment = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    alert("Attachment harus berupa gambar.");
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Ukuran gambar maksimal 5MB.");
+    return;
+  }
+  if (attachmentPreviewUrl) {
+    URL.revokeObjectURL(attachmentPreviewUrl);
+  }
+  setAttachmentFile(file);
+  setAttachmentPreviewUrl(URL.createObjectURL(file));
+};
+
+const clearAttachment = () => {
+  if (attachmentPreviewUrl) {
+    URL.revokeObjectURL(attachmentPreviewUrl);
+  }
+  setAttachmentPreviewUrl(null);
+  setAttachmentFile(null);
+  if (attachmentInputRef.current) {
+    attachmentInputRef.current.value = "";
   }
 };
 
@@ -435,29 +705,29 @@ const submitFeedback = async () => {
 };
 
   return (
-    <div className="max-w-3xl mx-auto h-[calc(100vh-200px)] flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="mx-auto flex h-[calc(100dvh-96px)] w-full max-w-3xl flex-col animate-in fade-in slide-in-from-bottom-4 duration-500 md:h-[calc(100dvh-120px)]">
       {/* Header Chat */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-t-3xl overflow-hidden shadow-sm">
-        <div className="p-6 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
-          <div className="flex items-center gap-4">
+      <div className="overflow-hidden rounded-t-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 md:rounded-t-3xl">
+        <div className="flex flex-col gap-3 border-b border-slate-100 p-3 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between md:p-6">
+          <div className="flex min-w-0 items-center gap-3 md:gap-4">
             <button 
               onClick={onBack}
               className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
             >
               <ArrowLeft className="size-5 text-slate-500" />
             </button>
-            <div>
-              <h2 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <div className="min-w-0">
+              <h2 className="flex items-center gap-2 truncate text-sm font-bold text-slate-900 dark:text-white md:text-base">
                 Diskusi Tiket {ticketId}
                 <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
               </h2>
-              <p className="text-xs text-slate-500 flex items-center gap-1">
+              <p className="flex items-center gap-1 text-[11px] text-slate-500 md:text-xs">
                 <Clock className="size-3" />
                 Biasanya membalas dalam 5 menit
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {ticketStatus !== "CLOSED" && (
               <button
                 type="button"
@@ -486,39 +756,60 @@ const submitFeedback = async () => {
           </div>
         </div>
 
-        {/* Detail Tiket Section */}
-        <div className="bg-slate-50/50 dark:bg-slate-800/30 p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-[11px] border-b border-slate-100 dark:border-slate-800">
-          <div className="space-y-1">
-            <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
-              <User className="size-3" /> Pelapor
-            </p>
-            <p className="font-bold text-slate-700 dark:text-slate-200">{ticketData.name}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
-              <MapPin className="size-3" /> Lokasi
-            </p>
-            <p className="font-bold text-slate-700 dark:text-slate-200">{ticketData.location}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
-              <Tag className="size-3" /> Kategori
-            </p>
-            <p className="font-bold text-slate-700 dark:text-slate-200">{ticketData.category.split(' ')[0]}</p>
-          </div>
-          <div className="space-y-1">
-            <p className="text-slate-400 font-medium uppercase tracking-wider flex items-center gap-1">
-              <AlertTriangle className="size-3" /> Urgensi
-            </p>
-            <p className={`font-bold ${ticketData.urgency.includes('Mendesak') ? 'text-red-500' : 'text-slate-700 dark:text-slate-200'}`}>
-              {ticketData.urgency.split(' ')[0]}
-            </p>
+        <div className="border-b border-slate-100 px-3 py-2 dark:border-slate-800 md:px-6">
+          <div className="grid w-full grid-cols-2 gap-x-4 gap-y-2 md:grid-cols-5">
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Pelapor
+              </p>
+              <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                {ticketData.name}
+              </p>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Lokasi
+              </p>
+              <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                {ticketData.location}
+              </p>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Kategori
+              </p>
+              <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                {ticketData.category.split(" ")[0]}
+              </p>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Urgensi
+              </p>
+              <p
+                className={`truncate text-sm font-medium ${
+                  ticketData.urgency.includes("Mendesak")
+                    ? "text-red-500"
+                    : "text-slate-700 dark:text-slate-200"
+                }`}
+              >
+                {ticketData.urgency.split(" ")[0]}
+              </p>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                Admin
+              </p>
+              <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                {assignedAdminName || "Belum ditugaskan"}
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Area Pesan */}
-      <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50 dark:bg-slate-950/50 border-x border-slate-200 dark:border-slate-800 space-y-4 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800">
+      <div className="flex-1 space-y-3 overflow-y-auto border-x border-slate-200 bg-slate-50/50 p-3 scrollbar-thin scrollbar-thumb-slate-200 dark:border-slate-800 dark:bg-slate-950/50 dark:scrollbar-thumb-slate-800 md:space-y-4 md:p-6">
         {loading && (
           <p className="text-center text-xs text-slate-400">
             Memuat percakapan...
@@ -530,17 +821,43 @@ const submitFeedback = async () => {
             key={msg.id} 
             className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
           >
-            <div className={`max-w-[80%] flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"}`}>
+            <div className={`flex max-w-[90%] flex-col md:max-w-[80%] ${msg.sender === "user" ? "items-end" : "items-start"}`}>
               <div 
-                className={`px-4 py-3 rounded-2xl text-sm ${
+                className={`rounded-2xl px-3 py-2.5 text-sm md:px-4 md:py-3 ${
                   msg.sender === "user" 
                     ? "bg-blue-600 text-white rounded-tr-none shadow-lg shadow-blue-500/10" 
                     : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm"
                 }`}
               >
-                {msg.text}
+                {msg.text ? <p>{msg.text}</p> : null}
+                {msg.attachmentUrl ? (
+                  <div className={msg.text ? "mt-2" : ""}>
+                    <button
+                      type="button"
+                      className="block"
+                      onClick={() =>
+                        setViewerImage({
+                          url: msg.attachmentUrl || "",
+                          caption: msg.attachmentCaption || null,
+                        })
+                      }
+                      aria-label="Lihat gambar"
+                    >
+                      <img
+                        src={msg.attachmentUrl}
+                        alt={msg.attachmentCaption || "Attachment"}
+                        className="max-h-72 w-auto max-w-full rounded-lg border border-slate-200/40 object-contain dark:border-slate-700/50"
+                      />
+                    </button>
+                    {msg.attachmentCaption ? (
+                      <p className="mt-1 text-xs opacity-90">{msg.attachmentCaption}</p>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
-              <span className="text-[10px] text-slate-400 mt-1 px-1">{msg.timestamp}</span>
+              <span className={`mt-1 px-1 text-[10px] ${msg.sending ? "text-blue-400" : "text-slate-400"}`}>
+                {msg.sending ? "Mengirim..." : msg.timestamp}
+              </span>
             </div>
           </div>
         ))}
@@ -548,7 +865,7 @@ const submitFeedback = async () => {
       </div>
 
       {/* Input Chat */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-b-3xl p-4 shadow-lg">
+      <div className="relative rounded-b-2xl border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-800 dark:bg-slate-900 md:rounded-b-3xl md:p-4">
         {ticketStatus === "CLOSED" && (
           <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-500/30 dark:bg-amber-500/10">
             <p className="text-xs font-semibold text-amber-800 dark:text-amber-300">
@@ -587,7 +904,52 @@ const submitFeedback = async () => {
             </div>
           </div>
         )}
-        <form onSubmit={handleSendMessage} className="flex gap-3">
+        {attachmentPreviewUrl && (
+          <div className="absolute inset-x-3 bottom-full z-20 mb-2 rounded-xl border border-slate-200 bg-slate-50 p-2.5 shadow-md dark:border-slate-700 dark:bg-slate-800 md:inset-x-4">
+            <div className="flex items-start gap-3">
+              <img
+                src={attachmentPreviewUrl}
+                alt="Preview attachment"
+                className="h-16 w-16 rounded-md border border-slate-200 object-cover dark:border-slate-700"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-semibold text-slate-700 dark:text-slate-200">
+                  {attachmentFile?.name}
+                </p>
+                <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                  {attachmentFile
+                    ? `${formatMimeShort(attachmentFile.type)} • ${formatFileSize(attachmentFile.size)}`
+                    : ""}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={clearAttachment}
+                className="rounded-md p-1 text-slate-500 hover:bg-slate-200 hover:text-slate-700 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                aria-label="Hapus attachment"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+          </div>
+        )}
+        <form onSubmit={handleSendMessage} className="flex items-end gap-2 sm:gap-3">
+          <input
+            ref={attachmentInputRef}
+            type="file"
+            accept="image/*"
+            onChange={onPickAttachment}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => attachmentInputRef.current?.click()}
+            disabled={ticketStatus === "CLOSED"}
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+            aria-label="Tambah gambar"
+          >
+            <Paperclip className="size-4" />
+          </button>
           <label htmlFor="chat-input" className="sr-only">
             Tulis pesan chat
           </label>
@@ -596,15 +958,21 @@ const submitFeedback = async () => {
             type="text" 
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            placeholder={ticketStatus === "CLOSED" ? "Tiket sudah selesai." : "Ketik pesan balasan di sini..."} 
-            className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 transition-all dark:text-white"
+            placeholder={
+              ticketStatus === "CLOSED"
+                ? "Tiket sudah selesai."
+                : attachmentFile
+                  ? "Tulis caption gambar..."
+                  : "Ketik pesan..."
+            } 
+            className="h-11 flex-1 rounded-full border border-slate-200 bg-slate-50 px-4 text-sm transition-all focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             disabled={ticketStatus === "CLOSED"}
           />
           <button 
             type="submit"
             aria-label="Kirim pesan"
             disabled={ticketStatus === "CLOSED"}
-            className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-500/20"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-700 active:scale-95"
           >
             <Send className="size-5" />
           </button>
@@ -646,6 +1014,40 @@ const submitFeedback = async () => {
                 {closingTicket ? "Menyelesaikan..." : "Ya, Selesaikan"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {viewerImage && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Pratinjau gambar"
+          onClick={() => setViewerImage(null)}
+        >
+          <div
+            className="relative w-full max-w-5xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setViewerImage(null)}
+              className="absolute right-0 top-0 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80"
+              aria-label="Tutup pratinjau"
+            >
+              <X className="size-5" />
+            </button>
+            <img
+              src={viewerImage.url}
+              alt={viewerImage.caption || "Preview gambar"}
+              className="max-h-[80dvh] w-full rounded-xl object-contain"
+            />
+            {viewerImage.caption ? (
+              <p className="mt-2 text-center text-sm text-slate-100">
+                {viewerImage.caption}
+              </p>
+            ) : null}
           </div>
         </div>
       )}

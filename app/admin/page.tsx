@@ -11,7 +11,9 @@ import {
   Shield,
   SlidersHorizontal,
   Ticket,
+  Trash2,
   UserCheck,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { EmptyState, FieldGroup, NoticeCard } from "@/app/components/system/ux";
@@ -27,6 +29,7 @@ type AdminTicketSummary = {
   code: string;
   title: string;
   description: string;
+  reporterName?: string | null;
   status: TicketStatus;
   category: TicketCategory;
   priority: TicketPriority;
@@ -50,11 +53,16 @@ type TicketMessage = {
   ticketId: string;
   sender: TicketSender | "system";
   message: string;
+  attachmentUrl?: string | null;
+  attachmentCaption?: string | null;
+  attachmentMimeType?: string | null;
   createdAt: string;
 };
 
+
 type AdminTicketDetail = AdminTicketSummary & {
   reporterName?: string | null;
+  reporterLocation?: string | null;
   firstReplyAt: string | null;
   responseDueAt: string;
   resolveDueAt: string;
@@ -75,12 +83,22 @@ type AdminSessionResponse = {
 
 type AdminNotificationEvent = {
   id: string;
-  type: "ticket_created" | "user_message" | "sla_breach";
+  type:
+    | "ticket_created"
+    | "user_message"
+    | "sla_breach"
+    | "ticket_status_changed";
   ticketId: string;
   ticketCode: string;
   title: string;
   message: string;
   createdAt: string;
+  status?: TicketStatus;
+};
+
+type ImageViewerState = {
+  url: string;
+  caption?: string | null;
 };
 
 const statusLabel: Record<TicketStatus, string> = {
@@ -98,6 +116,17 @@ const statusBadgeClass: Record<TicketStatus, string> = {
     "bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-500/10 dark:text-amber-300 dark:border-amber-500/20",
   CLOSED:
     "bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-300 dark:border-emerald-500/20",
+};
+
+const statusSelectClass: Record<TicketStatus, string> = {
+  OPEN:
+    "border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-300",
+  IN_PROGRESS:
+    "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300",
+  WAITING:
+    "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300",
+  CLOSED:
+    "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300",
 };
 
 const priorityBadgeClass: Record<TicketPriority, string> = {
@@ -205,19 +234,26 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
   const [sendingMessage, setSendingMessage] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [downloadingReport, setDownloadingReport] = useState(false);
+  const [deletingTicket, setDeletingTicket] = useState(false);
+  const [showDeleteTicketConfirm, setShowDeleteTicketConfirm] = useState(false);
+  const [isTicketDetailCollapsed, setIsTicketDetailCollapsed] = useState(true);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<TicketStatus>("OPEN");
+  const [viewerImage, setViewerImage] = useState<ImageViewerState | null>(null);
   const lastDetailMessageAtRef = useRef<string>(new Date(0).toISOString());
+  const sendingMessageLockRef = useRef(false);
   const notifiedEventIdsRef = useRef<Set<string>>(new Set());
   const lastAdminNotifAtRef = useRef<string>(new Date().toISOString());
-  const slaSummary = useMemo(() => {
+  const statusSummary = useMemo(() => {
     return tickets.reduce(
       (acc, ticket) => {
-        if (ticket.slaState === "BREACHED") acc.breached += 1;
-        else if (ticket.slaState === "DUE_SOON") acc.dueSoon += 1;
-        else acc.onTrack += 1;
+        if (ticket.status === "OPEN") acc.open += 1;
+        else if (ticket.status === "IN_PROGRESS") acc.inProgress += 1;
+        else if (ticket.status === "WAITING") acc.waiting += 1;
+        else if (ticket.status === "CLOSED") acc.closed += 1;
         return acc;
       },
-      { breached: 0, dueSoon: 0, onTrack: 0 }
+      { open: 0, inProgress: 0, waiting: 0, closed: 0 }
     );
   }, [tickets]);
 
@@ -373,6 +409,22 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
   }, [authenticated, selectedTicketId, loadTicketDetail]);
 
   useEffect(() => {
+    setIsDescriptionExpanded(false);
+    setIsTicketDetailCollapsed(true);
+  }, [ticketDetail?.id]);
+
+  useEffect(() => {
+    if (!viewerImage) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setViewerImage(null);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [viewerImage]);
+
+  useEffect(() => {
     if (!authenticated || !ticketDetail?.code) return;
 
     const source = new EventSource(
@@ -470,6 +522,33 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
           }
         }
 
+        if (payload.type === "ticket_status_changed") {
+          const nextStatus = payload.status || "CLOSED";
+          setTickets((prev) =>
+            prev.map((ticket) =>
+              ticket.id === payload.ticketId
+                ? {
+                    ...ticket,
+                    status: nextStatus,
+                    updatedAt: payload.createdAt,
+                  }
+                : ticket
+            )
+          );
+          setTicketDetail((prev) =>
+            prev && prev.id === payload.ticketId
+              ? {
+                  ...prev,
+                  status: nextStatus,
+                  updatedAt: payload.createdAt,
+                }
+              : prev
+          );
+          if (selectedTicketId === payload.ticketId) {
+            setSelectedStatus(nextStatus);
+          }
+        }
+
         if (
           typeof window !== "undefined" &&
           "Notification" in window &&
@@ -480,6 +559,8 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
               ? `Tiket Baru ${payload.ticketCode}`
               : payload.type === "sla_breach"
               ? `SLA Breach ${payload.ticketCode}`
+              : payload.type === "ticket_status_changed"
+              ? `Status Tiket ${payload.ticketCode}`
               : `Pesan Baru ${payload.ticketCode}`;
           const body =
             payload.type === "ticket_created"
@@ -561,6 +642,8 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
 
   const submitAdminReply = async () => {
     if (!ticketDetail || !messageInput.trim()) return;
+    if (sendingMessageLockRef.current) return;
+    sendingMessageLockRef.current = true;
     setSendingMessage(true);
     setDetailError(null);
 
@@ -625,6 +708,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
     } catch {
       setDetailError("Koneksi terputus saat mengirim pesan.");
     } finally {
+      sendingMessageLockRef.current = false;
       setSendingMessage(false);
     }
   };
@@ -663,6 +747,34 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
       setDetailError("Koneksi terputus saat update status.");
     } finally {
       setUpdatingStatus(false);
+    }
+  };
+
+  const deleteSelectedTicket = async () => {
+    if (!ticketDetail || deletingTicket) return;
+
+    setDeletingTicket(true);
+    setDetailError(null);
+    try {
+      const res = await fetch(`/api/admin/tickets/${ticketDetail.id}`, {
+        method: "DELETE",
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setDetailError(data.error || "Gagal menghapus tiket.");
+        return;
+      }
+
+      toast.success(`Tiket ${ticketDetail.code} berhasil dihapus.`);
+      setTicketDetail(null);
+      setSelectedTicketId(null);
+      setMessageInput("");
+      setShowDeleteTicketConfirm(false);
+      await loadTickets();
+    } catch {
+      setDetailError("Koneksi terputus saat menghapus tiket.");
+    } finally {
+      setDeletingTicket(false);
     }
   };
 
@@ -784,17 +896,17 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="space-y-1">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Admin Dashboard</h2>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white md:text-3xl">Admin Dashboard</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Login sebagai: <span className="font-semibold">{adminUser}</span>
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 md:justify-end">
           <button
             type="button"
             onClick={downloadReport}
             disabled={downloadingReport}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 md:px-4 md:text-sm"
           >
             <Download className="size-4" />
             {downloadingReport ? "Mengunduh..." : "Download Laporan"}
@@ -802,7 +914,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
           <button
             type="button"
             onClick={loadTickets}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 md:px-4 md:text-sm"
           >
             <RefreshCw className="size-4" />
             Refresh
@@ -810,21 +922,21 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
           <button
             type="button"
             onClick={() => router.push("/admin/users")}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 md:px-4 md:text-sm"
           >
             Kelola Admin
           </button>
           <button
             type="button"
             onClick={logout}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 md:px-4 md:text-sm"
           >
             Logout
           </button>
           <button
             type="button"
             onClick={onBackHome}
-            className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+            className="rounded-xl bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700 md:px-4 md:text-sm"
           >
             Kembali
           </button>
@@ -832,24 +944,28 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[460px_minmax(0,1fr)] xl:h-[calc(100vh-170px)]">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col min-h-0">
+        <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900 flex flex-col min-h-0 overflow-hidden md:p-4">
           <div className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200">
             <Shield className="size-4 text-blue-500" />
             Queue Tiket
           </div>
 
-          <div className="mb-3 grid grid-cols-3 gap-2">
-            <div className="rounded-lg border border-red-200 bg-red-50 px-2 py-2 text-center dark:border-red-500/30 dark:bg-red-500/10">
-              <p className="text-[10px] font-bold text-red-700 dark:text-red-300">BREACHED</p>
-              <p className="text-base font-extrabold text-red-700 dark:text-red-200">{slaSummary.breached}</p>
+          <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="rounded-lg border border-indigo-200 bg-indigo-50 px-2 py-2 text-center dark:border-indigo-500/30 dark:bg-indigo-500/10">
+              <p className="text-[10px] font-bold text-indigo-700 dark:text-indigo-300">NEW</p>
+              <p className="text-base font-extrabold text-indigo-700 dark:text-indigo-200">{statusSummary.open}</p>
+            </div>
+            <div className="rounded-lg border border-blue-200 bg-blue-50 px-2 py-2 text-center dark:border-blue-500/30 dark:bg-blue-500/10">
+              <p className="text-[10px] font-bold text-blue-700 dark:text-blue-300">IN PROGRESS</p>
+              <p className="text-base font-extrabold text-blue-700 dark:text-blue-200">{statusSummary.inProgress}</p>
             </div>
             <div className="rounded-lg border border-amber-200 bg-amber-50 px-2 py-2 text-center dark:border-amber-500/30 dark:bg-amber-500/10">
-              <p className="text-[10px] font-bold text-amber-800 dark:text-amber-300">DUE SOON</p>
-              <p className="text-base font-extrabold text-amber-700 dark:text-amber-200">{slaSummary.dueSoon}</p>
+              <p className="text-[10px] font-bold text-amber-800 dark:text-amber-300">WAITING</p>
+              <p className="text-base font-extrabold text-amber-700 dark:text-amber-200">{statusSummary.waiting}</p>
             </div>
             <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-2 text-center dark:border-emerald-500/30 dark:bg-emerald-500/10">
-              <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300">ON TRACK</p>
-              <p className="text-base font-extrabold text-emerald-700 dark:text-emerald-200">{slaSummary.onTrack}</p>
+              <p className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300">CLOSED</p>
+              <p className="text-base font-extrabold text-emerald-700 dark:text-emerald-200">{statusSummary.closed}</p>
             </div>
           </div>
 
@@ -988,11 +1104,13 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-slate-500 dark:text-slate-300">{ticket.code}</span>
+                    <span className="max-w-[72%] truncate text-xs font-bold text-slate-500 dark:text-slate-300">
+                      {ticket.code} / {ticket.reporterName || "Pelapor"}
+                    </span>
                     <span
-                      className={`inline-flex rounded-md border px-1.5 py-0.5 text-[10px] font-bold ${slaBadgeClass[ticket.slaState]}`}
+                      className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${statusBadgeClass[ticket.status]}`}
                     >
-                      {slaLabel[ticket.slaState]}
+                      {statusLabel[ticket.status].toUpperCase()}
                     </span>
                   </div>
                   <div className="mt-2 flex items-start justify-between gap-2">
@@ -1006,18 +1124,13 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                     </span>
                   </div>
                   <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-                    <span
-                      className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${statusBadgeClass[ticket.status]}`}
-                    >
-                      {statusLabel[ticket.status].toUpperCase()}
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                      SLA: {slaLabel[ticket.slaState]}
                     </span>
                     <span className="inline-flex items-center gap-1 font-semibold truncate max-w-[55%]">
                       <UserCheck className="size-3" />
                       {ticket.assignedAdminId || "Unassigned"}
                     </span>
-                  </div>
-                  <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-                    Update: {formatRelative(ticket.updatedAt)}
                   </div>
                   {ticket.unreadUserMessages > 0 && (
                     <span className="mt-2 inline-flex rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-600 dark:bg-red-500/10 dark:text-red-300">
@@ -1066,7 +1179,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
           )}
 
           {selectedTicketId && (
-            <div className="space-y-4 flex flex-col min-h-0 h-full">
+            <div className="space-y-3 flex flex-col min-h-0 h-full md:space-y-4">
               {loadingDetail && (
                 <p className="text-sm text-slate-500 dark:text-slate-400">Memuat detail tiket...</p>
               )}
@@ -1075,68 +1188,126 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
               )}
 
               {ticketDetail && !loadingDetail && (
-                <div className="flex flex-col min-h-0 h-full space-y-4">
-                  <div className="space-y-3 border-b border-slate-200 pb-3 dark:border-slate-800">
-                    <div className="space-y-1">
-                      <div className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-300">
-                        <Ticket className="size-3.5" />
+                <div className="flex flex-col min-h-0 h-full space-y-3 md:space-y-4">
+                  <div className="space-y-2 border-b border-slate-200 pb-3 dark:border-slate-800 md:space-y-3">
+                    <div className="inline-flex max-w-full items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-300">
+                      <Ticket className="size-3.5" />
+                      <span className="truncate">
                         {ticketDetail.code} / {ticketDetail.reporterName || "Pelapor"}
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="space-y-1 min-w-0">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white md:text-xl break-words">
+                          {ticketDetail.title}
+                        </h3>
+                        <p
+                          className={`text-xs text-slate-500 dark:text-slate-400 md:text-sm ${
+                            isDescriptionExpanded ? "" : "line-clamp-2"
+                          }`}
+                        >
+                          {ticketDetail.description}
+                        </p>
+                        {ticketDetail.description.length > 180 && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setIsDescriptionExpanded((prev) => !prev)
+                            }
+                            className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-200"
+                          >
+                            {isDescriptionExpanded
+                              ? "Sembunyikan deskripsi"
+                              : "Lihat deskripsi lengkap"}
+                          </button>
+                        )}
                       </div>
-                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                        {ticketDetail.title}
-                      </h3>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
-                        {ticketDetail.description}
-                      </p>
+                      <div className="w-full sm:w-44 shrink-0 space-y-1 sm:self-start sm:-mt-3">
+                        <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                          Status Tiket
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={selectedStatus}
+                            onChange={(e) =>
+                              void submitStatusUpdate(
+                                e.target.value as TicketStatus
+                              )
+                            }
+                            disabled={updatingStatus || deletingTicket}
+                            className={`w-full rounded-lg border px-2.5 py-2 text-xs font-bold outline-none focus:border-blue-500 disabled:opacity-60 ${statusSelectClass[selectedStatus]}`}
+                          >
+                            <option value="OPEN">OPEN</option>
+                            <option value="IN_PROGRESS">IN_PROGRESS</option>
+                            <option value="WAITING">WAITING</option>
+                            <option value="CLOSED">CLOSED</option>
+                          </select>
+                          <button
+                            type="button"
+                            onClick={() => setShowDeleteTicketConfirm(true)}
+                            disabled={deletingTicket || updatingStatus}
+                            className="inline-flex shrink-0 items-center justify-center rounded-lg border border-red-200 bg-red-50 px-2.5 py-2 text-red-700 hover:bg-red-100 disabled:opacity-60 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
+                            title="Hapus tiket"
+                            aria-label="Hapus tiket"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="w-full rounded-xl border border-slate-200 p-3 dark:border-slate-700">
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
-                        <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
-                          Prioritas: {ticketDetail.priority}
-                        </span>
-                        <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
-                          Kategori: {ticketDetail.category}
-                        </span>
-                        <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
-                          Assigned: {ticketDetail.assignedAdminId || "-"}
-                        </span>
-                        <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
-                          Unread user msg: {ticketDetail.unreadUserMessages}
-                        </span>
-                        <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
-                          Respons SLA: {formatRelative(ticketDetail.responseDueAt)}
-                        </span>
-                        <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
-                          Resolve SLA: {formatRelative(ticketDetail.resolveDueAt)}
-                        </span>
-                        <span
-                          className={`rounded-md border px-2 py-1 font-bold ${slaBadgeClass[ticketDetail.slaState]}`}
-                        >
-                          SLA: {slaLabel[ticketDetail.slaState]}
-                        </span>
-                      </div>
-                      <div className="mt-3 flex items-center gap-2">
-                        <select
-                          value={selectedStatus}
-                          onChange={(e) =>
-                            void submitStatusUpdate(
-                              e.target.value as TicketStatus
-                            )
-                          }
-                          disabled={updatingStatus}
-                          className="w-full rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs font-semibold outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
-                        >
-                          <option value="OPEN">OPEN</option>
-                          <option value="IN_PROGRESS">IN_PROGRESS</option>
-                          <option value="WAITING">WAITING</option>
-                          <option value="CLOSED">CLOSED</option>
-                        </select>
-                      </div>
+                    <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
+                      <button
+                        type="button"
+                        onClick={() => setIsTicketDetailCollapsed((prev) => !prev)}
+                        aria-expanded={!isTicketDetailCollapsed}
+                        aria-controls="admin-ticket-meta-panel"
+                        className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                      >
+                        <span>Detail Tiket</span>
+                        {isTicketDetailCollapsed ? (
+                          <ChevronDown className="size-4" />
+                        ) : (
+                          <ChevronUp className="size-4" />
+                        )}
+                      </button>
+
+                      {!isTicketDetailCollapsed && (
+                        <div id="admin-ticket-meta-panel" className="mt-3 space-y-3">
+                          <div className="grid grid-cols-1 gap-2 text-xs text-slate-600 dark:text-slate-300 sm:grid-cols-2">
+                            <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+                              Prioritas: {ticketDetail.priority}
+                            </span>
+                            <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+                              Kategori: {ticketDetail.category}
+                            </span>
+                            <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+                              Lokasi: {ticketDetail.reporterLocation || "-"}
+                            </span>
+                            <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+                              Assigned: {ticketDetail.assignedAdminId || "-"}
+                            </span>
+                            {/* <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+                              Unread user msg: {ticketDetail.unreadUserMessages}
+                            </span> */}
+                            <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+                              Respons SLA: {formatRelative(ticketDetail.responseDueAt)}
+                            </span>
+                            <span className="rounded-md bg-slate-100 px-2 py-1 dark:bg-slate-800">
+                              Resolve SLA: {formatRelative(ticketDetail.resolveDueAt)}
+                            </span>
+                            {/* <span
+                              className={`rounded-md border px-2 py-1 font-bold ${slaBadgeClass[ticketDetail.slaState]}`}
+                            >
+                              SLA: {slaLabel[ticketDetail.slaState]}
+                            </span> */}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  <div className="flex-1 min-h-[220px] space-y-3 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-950/50">
+                  <div className="flex-1 min-h-0 space-y-2 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-950/50 md:space-y-3 md:p-4">
                     {ticketDetail.messages.length === 0 && (
                       <p className="text-xs text-slate-500 dark:text-slate-400">
                         Belum ada pesan pada tiket ini.
@@ -1150,7 +1321,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                         }`}
                       >
                         <div
-                          className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
+                          className={`max-w-[90%] rounded-2xl px-3 py-2 text-sm md:max-w-[80%] md:px-4 ${
                             msg.sender === "admin"
                               ? "bg-blue-600 text-white"
                               : "border border-slate-200 bg-white text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
@@ -1159,7 +1330,33 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                           <p className="mb-1 text-[10px] font-semibold opacity-80">
                             {msg.sender === "admin" ? "Admin" : "Pelapor"}
                           </p>
-                          <p>{msg.message}</p>
+                          {msg.message ? <p>{msg.message}</p> : null}
+                          {msg.attachmentUrl && (
+                            <div className={msg.message ? "mt-2" : ""}>
+                              <button
+                                type="button"
+                                className="block"
+                                onClick={() =>
+                                  setViewerImage({
+                                    url: msg.attachmentUrl || "",
+                                    caption: msg.attachmentCaption || null,
+                                  })
+                                }
+                                aria-label="Lihat gambar"
+                              >
+                                <img
+                                  src={msg.attachmentUrl}
+                                  alt={msg.attachmentCaption || "Attachment"}
+                                  className="max-h-64 w-auto rounded-lg border border-slate-200 object-contain dark:border-slate-700"
+                                />
+                              </button>
+                              {msg.attachmentCaption && (
+                                <p className="mt-1 text-xs opacity-90">
+                                  {msg.attachmentCaption}
+                                </p>
+                              )}
+                            </div>
+                          )}
                           <p className="mt-1 text-[10px] opacity-75">{formatRelative(msg.createdAt)}</p>
                         </div>
                       </div>
@@ -1171,7 +1368,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                       e.preventDefault();
                       submitAdminReply();
                     }}
-                    className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-2 dark:border-slate-700 dark:bg-slate-900 shrink-0"
+                    className="flex flex-col gap-2 rounded-xl border border-slate-200 bg-white p-2 dark:border-slate-700 dark:bg-slate-900 shrink-0 sm:flex-row sm:items-center"
                   >
                     <input
                       value={messageInput}
@@ -1183,7 +1380,7 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                     <button
                       type="submit"
                       disabled={sendingMessage || !messageInput.trim()}
-                      className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white disabled:opacity-60 sm:w-auto"
                     >
                       {sendingMessage ? (
                         <>
@@ -1204,6 +1401,75 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
           )}
         </div>
       </div>
+      {showDeleteTicketConfirm && ticketDetail && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-ticket-title"
+          aria-describedby="delete-ticket-desc"
+        >
+          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-xl dark:border-slate-700 dark:bg-slate-900">
+            <h3 id="delete-ticket-title" className="text-base font-bold text-slate-900 dark:text-white">
+              Hapus Tiket {ticketDetail.code}?
+            </h3>
+            <p id="delete-ticket-desc" className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+              Tindakan ini permanen. Semua chat pada tiket ini juga akan ikut terhapus.
+            </p>
+            <div className="mt-5 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowDeleteTicketConfirm(false)}
+                disabled={deletingTicket}
+                className="rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 disabled:opacity-60 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={deleteSelectedTicket}
+                disabled={deletingTicket}
+                className="rounded-lg border border-red-200 bg-red-50 px-3.5 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 disabled:opacity-60 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
+              >
+                {deletingTicket ? "Menghapus..." : "Ya, Hapus"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {viewerImage && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Pratinjau gambar"
+          onClick={() => setViewerImage(null)}
+        >
+          <div
+            className="relative w-full max-w-5xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setViewerImage(null)}
+              className="absolute right-0 top-0 z-10 rounded-full bg-black/60 p-2 text-white hover:bg-black/80"
+              aria-label="Tutup pratinjau"
+            >
+              <X className="size-5" />
+            </button>
+            <img
+              src={viewerImage.url}
+              alt={viewerImage.caption || "Preview gambar"}
+              className="max-h-[80dvh] w-full rounded-xl object-contain"
+            />
+            {viewerImage.caption ? (
+              <p className="mt-2 text-center text-sm text-slate-100">
+                {viewerImage.caption}
+              </p>
+            ) : null}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
