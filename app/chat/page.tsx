@@ -37,6 +37,7 @@ interface Message {
   attachmentUrl?: string | null;
   attachmentCaption?: string | null;
   attachmentMimeType?: string | null;
+  sending?: boolean;
 }
 
 type TicketStatus = "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
@@ -269,8 +270,35 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
       try {
         const payload = JSON.parse((event as MessageEvent).data) as StreamMessage;
         setMessages((prev) => {
-          if (prev.some((msg) => msg.id === payload.id)) return prev;
+          if (prev.some((msg) => msg.id === payload.id)) {
+            return prev.filter((msg) => !msg.sending);
+          }
           lastMessageAtRef.current = payload.createdAt;
+          const optimisticIndex = prev.findIndex(
+            (msg) =>
+              msg.sending &&
+              msg.sender === "user" &&
+              msg.text === payload.message &&
+              !!msg.attachmentUrl === !!payload.attachmentUrl
+          );
+          if (optimisticIndex >= 0) {
+            const next = [...prev];
+            next[optimisticIndex] = {
+              id: payload.id,
+              text: payload.message,
+              sender: payload.sender,
+              timestamp: new Date(payload.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+              createdAt: payload.createdAt,
+              attachmentUrl: payload.attachmentUrl || null,
+              attachmentCaption: payload.attachmentCaption || null,
+              attachmentMimeType: payload.attachmentMimeType || null,
+              sending: false,
+            };
+            return next;
+          }
           return [
             ...prev,
             {
@@ -285,6 +313,7 @@ export const ChatPage = ({ onBack, ticketId, ticketData }: ChatPageProps) => {
               attachmentUrl: payload.attachmentUrl || null,
               attachmentCaption: payload.attachmentCaption || null,
               attachmentMimeType: payload.attachmentMimeType || null,
+              sending: false,
             },
           ];
         });
@@ -351,6 +380,33 @@ const handleSendMessage = async (e: React.FormEvent) => {
   e.preventDefault();
   const text = inputText.trim();
   if (!text && !attachmentFile) return;
+  const selectedFile = attachmentFile;
+  const selectedPreviewUrl = attachmentPreviewUrl;
+  const optimisticId = `temp:${Date.now().toString(36)}:${Math.random()
+    .toString(36)
+    .slice(2, 8)}`;
+  const optimisticCreatedAt = new Date().toISOString();
+
+  setMessages((prev) => [
+    ...prev,
+    {
+      id: optimisticId,
+      text: selectedFile ? "" : text,
+      sender: "user",
+      timestamp: "Mengirim...",
+      createdAt: optimisticCreatedAt,
+      attachmentUrl: selectedPreviewUrl || null,
+      attachmentCaption: selectedFile ? text : null,
+      attachmentMimeType: selectedFile?.type || null,
+      sending: true,
+    },
+  ]);
+  setInputText("");
+  setAttachmentPreviewUrl(null);
+  setAttachmentFile(null);
+  if (attachmentInputRef.current) {
+    attachmentInputRef.current.value = "";
+  }
 
   let uploadedAttachment: {
     attachmentUrl: string;
@@ -360,15 +416,15 @@ const handleSendMessage = async (e: React.FormEvent) => {
   } | null = null;
 
   try {
-    if (attachmentFile) {
+    if (selectedFile) {
       const presignRes = await fetch("/api/storage/presign-upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ticketId,
-          fileName: attachmentFile.name,
-          mimeType: attachmentFile.type,
-          size: attachmentFile.size,
+          fileName: selectedFile.name,
+          mimeType: selectedFile.type,
+          size: selectedFile.size,
         }),
       });
       const presignPayload = await parseJsonSafe<{
@@ -385,9 +441,9 @@ const handleSendMessage = async (e: React.FormEvent) => {
         const uploadRes = await fetch(presignPayload.uploadUrl, {
           method: "PUT",
           headers: {
-            "Content-Type": attachmentFile.type,
+            "Content-Type": selectedFile.type,
           },
-          body: attachmentFile,
+          body: selectedFile,
         });
         if (!uploadRes.ok) {
           const uploadErrorText = await uploadRes.text().catch(() => "");
@@ -396,14 +452,14 @@ const handleSendMessage = async (e: React.FormEvent) => {
 
         uploadedAttachment = {
           attachmentUrl: presignPayload.fileUrl,
-          attachmentMimeType: attachmentFile.type,
-          attachmentFileName: attachmentFile.name,
-          attachmentSize: attachmentFile.size,
+          attachmentMimeType: selectedFile.type,
+          attachmentFileName: selectedFile.name,
+          attachmentSize: selectedFile.size,
         };
       } catch {
         const fallbackForm = new FormData();
         fallbackForm.append("ticketId", ticketId);
-        fallbackForm.append("attachment", attachmentFile);
+        fallbackForm.append("attachment", selectedFile);
         const fallbackRes = await fetch("/api/storage/upload", {
           method: "POST",
           body: fallbackForm,
@@ -423,9 +479,9 @@ const handleSendMessage = async (e: React.FormEvent) => {
         }
         uploadedAttachment = {
           attachmentUrl: fallbackPayload.fileUrl,
-          attachmentMimeType: fallbackPayload.attachmentMimeType || attachmentFile.type,
-          attachmentFileName: fallbackPayload.attachmentFileName || attachmentFile.name,
-          attachmentSize: fallbackPayload.attachmentSize || attachmentFile.size,
+          attachmentMimeType: fallbackPayload.attachmentMimeType || selectedFile.type,
+          attachmentFileName: fallbackPayload.attachmentFileName || selectedFile.name,
+          attachmentSize: fallbackPayload.attachmentSize || selectedFile.size,
         };
       }
     }
@@ -435,8 +491,8 @@ const handleSendMessage = async (e: React.FormEvent) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         sender: "user",
-        message: attachmentFile ? "" : text,
-        attachmentCaption: attachmentFile ? text : null,
+        message: selectedFile ? "" : text,
+        attachmentCaption: selectedFile ? text : null,
         attachmentUrl: uploadedAttachment?.attachmentUrl || null,
         attachmentMimeType: uploadedAttachment?.attachmentMimeType || null,
         attachmentFileName: uploadedAttachment?.attachmentFileName || null,
@@ -456,6 +512,7 @@ const handleSendMessage = async (e: React.FormEvent) => {
     }>(res);
 
     if (!res.ok) {
+      setMessages((prev) => prev.filter((msg) => msg.id !== optimisticId));
       alert(saved?.error || "Gagal mengirim pesan");
       if (res.status === 409) {
         setTicketStatus("CLOSED");
@@ -469,39 +526,35 @@ const handleSendMessage = async (e: React.FormEvent) => {
       !saved?.createdAt ||
       (!saved?.message && !saved?.attachmentUrl)
     ) {
+      setMessages((prev) => prev.filter((msg) => msg.id !== optimisticId));
       alert("Respons server tidak valid. Coba kirim ulang.");
       return;
     }
 
     setMessages((prev) => {
-      if (prev.some((msg) => msg.id === saved.id)) return prev;
-      return [
-        ...prev,
-        {
-          id: saved.id,
-          text: saved.message,
-          sender: saved.sender,
-          timestamp: new Date(saved.createdAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-          createdAt: saved.createdAt,
-          attachmentUrl: saved.attachmentUrl || null,
-          attachmentCaption: saved.attachmentCaption || null,
-          attachmentMimeType: saved.attachmentMimeType || null,
-        },
-      ];
+      const withoutOptimistic = prev.filter((msg) => msg.id !== optimisticId);
+      if (withoutOptimistic.some((msg) => msg.id === saved.id)) {
+        return withoutOptimistic;
+      }
+      return [...withoutOptimistic, {
+        id: saved.id,
+        text: saved.message,
+        sender: saved.sender,
+        timestamp: new Date(saved.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        createdAt: saved.createdAt,
+        attachmentUrl: saved.attachmentUrl || null,
+        attachmentCaption: saved.attachmentCaption || null,
+        attachmentMimeType: saved.attachmentMimeType || null,
+        sending: false,
+      }];
     });
     lastMessageAtRef.current = saved.createdAt;
 
-    setInputText("");
-    if (attachmentPreviewUrl) {
-      URL.revokeObjectURL(attachmentPreviewUrl);
-    }
-    setAttachmentPreviewUrl(null);
-    setAttachmentFile(null);
-    if (attachmentInputRef.current) {
-      attachmentInputRef.current.value = "";
+    if (selectedPreviewUrl) {
+      URL.revokeObjectURL(selectedPreviewUrl);
     }
 
     const ticketRes = await fetch(`/api/tickets/${ticketId}`);
@@ -528,6 +581,14 @@ const handleSendMessage = async (e: React.FormEvent) => {
       }
     }
   } catch (error) {
+    setMessages((prev) => prev.filter((msg) => msg.id !== optimisticId));
+    if (selectedFile && selectedPreviewUrl) {
+      setAttachmentFile(selectedFile);
+      setAttachmentPreviewUrl(selectedPreviewUrl);
+      setInputText(text);
+    } else if (selectedPreviewUrl) {
+      URL.revokeObjectURL(selectedPreviewUrl);
+    }
     const message =
       error instanceof Error && error.message.trim()
         ? error.message
@@ -765,7 +826,9 @@ const submitFeedback = async () => {
                   </div>
                 ) : null}
               </div>
-              <span className="text-[10px] text-slate-400 mt-1 px-1">{msg.timestamp}</span>
+              <span className={`mt-1 px-1 text-[10px] ${msg.sending ? "text-blue-400" : "text-slate-400"}`}>
+                {msg.sending ? "Mengirim..." : msg.timestamp}
+              </span>
             </div>
           </div>
         ))}
