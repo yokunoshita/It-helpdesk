@@ -4,13 +4,11 @@ services:
     container_name: it-helpdesk-app
     ports:
       - "3006:3000"
-    environment:
-      DATABASE_URL: postgresql://dev:dev_rahasiasekali@192.168.3.13:5434/db_itheldesk
-      ADMIN_USERNAME: a1 # ubah jadi rahasia sendiri
-      ADMIN_PASSWORD: rahasia
-      ADMIN_SESSION_SECRET: secret_session_key # ubah jadi rahasia sendiri
-      S3_SERVER: is3.cloudhost.id
-      S3_ACCESS_KEY_ID: secret_access_key_id
-      S3_SECRET_ACCESS_KEY: awcess_key_secret_access_key
-      S3_REGION: us-east-1
-      S3_BUCKET_NAME: storage-main
+    env_file:
+      - .env
+    networks:
+      - ithelpdesk-net
+      
+networks:
+  ithelpdesk-net:
+    external: true
