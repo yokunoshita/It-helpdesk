@@ -1327,9 +1327,6 @@ export const AdminDashboard = ({ onBackHome }: AdminDashboardProps) => {
                               : "border border-slate-200 bg-white text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                           }`}
                         >
-                          <p className="mb-1 text-[10px] font-semibold opacity-80">
-                            {msg.sender === "admin" ? "Admin" : "Pelapor"}
-                          </p>
                           {msg.message ? <p>{msg.message}</p> : null}
                           {msg.attachmentUrl && (
                             <div className={msg.message ? "mt-2" : ""}>
