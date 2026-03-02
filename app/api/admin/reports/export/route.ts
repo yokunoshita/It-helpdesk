@@ -77,6 +77,7 @@ export async function GET(req: Request) {
         resolveDueAt: true,
         firstReplyAt: true,
         closedAt: true,
+        feedbackRating: true,
       },
     });
 
@@ -93,6 +94,7 @@ export async function GET(req: Request) {
       "Resolve Due At",
       "Response SLA Met",
       "Resolve SLA Met",
+      "Rating (2-10)",
     ];
 
     const rows = tickets.map((ticket) => {
@@ -106,6 +108,10 @@ export async function GET(req: Request) {
           ? "YES"
           : "NO"
         : "PENDING";
+      const ratingScaleTen =
+        typeof ticket.feedbackRating === "number"
+          ? ticket.feedbackRating * 2
+          : "";
 
       return [
         ticket.code,
@@ -120,6 +126,7 @@ export async function GET(req: Request) {
         ticket.resolveDueAt.toISOString(),
         responseSlaMet,
         resolveSlaMet,
+        ratingScaleTen,
       ]
         .map(csvEscape)
         .join(",");

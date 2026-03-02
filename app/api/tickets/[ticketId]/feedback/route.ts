@@ -14,14 +14,14 @@ export async function POST(
 
   if (typeof rating !== "number" || !Number.isInteger(rating)) {
     return NextResponse.json(
-      { error: "rating integer 1-5 wajib diisi" },
+      { error: "rating integer 4-5 wajib diisi" },
       { status: 400 }
     );
   }
 
-  if (rating < 1 || rating > 5) {
+  if (rating < 4 || rating > 5) {
     return NextResponse.json(
-      { error: "rating harus antara 1 sampai 5" },
+      { error: "rating minimal 4 dan maksimal 5" },
       { status: 400 }
     );
   }
