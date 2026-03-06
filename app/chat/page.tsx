@@ -677,7 +677,7 @@ const closeTicketByUser = async () => {
 };
 
 const submitFeedback = async () => {
-  if (ticketStatus !== "CLOSED" || draftRating < 1 || draftRating > 5) return;
+  if (ticketStatus !== "CLOSED" || draftRating < 4 || draftRating > 5) return;
   setSubmittingFeedback(true);
   try {
     const res = await fetch(`/api/tickets/${ticketId}/feedback`, {
@@ -871,7 +871,7 @@ const submitFeedback = async () => {
             <p className="text-xs font-semibold text-amber-800 dark:text-amber-300">
               {feedbackRating
                 ? "Terima kasih, feedback Anda sudah kami terima."
-                : "Tiket selesai. Mohon beri penilaian layanan (1-5 bintang)."}
+                : "Tiket selesai. Mohon beri penilaian layanan kami."}
             </p>
             <div className="mt-2 flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((value) => (
@@ -879,7 +879,7 @@ const submitFeedback = async () => {
                   key={value}
                   type="button"
                   disabled={feedbackRating !== null || submittingFeedback}
-                  onClick={() => setDraftRating(value)}
+                  onClick={() => setDraftRating(value < 4 ? 4 : value)}
                   className="rounded-md p-1.5 hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-70 dark:hover:bg-amber-500/20"
                 >
                   <Star
@@ -895,7 +895,7 @@ const submitFeedback = async () => {
                 <button
                   type="button"
                   onClick={submitFeedback}
-                  disabled={draftRating < 1 || submittingFeedback}
+                  disabled={draftRating < 4 || submittingFeedback}
                   className="ml-2 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-600 disabled:opacity-60"
                 >
                   {submittingFeedback ? "Mengirim..." : "Kirim Feedback"}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { 
   BarChart, 
@@ -18,7 +18,8 @@ import {
   Clock, 
   CheckCircle2, 
   AlertCircle, 
-  ArrowUpRight 
+  ArrowUpRight,
+  X,
 } from "lucide-react";
 
 type DashboardStats = {
@@ -38,6 +39,16 @@ type RecentTicket = {
   status: "OPEN" | "IN_PROGRESS" | "WAITING" | "CLOSED";
   category: "HARDWARE" | "SOFTWARE" | "NETWORK" | "ACCOUNT" | "OTHER";
   createdAt: string;
+};
+
+type RecentTicketDetail = {
+  id: string;
+  code: string;
+  reporterName?: string | null;
+  reporterLocation?: string | null;
+  assignedAdminId?: string | null;
+  createdAt: string;
+  closedAt?: string | null;
 };
 
 type RecentTicketsResponse = {
@@ -179,7 +190,7 @@ export const DashboardView = () => {
         bg: "bg-blue-50 dark:bg-blue-500/10",
       },
       {
-        label: "Butuh Perhatian",
+        label: "Tiket Tertunda",
         value: String(stats.cards.needsAttention).padStart(2, "0"),
         icon: AlertCircle,
         color: "text-amber-600 dark:text-amber-400",
@@ -295,6 +306,19 @@ export default function DashboardRoutePage() {
   const [recentError, setRecentError] = useState<string | null>(null);
   const [recentPage, setRecentPage] = useState(1);
   const [recentTotalPages, setRecentTotalPages] = useState(1);
+  const [selectedRecentTicketId, setSelectedRecentTicketId] = useState<string | null>(null);
+  const [recentDetail, setRecentDetail] = useState<RecentTicketDetail | null>(null);
+  const [isRecentDetailLoading, setIsRecentDetailLoading] = useState(false);
+  const [recentDetailError, setRecentDetailError] = useState<string | null>(null);
+  const [isRecentDetailOpen, setIsRecentDetailOpen] = useState(false);
+  const recentDetailPanelRef = useRef<HTMLDivElement | null>(null);
+  const recentDetailCloseBtnRef = useRef<HTMLButtonElement | null>(null);
+  const lastDetailTriggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const selectedRecentTicket = useMemo(
+    () => recentTickets.find((ticket) => ticket.id === selectedRecentTicketId) || null,
+    [recentTickets, selectedRecentTicketId]
+  );
 
   useEffect(() => {
     const loadRecentTickets = async () => {
@@ -357,6 +381,11 @@ export default function DashboardRoutePage() {
 
         setRecentTickets(parsed);
         setRecentTotalPages(payload.totalPages > 0 ? payload.totalPages : 1);
+        setSelectedRecentTicketId((prev) => {
+          if (!parsed.length) return null;
+          if (prev && parsed.some((ticket) => ticket.id === prev)) return prev;
+          return parsed[0].id;
+        });
       } catch {
         setRecentError("Terjadi kendala jaringan saat memuat laporan.");
         setRecentTickets([]);
@@ -367,6 +396,97 @@ export default function DashboardRoutePage() {
 
     void loadRecentTickets();
   }, [recentPage]);
+
+  useEffect(() => {
+    const loadRecentDetail = async () => {
+      if (!selectedRecentTicketId) {
+        setRecentDetail(null);
+        setRecentDetailError(null);
+        return;
+      }
+
+      setIsRecentDetailLoading(true);
+      setRecentDetailError(null);
+      try {
+        const res = await fetch(`/api/tickets/${selectedRecentTicketId}`);
+        const data: unknown = await res.json();
+
+        if (!res.ok || typeof data !== "object" || data === null) {
+          setRecentDetail(null);
+          setRecentDetailError("Gagal memuat detail laporan terpilih.");
+          return;
+        }
+
+        const payload = data as Partial<RecentTicketDetail>;
+        if (
+          typeof payload.id !== "string" ||
+          typeof payload.code !== "string" ||
+          typeof payload.createdAt !== "string"
+        ) {
+          setRecentDetail(null);
+          setRecentDetailError("Format detail laporan tidak valid.");
+          return;
+        }
+
+        setRecentDetail({
+          id: payload.id,
+          code: payload.code,
+          reporterName:
+            typeof payload.reporterName === "string" ? payload.reporterName : null,
+          reporterLocation:
+            typeof payload.reporterLocation === "string"
+              ? payload.reporterLocation
+              : null,
+          assignedAdminId:
+            typeof payload.assignedAdminId === "string"
+              ? payload.assignedAdminId
+              : null,
+          createdAt: payload.createdAt,
+          closedAt: typeof payload.closedAt === "string" ? payload.closedAt : null,
+        });
+      } catch {
+        setRecentDetail(null);
+        setRecentDetailError("Terjadi kendala jaringan saat memuat detail laporan.");
+      } finally {
+        setIsRecentDetailLoading(false);
+      }
+    };
+
+    void loadRecentDetail();
+  }, [selectedRecentTicketId]);
+
+  useEffect(() => {
+    if (!isRecentDetailOpen) return;
+    recentDetailCloseBtnRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsRecentDetailOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const panel = recentDetailPanelRef.current;
+      if (!panel) return;
+      const focusable = panel.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      lastDetailTriggerRef.current?.focus();
+    };
+  }, [isRecentDetailOpen]);
 
   return (
     <div className="space-y-8">
@@ -397,17 +517,17 @@ export default function DashboardRoutePage() {
         </h3>
         <div className="space-y-4">
           {isRecentLoading && (
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-400">
               Memuat laporan terbaru...
             </p>
           )}
           {recentError && (
-            <p className="text-sm text-red-600 dark:text-red-400">
+            <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-400">
               {recentError}
             </p>
           )}
           {!isRecentLoading && !recentError && recentTickets.length === 0 && (
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+            <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-400">
               Belum ada laporan.
             </p>
           )}
@@ -416,10 +536,21 @@ export default function DashboardRoutePage() {
             !recentError &&
             recentTickets.map((item) => {
               const statusLabel = formatStatusLabel(item.status);
+              const isSelected = selectedRecentTicketId === item.id;
               return (
-                <div
+                <button
+                  type="button"
                   key={item.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800 gap-4"
+                  onClick={(event) => {
+                    lastDetailTriggerRef.current = event.currentTarget;
+                    setSelectedRecentTicketId(item.id);
+                    setIsRecentDetailOpen(true);
+                  }}
+                  className={`flex w-full flex-col justify-between gap-4 rounded-xl border p-4 text-left sm:flex-row sm:items-center ${
+                    isSelected
+                      ? "border-blue-300 bg-blue-50 dark:border-blue-500/40 dark:bg-blue-500/10"
+                      : "border-slate-100 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50"
+                  }`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center font-bold text-slate-400 dark:text-slate-500 text-xs border border-slate-100 dark:border-slate-700">
@@ -450,7 +581,7 @@ export default function DashboardRoutePage() {
                   >
                     {statusLabel.toUpperCase()}
                   </span>
-                </div>
+                </button>
               );
             })}
 
@@ -483,6 +614,112 @@ export default function DashboardRoutePage() {
           )}
         </div>
       </div>
+
+      {isRecentDetailOpen && selectedRecentTicketId && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Detail laporan terpilih"
+          onClick={() => setIsRecentDetailOpen(false)}
+        >
+          <div
+            ref={recentDetailPanelRef}
+            className="w-full max-w-5xl animate-in fade-in slide-in-from-bottom-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-xl duration-200 dark:border-slate-700 dark:bg-slate-900"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-3 flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  Detail Laporan
+                </p>
+                <p className="text-base font-bold text-slate-900 dark:text-white">
+                  {selectedRecentTicket?.code || recentDetail?.code || "-"} /{" "}
+                  {selectedRecentTicket?.title || "Tiket Terpilih"}
+                </p>
+              </div>
+              <button
+                ref={recentDetailCloseBtnRef}
+                type="button"
+                onClick={() => setIsRecentDetailOpen(false)}
+                className="rounded-full bg-slate-100 p-2 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                aria-label="Tutup detail"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            {isRecentDetailLoading && (
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Memuat detail laporan...
+              </p>
+            )}
+            {recentDetailError && (
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {recentDetailError}
+              </p>
+            )}
+            {!isRecentDetailLoading && !recentDetailError && recentDetail && (
+              <div className="space-y-3 text-sm">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Pelapor
+                  </p>
+                  <p className="font-medium text-slate-800 dark:text-slate-100">
+                    {recentDetail.reporterName || "Pelapor"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Lokasi
+                  </p>
+                  <p className="font-medium text-slate-800 dark:text-slate-100">
+                    {recentDetail.reporterLocation || "-"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Admin Assigned
+                  </p>
+                  <p className="font-medium text-slate-800 dark:text-slate-100">
+                    {recentDetail.assignedAdminId || "Belum ditugaskan"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Waktu Laporan
+                  </p>
+                  <p className="font-medium text-slate-800 dark:text-slate-100">
+                    {new Date(recentDetail.createdAt).toLocaleString("id-ID", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Waktu Selesai
+                  </p>
+                  <p className="font-medium text-slate-800 dark:text-slate-100">
+                    {recentDetail.closedAt
+                      ? new Date(recentDetail.closedAt).toLocaleString("id-ID", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "-"}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

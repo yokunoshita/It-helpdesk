@@ -24,7 +24,7 @@ export default function PanduanPage() {
         </ol>
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
+      {/* <section className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900">
         <h2 className="text-lg font-bold text-slate-900 dark:text-white">
           Alur Admin
         </h2>
@@ -36,7 +36,7 @@ export default function PanduanPage() {
           <li>Unduh laporan dari tombol `Download Laporan` sesuai filter aktif.</li>
           <li>Kelola akun admin di menu `Kelola Admin` (tambah, edit nama, reset password, hapus admin).</li>
         </ol>
-      </section>
+      </section> */}
 
       <section className="rounded-2xl border border-amber-200 bg-amber-50 p-6 dark:border-amber-500/30 dark:bg-amber-500/10">
         <h2 className="text-lg font-bold text-amber-800 dark:text-amber-200">
