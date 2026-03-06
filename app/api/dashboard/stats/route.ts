@@ -29,7 +29,7 @@ export async function GET() {
     start.setDate(now.getDate() - 6);
     start.setHours(0, 0, 0, 0);
 
-    const [closedCount, inProgressCount, waitingCount, needAttentionCount, weeklyTickets] =
+    const [closedCount, inProgressCount, waitingCount, weeklyTickets] =
       await Promise.all([
         prisma.ticket.count({
           where: { status: "CLOSED" },
@@ -39,17 +39,6 @@ export async function GET() {
         }),
         prisma.ticket.count({
           where: { status: "WAITING" },
-        }),
-        prisma.ticket.count({
-          where: {
-            status: { not: "CLOSED" },
-            OR: [
-              { resolveDueAt: { lt: now } },
-              {
-                AND: [{ firstReplyAt: null }, { responseDueAt: { lt: now } }],
-              },
-            ],
-          },
         }),
         prisma.ticket.findMany({
           where: {
@@ -106,7 +95,7 @@ export async function GET() {
       cards: {
         completed: closedCount,
         inProgress: inProgressCount,
-        needsAttention: needAttentionCount,
+        needsAttention: waitingCount,
       },
       weeklyVolume: weeklyData,
       statusBreakdown: statusData,

@@ -125,6 +125,9 @@ exports.Prisma.TicketScalarFieldEnum = {
   code: 'code',
   title: 'title',
   description: 'description',
+  reporterKey: 'reporterKey',
+  reporterName: 'reporterName',
+  reporterLocation: 'reporterLocation',
   priority: 'priority',
   category: 'category',
   status: 'status',
@@ -132,6 +135,8 @@ exports.Prisma.TicketScalarFieldEnum = {
   resolveDueAt: 'resolveDueAt',
   firstReplyAt: 'firstReplyAt',
   closedAt: 'closedAt',
+  feedbackRating: 'feedbackRating',
+  feedbackSubmittedAt: 'feedbackSubmittedAt',
   assignedAdminId: 'assignedAdminId',
   assignedAt: 'assignedAt',
   lastAdminReadAt: 'lastAdminReadAt',
@@ -147,12 +152,54 @@ exports.Prisma.TicketMessageScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.MessageAttachmentScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  url: 'url',
+  caption: 'caption',
+  mimeType: 'mimeType',
+  fileName: 'fileName',
+  size: 'size',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TicketStatusHistoryScalarFieldEnum = {
+  id: 'id',
+  ticketId: 'ticketId',
+  fromStatus: 'fromStatus',
+  toStatus: 'toStatus',
+  changedBy: 'changedBy',
+  note: 'note',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TicketAssignmentHistoryScalarFieldEnum = {
+  id: 'id',
+  ticketId: 'ticketId',
+  fromAdminId: 'fromAdminId',
+  toAdminId: 'toAdminId',
+  changedBy: 'changedBy',
+  trigger: 'trigger',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SlaPolicyScalarFieldEnum = {
   id: 'id',
   priority: 'priority',
   responseMinutes: 'responseMinutes',
   resolveMinutes: 'resolveMinutes',
   active: 'active'
+};
+
+exports.Prisma.AdminUserScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  password: 'password',
+  name: 'name',
+  active: 'active',
+  isOnline: 'isOnline',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -193,7 +240,11 @@ exports.TicketStatus = exports.$Enums.TicketStatus = {
 exports.Prisma.ModelName = {
   Ticket: 'Ticket',
   TicketMessage: 'TicketMessage',
-  SlaPolicy: 'SlaPolicy'
+  MessageAttachment: 'MessageAttachment',
+  TicketStatusHistory: 'TicketStatusHistory',
+  TicketAssignmentHistory: 'TicketAssignmentHistory',
+  SlaPolicy: 'SlaPolicy',
+  AdminUser: 'AdminUser'
 };
 
 /**

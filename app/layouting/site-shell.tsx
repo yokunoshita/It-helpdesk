@@ -15,7 +15,7 @@ const LAST_CHAT_STORAGE_KEY = "hd_last_chat_state";
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [hasActiveChat, setHasActiveChat] = useState(false);
 
   useEffect(() => {
@@ -39,11 +39,15 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        const ticket = (await res.json()) as { status?: TicketStatus };
+        const ticket = (await res.json()) as {
+          status?: TicketStatus;
+          feedbackRating?: number | null;
+        };
         setHasActiveChat(
           ticket.status === "OPEN" ||
             ticket.status === "IN_PROGRESS" ||
-            ticket.status === "WAITING"
+            ticket.status === "WAITING" ||
+            (ticket.status === "CLOSED" && ticket.feedbackRating == null)
         );
       } catch {
         setHasActiveChat(false);
@@ -93,10 +97,10 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         />
 
         <main className="w-full flex-1">
-          <div className="max-w-6xl mx-auto px-6 py-12">{children}</div>
+          <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 sm:py-12">{children}</div>
         </main>
 
-        <footer className="max-w-6xl w-full mx-auto px-6 py-12 border-t border-slate-100 dark:border-slate-900">
+        <footer className="max-w-6xl w-full mx-auto px-4 py-10 sm:px-6 sm:py-12 border-t border-slate-100 dark:border-slate-900">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2 grayscale opacity-50 dark:opacity-30">
               <div className="w-6 h-6 bg-slate-800 dark:bg-slate-200 rounded flex items-center justify-center">
@@ -111,7 +115,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             <p className="text-sm text-slate-400 dark:text-slate-500">
               © 2026 IT Operations Team. All rights reserved.
             </p>
-            <div className="flex gap-6">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
               <a
                 href="#"
                 className="text-xs font-semibold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
@@ -119,7 +123,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
                 Kebijakan Privasi
               </a>
               <a
-                href="#"
+                href="/panduan"
                 className="text-xs font-semibold text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
               >
                 Panduan Pengguna

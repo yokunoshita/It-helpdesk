@@ -24,10 +24,30 @@ export type Ticket = $Result.DefaultSelection<Prisma.$TicketPayload>
  */
 export type TicketMessage = $Result.DefaultSelection<Prisma.$TicketMessagePayload>
 /**
+ * Model MessageAttachment
+ * 
+ */
+export type MessageAttachment = $Result.DefaultSelection<Prisma.$MessageAttachmentPayload>
+/**
+ * Model TicketStatusHistory
+ * 
+ */
+export type TicketStatusHistory = $Result.DefaultSelection<Prisma.$TicketStatusHistoryPayload>
+/**
+ * Model TicketAssignmentHistory
+ * 
+ */
+export type TicketAssignmentHistory = $Result.DefaultSelection<Prisma.$TicketAssignmentHistoryPayload>
+/**
  * Model SlaPolicy
  * 
  */
 export type SlaPolicy = $Result.DefaultSelection<Prisma.$SlaPolicyPayload>
+/**
+ * Model AdminUser
+ * 
+ */
+export type AdminUser = $Result.DefaultSelection<Prisma.$AdminUserPayload>
 
 /**
  * Enums
@@ -214,6 +234,36 @@ export class PrismaClient<
   get ticketMessage(): Prisma.TicketMessageDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.messageAttachment`: Exposes CRUD operations for the **MessageAttachment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MessageAttachments
+    * const messageAttachments = await prisma.messageAttachment.findMany()
+    * ```
+    */
+  get messageAttachment(): Prisma.MessageAttachmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.ticketStatusHistory`: Exposes CRUD operations for the **TicketStatusHistory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TicketStatusHistories
+    * const ticketStatusHistories = await prisma.ticketStatusHistory.findMany()
+    * ```
+    */
+  get ticketStatusHistory(): Prisma.TicketStatusHistoryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.ticketAssignmentHistory`: Exposes CRUD operations for the **TicketAssignmentHistory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TicketAssignmentHistories
+    * const ticketAssignmentHistories = await prisma.ticketAssignmentHistory.findMany()
+    * ```
+    */
+  get ticketAssignmentHistory(): Prisma.TicketAssignmentHistoryDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.slaPolicy`: Exposes CRUD operations for the **SlaPolicy** model.
     * Example usage:
     * ```ts
@@ -222,6 +272,16 @@ export class PrismaClient<
     * ```
     */
   get slaPolicy(): Prisma.SlaPolicyDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.adminUser`: Exposes CRUD operations for the **AdminUser** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AdminUsers
+    * const adminUsers = await prisma.adminUser.findMany()
+    * ```
+    */
+  get adminUser(): Prisma.AdminUserDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -658,7 +718,11 @@ export namespace Prisma {
   export const ModelName: {
     Ticket: 'Ticket',
     TicketMessage: 'TicketMessage',
-    SlaPolicy: 'SlaPolicy'
+    MessageAttachment: 'MessageAttachment',
+    TicketStatusHistory: 'TicketStatusHistory',
+    TicketAssignmentHistory: 'TicketAssignmentHistory',
+    SlaPolicy: 'SlaPolicy',
+    AdminUser: 'AdminUser'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -674,7 +738,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "ticket" | "ticketMessage" | "slaPolicy"
+      modelProps: "ticket" | "ticketMessage" | "messageAttachment" | "ticketStatusHistory" | "ticketAssignmentHistory" | "slaPolicy" | "adminUser"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -826,6 +890,228 @@ export namespace Prisma {
           }
         }
       }
+      MessageAttachment: {
+        payload: Prisma.$MessageAttachmentPayload<ExtArgs>
+        fields: Prisma.MessageAttachmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MessageAttachmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessageAttachmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MessageAttachmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessageAttachmentPayload>
+          }
+          findFirst: {
+            args: Prisma.MessageAttachmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessageAttachmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MessageAttachmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessageAttachmentPayload>
+          }
+          findMany: {
+            args: Prisma.MessageAttachmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessageAttachmentPayload>[]
+          }
+          create: {
+            args: Prisma.MessageAttachmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessageAttachmentPayload>
+          }
+          createMany: {
+            args: Prisma.MessageAttachmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MessageAttachmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessageAttachmentPayload>[]
+          }
+          delete: {
+            args: Prisma.MessageAttachmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessageAttachmentPayload>
+          }
+          update: {
+            args: Prisma.MessageAttachmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessageAttachmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.MessageAttachmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MessageAttachmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MessageAttachmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessageAttachmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.MessageAttachmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MessageAttachmentPayload>
+          }
+          aggregate: {
+            args: Prisma.MessageAttachmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMessageAttachment>
+          }
+          groupBy: {
+            args: Prisma.MessageAttachmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MessageAttachmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MessageAttachmentCountArgs<ExtArgs>
+            result: $Utils.Optional<MessageAttachmentCountAggregateOutputType> | number
+          }
+        }
+      }
+      TicketStatusHistory: {
+        payload: Prisma.$TicketStatusHistoryPayload<ExtArgs>
+        fields: Prisma.TicketStatusHistoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TicketStatusHistoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketStatusHistoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TicketStatusHistoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketStatusHistoryPayload>
+          }
+          findFirst: {
+            args: Prisma.TicketStatusHistoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketStatusHistoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TicketStatusHistoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketStatusHistoryPayload>
+          }
+          findMany: {
+            args: Prisma.TicketStatusHistoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketStatusHistoryPayload>[]
+          }
+          create: {
+            args: Prisma.TicketStatusHistoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketStatusHistoryPayload>
+          }
+          createMany: {
+            args: Prisma.TicketStatusHistoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TicketStatusHistoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketStatusHistoryPayload>[]
+          }
+          delete: {
+            args: Prisma.TicketStatusHistoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketStatusHistoryPayload>
+          }
+          update: {
+            args: Prisma.TicketStatusHistoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketStatusHistoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.TicketStatusHistoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TicketStatusHistoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TicketStatusHistoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketStatusHistoryPayload>[]
+          }
+          upsert: {
+            args: Prisma.TicketStatusHistoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketStatusHistoryPayload>
+          }
+          aggregate: {
+            args: Prisma.TicketStatusHistoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTicketStatusHistory>
+          }
+          groupBy: {
+            args: Prisma.TicketStatusHistoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TicketStatusHistoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TicketStatusHistoryCountArgs<ExtArgs>
+            result: $Utils.Optional<TicketStatusHistoryCountAggregateOutputType> | number
+          }
+        }
+      }
+      TicketAssignmentHistory: {
+        payload: Prisma.$TicketAssignmentHistoryPayload<ExtArgs>
+        fields: Prisma.TicketAssignmentHistoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TicketAssignmentHistoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketAssignmentHistoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TicketAssignmentHistoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketAssignmentHistoryPayload>
+          }
+          findFirst: {
+            args: Prisma.TicketAssignmentHistoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketAssignmentHistoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TicketAssignmentHistoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketAssignmentHistoryPayload>
+          }
+          findMany: {
+            args: Prisma.TicketAssignmentHistoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketAssignmentHistoryPayload>[]
+          }
+          create: {
+            args: Prisma.TicketAssignmentHistoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketAssignmentHistoryPayload>
+          }
+          createMany: {
+            args: Prisma.TicketAssignmentHistoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TicketAssignmentHistoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketAssignmentHistoryPayload>[]
+          }
+          delete: {
+            args: Prisma.TicketAssignmentHistoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketAssignmentHistoryPayload>
+          }
+          update: {
+            args: Prisma.TicketAssignmentHistoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketAssignmentHistoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.TicketAssignmentHistoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TicketAssignmentHistoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TicketAssignmentHistoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketAssignmentHistoryPayload>[]
+          }
+          upsert: {
+            args: Prisma.TicketAssignmentHistoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TicketAssignmentHistoryPayload>
+          }
+          aggregate: {
+            args: Prisma.TicketAssignmentHistoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTicketAssignmentHistory>
+          }
+          groupBy: {
+            args: Prisma.TicketAssignmentHistoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TicketAssignmentHistoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TicketAssignmentHistoryCountArgs<ExtArgs>
+            result: $Utils.Optional<TicketAssignmentHistoryCountAggregateOutputType> | number
+          }
+        }
+      }
       SlaPolicy: {
         payload: Prisma.$SlaPolicyPayload<ExtArgs>
         fields: Prisma.SlaPolicyFieldRefs
@@ -897,6 +1183,80 @@ export namespace Prisma {
           count: {
             args: Prisma.SlaPolicyCountArgs<ExtArgs>
             result: $Utils.Optional<SlaPolicyCountAggregateOutputType> | number
+          }
+        }
+      }
+      AdminUser: {
+        payload: Prisma.$AdminUserPayload<ExtArgs>
+        fields: Prisma.AdminUserFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AdminUserFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminUserPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AdminUserFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminUserPayload>
+          }
+          findFirst: {
+            args: Prisma.AdminUserFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminUserPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AdminUserFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminUserPayload>
+          }
+          findMany: {
+            args: Prisma.AdminUserFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminUserPayload>[]
+          }
+          create: {
+            args: Prisma.AdminUserCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminUserPayload>
+          }
+          createMany: {
+            args: Prisma.AdminUserCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AdminUserCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminUserPayload>[]
+          }
+          delete: {
+            args: Prisma.AdminUserDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminUserPayload>
+          }
+          update: {
+            args: Prisma.AdminUserUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminUserPayload>
+          }
+          deleteMany: {
+            args: Prisma.AdminUserDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AdminUserUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AdminUserUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminUserPayload>[]
+          }
+          upsert: {
+            args: Prisma.AdminUserUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AdminUserPayload>
+          }
+          aggregate: {
+            args: Prisma.AdminUserAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAdminUser>
+          }
+          groupBy: {
+            args: Prisma.AdminUserGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AdminUserGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AdminUserCountArgs<ExtArgs>
+            result: $Utils.Optional<AdminUserCountAggregateOutputType> | number
           }
         }
       }
@@ -1010,7 +1370,11 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     ticket?: TicketOmit
     ticketMessage?: TicketMessageOmit
+    messageAttachment?: MessageAttachmentOmit
+    ticketStatusHistory?: TicketStatusHistoryOmit
+    ticketAssignmentHistory?: TicketAssignmentHistoryOmit
     slaPolicy?: SlaPolicyOmit
+    adminUser?: AdminUserOmit
   }
 
   /* Types for Logging */
@@ -1092,10 +1456,14 @@ export namespace Prisma {
 
   export type TicketCountOutputType = {
     messages: number
+    statusHistory: number
+    assignmentHistory: number
   }
 
   export type TicketCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | TicketCountOutputTypeCountMessagesArgs
+    statusHistory?: boolean | TicketCountOutputTypeCountStatusHistoryArgs
+    assignmentHistory?: boolean | TicketCountOutputTypeCountAssignmentHistoryArgs
   }
 
   // Custom InputTypes
@@ -1116,6 +1484,51 @@ export namespace Prisma {
     where?: TicketMessageWhereInput
   }
 
+  /**
+   * TicketCountOutputType without action
+   */
+  export type TicketCountOutputTypeCountStatusHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TicketStatusHistoryWhereInput
+  }
+
+  /**
+   * TicketCountOutputType without action
+   */
+  export type TicketCountOutputTypeCountAssignmentHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TicketAssignmentHistoryWhereInput
+  }
+
+
+  /**
+   * Count Type TicketMessageCountOutputType
+   */
+
+  export type TicketMessageCountOutputType = {
+    attachments: number
+  }
+
+  export type TicketMessageCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    attachments?: boolean | TicketMessageCountOutputTypeCountAttachmentsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TicketMessageCountOutputType without action
+   */
+  export type TicketMessageCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketMessageCountOutputType
+     */
+    select?: TicketMessageCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TicketMessageCountOutputType without action
+   */
+  export type TicketMessageCountOutputTypeCountAttachmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MessageAttachmentWhereInput
+  }
+
 
   /**
    * Models
@@ -1127,8 +1540,18 @@ export namespace Prisma {
 
   export type AggregateTicket = {
     _count: TicketCountAggregateOutputType | null
+    _avg: TicketAvgAggregateOutputType | null
+    _sum: TicketSumAggregateOutputType | null
     _min: TicketMinAggregateOutputType | null
     _max: TicketMaxAggregateOutputType | null
+  }
+
+  export type TicketAvgAggregateOutputType = {
+    feedbackRating: number | null
+  }
+
+  export type TicketSumAggregateOutputType = {
+    feedbackRating: number | null
   }
 
   export type TicketMinAggregateOutputType = {
@@ -1136,6 +1559,9 @@ export namespace Prisma {
     code: string | null
     title: string | null
     description: string | null
+    reporterKey: string | null
+    reporterName: string | null
+    reporterLocation: string | null
     priority: $Enums.TicketPriority | null
     category: $Enums.TicketCategory | null
     status: $Enums.TicketStatus | null
@@ -1143,6 +1569,8 @@ export namespace Prisma {
     resolveDueAt: Date | null
     firstReplyAt: Date | null
     closedAt: Date | null
+    feedbackRating: number | null
+    feedbackSubmittedAt: Date | null
     assignedAdminId: string | null
     assignedAt: Date | null
     lastAdminReadAt: Date | null
@@ -1155,6 +1583,9 @@ export namespace Prisma {
     code: string | null
     title: string | null
     description: string | null
+    reporterKey: string | null
+    reporterName: string | null
+    reporterLocation: string | null
     priority: $Enums.TicketPriority | null
     category: $Enums.TicketCategory | null
     status: $Enums.TicketStatus | null
@@ -1162,6 +1593,8 @@ export namespace Prisma {
     resolveDueAt: Date | null
     firstReplyAt: Date | null
     closedAt: Date | null
+    feedbackRating: number | null
+    feedbackSubmittedAt: Date | null
     assignedAdminId: string | null
     assignedAt: Date | null
     lastAdminReadAt: Date | null
@@ -1174,6 +1607,9 @@ export namespace Prisma {
     code: number
     title: number
     description: number
+    reporterKey: number
+    reporterName: number
+    reporterLocation: number
     priority: number
     category: number
     status: number
@@ -1181,6 +1617,8 @@ export namespace Prisma {
     resolveDueAt: number
     firstReplyAt: number
     closedAt: number
+    feedbackRating: number
+    feedbackSubmittedAt: number
     assignedAdminId: number
     assignedAt: number
     lastAdminReadAt: number
@@ -1190,11 +1628,22 @@ export namespace Prisma {
   }
 
 
+  export type TicketAvgAggregateInputType = {
+    feedbackRating?: true
+  }
+
+  export type TicketSumAggregateInputType = {
+    feedbackRating?: true
+  }
+
   export type TicketMinAggregateInputType = {
     id?: true
     code?: true
     title?: true
     description?: true
+    reporterKey?: true
+    reporterName?: true
+    reporterLocation?: true
     priority?: true
     category?: true
     status?: true
@@ -1202,6 +1651,8 @@ export namespace Prisma {
     resolveDueAt?: true
     firstReplyAt?: true
     closedAt?: true
+    feedbackRating?: true
+    feedbackSubmittedAt?: true
     assignedAdminId?: true
     assignedAt?: true
     lastAdminReadAt?: true
@@ -1214,6 +1665,9 @@ export namespace Prisma {
     code?: true
     title?: true
     description?: true
+    reporterKey?: true
+    reporterName?: true
+    reporterLocation?: true
     priority?: true
     category?: true
     status?: true
@@ -1221,6 +1675,8 @@ export namespace Prisma {
     resolveDueAt?: true
     firstReplyAt?: true
     closedAt?: true
+    feedbackRating?: true
+    feedbackSubmittedAt?: true
     assignedAdminId?: true
     assignedAt?: true
     lastAdminReadAt?: true
@@ -1233,6 +1689,9 @@ export namespace Prisma {
     code?: true
     title?: true
     description?: true
+    reporterKey?: true
+    reporterName?: true
+    reporterLocation?: true
     priority?: true
     category?: true
     status?: true
@@ -1240,6 +1699,8 @@ export namespace Prisma {
     resolveDueAt?: true
     firstReplyAt?: true
     closedAt?: true
+    feedbackRating?: true
+    feedbackSubmittedAt?: true
     assignedAdminId?: true
     assignedAt?: true
     lastAdminReadAt?: true
@@ -1286,6 +1747,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: TicketAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TicketSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TicketMinAggregateInputType
@@ -1316,6 +1789,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: TicketCountAggregateInputType | true
+    _avg?: TicketAvgAggregateInputType
+    _sum?: TicketSumAggregateInputType
     _min?: TicketMinAggregateInputType
     _max?: TicketMaxAggregateInputType
   }
@@ -1325,6 +1800,9 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterKey: string | null
+    reporterName: string | null
+    reporterLocation: string | null
     priority: $Enums.TicketPriority
     category: $Enums.TicketCategory
     status: $Enums.TicketStatus
@@ -1332,12 +1810,16 @@ export namespace Prisma {
     resolveDueAt: Date
     firstReplyAt: Date | null
     closedAt: Date | null
+    feedbackRating: number | null
+    feedbackSubmittedAt: Date | null
     assignedAdminId: string | null
     assignedAt: Date | null
     lastAdminReadAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: TicketCountAggregateOutputType | null
+    _avg: TicketAvgAggregateOutputType | null
+    _sum: TicketSumAggregateOutputType | null
     _min: TicketMinAggregateOutputType | null
     _max: TicketMaxAggregateOutputType | null
   }
@@ -1361,6 +1843,9 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterKey?: boolean
+    reporterName?: boolean
+    reporterLocation?: boolean
     priority?: boolean
     category?: boolean
     status?: boolean
@@ -1368,12 +1853,16 @@ export namespace Prisma {
     resolveDueAt?: boolean
     firstReplyAt?: boolean
     closedAt?: boolean
+    feedbackRating?: boolean
+    feedbackSubmittedAt?: boolean
     assignedAdminId?: boolean
     assignedAt?: boolean
     lastAdminReadAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     messages?: boolean | Ticket$messagesArgs<ExtArgs>
+    statusHistory?: boolean | Ticket$statusHistoryArgs<ExtArgs>
+    assignmentHistory?: boolean | Ticket$assignmentHistoryArgs<ExtArgs>
     _count?: boolean | TicketCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["ticket"]>
 
@@ -1382,6 +1871,9 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterKey?: boolean
+    reporterName?: boolean
+    reporterLocation?: boolean
     priority?: boolean
     category?: boolean
     status?: boolean
@@ -1389,6 +1881,8 @@ export namespace Prisma {
     resolveDueAt?: boolean
     firstReplyAt?: boolean
     closedAt?: boolean
+    feedbackRating?: boolean
+    feedbackSubmittedAt?: boolean
     assignedAdminId?: boolean
     assignedAt?: boolean
     lastAdminReadAt?: boolean
@@ -1401,6 +1895,9 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterKey?: boolean
+    reporterName?: boolean
+    reporterLocation?: boolean
     priority?: boolean
     category?: boolean
     status?: boolean
@@ -1408,6 +1905,8 @@ export namespace Prisma {
     resolveDueAt?: boolean
     firstReplyAt?: boolean
     closedAt?: boolean
+    feedbackRating?: boolean
+    feedbackSubmittedAt?: boolean
     assignedAdminId?: boolean
     assignedAt?: boolean
     lastAdminReadAt?: boolean
@@ -1420,6 +1919,9 @@ export namespace Prisma {
     code?: boolean
     title?: boolean
     description?: boolean
+    reporterKey?: boolean
+    reporterName?: boolean
+    reporterLocation?: boolean
     priority?: boolean
     category?: boolean
     status?: boolean
@@ -1427,6 +1929,8 @@ export namespace Prisma {
     resolveDueAt?: boolean
     firstReplyAt?: boolean
     closedAt?: boolean
+    feedbackRating?: boolean
+    feedbackSubmittedAt?: boolean
     assignedAdminId?: boolean
     assignedAt?: boolean
     lastAdminReadAt?: boolean
@@ -1434,9 +1938,11 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "title" | "description" | "priority" | "category" | "status" | "responseDueAt" | "resolveDueAt" | "firstReplyAt" | "closedAt" | "assignedAdminId" | "assignedAt" | "lastAdminReadAt" | "createdAt" | "updatedAt", ExtArgs["result"]["ticket"]>
+  export type TicketOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "title" | "description" | "reporterKey" | "reporterName" | "reporterLocation" | "priority" | "category" | "status" | "responseDueAt" | "resolveDueAt" | "firstReplyAt" | "closedAt" | "feedbackRating" | "feedbackSubmittedAt" | "assignedAdminId" | "assignedAt" | "lastAdminReadAt" | "createdAt" | "updatedAt", ExtArgs["result"]["ticket"]>
   export type TicketInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | Ticket$messagesArgs<ExtArgs>
+    statusHistory?: boolean | Ticket$statusHistoryArgs<ExtArgs>
+    assignmentHistory?: boolean | Ticket$assignmentHistoryArgs<ExtArgs>
     _count?: boolean | TicketCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TicketIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1446,12 +1952,17 @@ export namespace Prisma {
     name: "Ticket"
     objects: {
       messages: Prisma.$TicketMessagePayload<ExtArgs>[]
+      statusHistory: Prisma.$TicketStatusHistoryPayload<ExtArgs>[]
+      assignmentHistory: Prisma.$TicketAssignmentHistoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       code: string
       title: string
       description: string
+      reporterKey: string | null
+      reporterName: string | null
+      reporterLocation: string | null
       priority: $Enums.TicketPriority
       category: $Enums.TicketCategory
       status: $Enums.TicketStatus
@@ -1459,6 +1970,8 @@ export namespace Prisma {
       resolveDueAt: Date
       firstReplyAt: Date | null
       closedAt: Date | null
+      feedbackRating: number | null
+      feedbackSubmittedAt: Date | null
       assignedAdminId: string | null
       assignedAt: Date | null
       lastAdminReadAt: Date | null
@@ -1859,6 +2372,8 @@ export namespace Prisma {
   export interface Prisma__TicketClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     messages<T extends Ticket$messagesArgs<ExtArgs> = {}>(args?: Subset<T, Ticket$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    statusHistory<T extends Ticket$statusHistoryArgs<ExtArgs> = {}>(args?: Subset<T, Ticket$statusHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    assignmentHistory<T extends Ticket$assignmentHistoryArgs<ExtArgs> = {}>(args?: Subset<T, Ticket$assignmentHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1892,6 +2407,9 @@ export namespace Prisma {
     readonly code: FieldRef<"Ticket", 'String'>
     readonly title: FieldRef<"Ticket", 'String'>
     readonly description: FieldRef<"Ticket", 'String'>
+    readonly reporterKey: FieldRef<"Ticket", 'String'>
+    readonly reporterName: FieldRef<"Ticket", 'String'>
+    readonly reporterLocation: FieldRef<"Ticket", 'String'>
     readonly priority: FieldRef<"Ticket", 'TicketPriority'>
     readonly category: FieldRef<"Ticket", 'TicketCategory'>
     readonly status: FieldRef<"Ticket", 'TicketStatus'>
@@ -1899,6 +2417,8 @@ export namespace Prisma {
     readonly resolveDueAt: FieldRef<"Ticket", 'DateTime'>
     readonly firstReplyAt: FieldRef<"Ticket", 'DateTime'>
     readonly closedAt: FieldRef<"Ticket", 'DateTime'>
+    readonly feedbackRating: FieldRef<"Ticket", 'Int'>
+    readonly feedbackSubmittedAt: FieldRef<"Ticket", 'DateTime'>
     readonly assignedAdminId: FieldRef<"Ticket", 'String'>
     readonly assignedAt: FieldRef<"Ticket", 'DateTime'>
     readonly lastAdminReadAt: FieldRef<"Ticket", 'DateTime'>
@@ -2316,6 +2836,54 @@ export namespace Prisma {
   }
 
   /**
+   * Ticket.statusHistory
+   */
+  export type Ticket$statusHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryInclude<ExtArgs> | null
+    where?: TicketStatusHistoryWhereInput
+    orderBy?: TicketStatusHistoryOrderByWithRelationInput | TicketStatusHistoryOrderByWithRelationInput[]
+    cursor?: TicketStatusHistoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TicketStatusHistoryScalarFieldEnum | TicketStatusHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * Ticket.assignmentHistory
+   */
+  export type Ticket$assignmentHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryInclude<ExtArgs> | null
+    where?: TicketAssignmentHistoryWhereInput
+    orderBy?: TicketAssignmentHistoryOrderByWithRelationInput | TicketAssignmentHistoryOrderByWithRelationInput[]
+    cursor?: TicketAssignmentHistoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TicketAssignmentHistoryScalarFieldEnum | TicketAssignmentHistoryScalarFieldEnum[]
+  }
+
+  /**
    * Ticket without action
    */
   export type TicketDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2499,6 +3067,8 @@ export namespace Prisma {
     message?: boolean
     createdAt?: boolean
     ticket?: boolean | TicketDefaultArgs<ExtArgs>
+    attachments?: boolean | TicketMessage$attachmentsArgs<ExtArgs>
+    _count?: boolean | TicketMessageCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["ticketMessage"]>
 
   export type TicketMessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2530,6 +3100,8 @@ export namespace Prisma {
   export type TicketMessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ticketId" | "sender" | "message" | "createdAt", ExtArgs["result"]["ticketMessage"]>
   export type TicketMessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     ticket?: boolean | TicketDefaultArgs<ExtArgs>
+    attachments?: boolean | TicketMessage$attachmentsArgs<ExtArgs>
+    _count?: boolean | TicketMessageCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TicketMessageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     ticket?: boolean | TicketDefaultArgs<ExtArgs>
@@ -2542,6 +3114,7 @@ export namespace Prisma {
     name: "TicketMessage"
     objects: {
       ticket: Prisma.$TicketPayload<ExtArgs>
+      attachments: Prisma.$MessageAttachmentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2944,6 +3517,7 @@ export namespace Prisma {
   export interface Prisma__TicketMessageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     ticket<T extends TicketDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TicketDefaultArgs<ExtArgs>>): Prisma__TicketClient<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    attachments<T extends TicketMessage$attachmentsArgs<ExtArgs> = {}>(args?: Subset<T, TicketMessage$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3374,6 +3948,30 @@ export namespace Prisma {
   }
 
   /**
+   * TicketMessage.attachments
+   */
+  export type TicketMessage$attachmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentInclude<ExtArgs> | null
+    where?: MessageAttachmentWhereInput
+    orderBy?: MessageAttachmentOrderByWithRelationInput | MessageAttachmentOrderByWithRelationInput[]
+    cursor?: MessageAttachmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MessageAttachmentScalarFieldEnum | MessageAttachmentScalarFieldEnum[]
+  }
+
+  /**
    * TicketMessage without action
    */
   export type TicketMessageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3389,6 +3987,3305 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: TicketMessageInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MessageAttachment
+   */
+
+  export type AggregateMessageAttachment = {
+    _count: MessageAttachmentCountAggregateOutputType | null
+    _avg: MessageAttachmentAvgAggregateOutputType | null
+    _sum: MessageAttachmentSumAggregateOutputType | null
+    _min: MessageAttachmentMinAggregateOutputType | null
+    _max: MessageAttachmentMaxAggregateOutputType | null
+  }
+
+  export type MessageAttachmentAvgAggregateOutputType = {
+    size: number | null
+  }
+
+  export type MessageAttachmentSumAggregateOutputType = {
+    size: number | null
+  }
+
+  export type MessageAttachmentMinAggregateOutputType = {
+    id: string | null
+    messageId: string | null
+    url: string | null
+    caption: string | null
+    mimeType: string | null
+    fileName: string | null
+    size: number | null
+    createdAt: Date | null
+  }
+
+  export type MessageAttachmentMaxAggregateOutputType = {
+    id: string | null
+    messageId: string | null
+    url: string | null
+    caption: string | null
+    mimeType: string | null
+    fileName: string | null
+    size: number | null
+    createdAt: Date | null
+  }
+
+  export type MessageAttachmentCountAggregateOutputType = {
+    id: number
+    messageId: number
+    url: number
+    caption: number
+    mimeType: number
+    fileName: number
+    size: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type MessageAttachmentAvgAggregateInputType = {
+    size?: true
+  }
+
+  export type MessageAttachmentSumAggregateInputType = {
+    size?: true
+  }
+
+  export type MessageAttachmentMinAggregateInputType = {
+    id?: true
+    messageId?: true
+    url?: true
+    caption?: true
+    mimeType?: true
+    fileName?: true
+    size?: true
+    createdAt?: true
+  }
+
+  export type MessageAttachmentMaxAggregateInputType = {
+    id?: true
+    messageId?: true
+    url?: true
+    caption?: true
+    mimeType?: true
+    fileName?: true
+    size?: true
+    createdAt?: true
+  }
+
+  export type MessageAttachmentCountAggregateInputType = {
+    id?: true
+    messageId?: true
+    url?: true
+    caption?: true
+    mimeType?: true
+    fileName?: true
+    size?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type MessageAttachmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MessageAttachment to aggregate.
+     */
+    where?: MessageAttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MessageAttachments to fetch.
+     */
+    orderBy?: MessageAttachmentOrderByWithRelationInput | MessageAttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MessageAttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MessageAttachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MessageAttachments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MessageAttachments
+    **/
+    _count?: true | MessageAttachmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MessageAttachmentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MessageAttachmentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MessageAttachmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MessageAttachmentMaxAggregateInputType
+  }
+
+  export type GetMessageAttachmentAggregateType<T extends MessageAttachmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateMessageAttachment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMessageAttachment[P]>
+      : GetScalarType<T[P], AggregateMessageAttachment[P]>
+  }
+
+
+
+
+  export type MessageAttachmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MessageAttachmentWhereInput
+    orderBy?: MessageAttachmentOrderByWithAggregationInput | MessageAttachmentOrderByWithAggregationInput[]
+    by: MessageAttachmentScalarFieldEnum[] | MessageAttachmentScalarFieldEnum
+    having?: MessageAttachmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MessageAttachmentCountAggregateInputType | true
+    _avg?: MessageAttachmentAvgAggregateInputType
+    _sum?: MessageAttachmentSumAggregateInputType
+    _min?: MessageAttachmentMinAggregateInputType
+    _max?: MessageAttachmentMaxAggregateInputType
+  }
+
+  export type MessageAttachmentGroupByOutputType = {
+    id: string
+    messageId: string
+    url: string
+    caption: string | null
+    mimeType: string | null
+    fileName: string | null
+    size: number | null
+    createdAt: Date
+    _count: MessageAttachmentCountAggregateOutputType | null
+    _avg: MessageAttachmentAvgAggregateOutputType | null
+    _sum: MessageAttachmentSumAggregateOutputType | null
+    _min: MessageAttachmentMinAggregateOutputType | null
+    _max: MessageAttachmentMaxAggregateOutputType | null
+  }
+
+  type GetMessageAttachmentGroupByPayload<T extends MessageAttachmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MessageAttachmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MessageAttachmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MessageAttachmentGroupByOutputType[P]>
+            : GetScalarType<T[P], MessageAttachmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MessageAttachmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    messageId?: boolean
+    url?: boolean
+    caption?: boolean
+    mimeType?: boolean
+    fileName?: boolean
+    size?: boolean
+    createdAt?: boolean
+    message?: boolean | TicketMessageDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["messageAttachment"]>
+
+  export type MessageAttachmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    messageId?: boolean
+    url?: boolean
+    caption?: boolean
+    mimeType?: boolean
+    fileName?: boolean
+    size?: boolean
+    createdAt?: boolean
+    message?: boolean | TicketMessageDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["messageAttachment"]>
+
+  export type MessageAttachmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    messageId?: boolean
+    url?: boolean
+    caption?: boolean
+    mimeType?: boolean
+    fileName?: boolean
+    size?: boolean
+    createdAt?: boolean
+    message?: boolean | TicketMessageDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["messageAttachment"]>
+
+  export type MessageAttachmentSelectScalar = {
+    id?: boolean
+    messageId?: boolean
+    url?: boolean
+    caption?: boolean
+    mimeType?: boolean
+    fileName?: boolean
+    size?: boolean
+    createdAt?: boolean
+  }
+
+  export type MessageAttachmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "messageId" | "url" | "caption" | "mimeType" | "fileName" | "size" | "createdAt", ExtArgs["result"]["messageAttachment"]>
+  export type MessageAttachmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    message?: boolean | TicketMessageDefaultArgs<ExtArgs>
+  }
+  export type MessageAttachmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    message?: boolean | TicketMessageDefaultArgs<ExtArgs>
+  }
+  export type MessageAttachmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    message?: boolean | TicketMessageDefaultArgs<ExtArgs>
+  }
+
+  export type $MessageAttachmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MessageAttachment"
+    objects: {
+      message: Prisma.$TicketMessagePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      messageId: string
+      url: string
+      caption: string | null
+      mimeType: string | null
+      fileName: string | null
+      size: number | null
+      createdAt: Date
+    }, ExtArgs["result"]["messageAttachment"]>
+    composites: {}
+  }
+
+  type MessageAttachmentGetPayload<S extends boolean | null | undefined | MessageAttachmentDefaultArgs> = $Result.GetResult<Prisma.$MessageAttachmentPayload, S>
+
+  type MessageAttachmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MessageAttachmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MessageAttachmentCountAggregateInputType | true
+    }
+
+  export interface MessageAttachmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MessageAttachment'], meta: { name: 'MessageAttachment' } }
+    /**
+     * Find zero or one MessageAttachment that matches the filter.
+     * @param {MessageAttachmentFindUniqueArgs} args - Arguments to find a MessageAttachment
+     * @example
+     * // Get one MessageAttachment
+     * const messageAttachment = await prisma.messageAttachment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MessageAttachmentFindUniqueArgs>(args: SelectSubset<T, MessageAttachmentFindUniqueArgs<ExtArgs>>): Prisma__MessageAttachmentClient<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MessageAttachment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MessageAttachmentFindUniqueOrThrowArgs} args - Arguments to find a MessageAttachment
+     * @example
+     * // Get one MessageAttachment
+     * const messageAttachment = await prisma.messageAttachment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MessageAttachmentFindUniqueOrThrowArgs>(args: SelectSubset<T, MessageAttachmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MessageAttachmentClient<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MessageAttachment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MessageAttachmentFindFirstArgs} args - Arguments to find a MessageAttachment
+     * @example
+     * // Get one MessageAttachment
+     * const messageAttachment = await prisma.messageAttachment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MessageAttachmentFindFirstArgs>(args?: SelectSubset<T, MessageAttachmentFindFirstArgs<ExtArgs>>): Prisma__MessageAttachmentClient<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MessageAttachment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MessageAttachmentFindFirstOrThrowArgs} args - Arguments to find a MessageAttachment
+     * @example
+     * // Get one MessageAttachment
+     * const messageAttachment = await prisma.messageAttachment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MessageAttachmentFindFirstOrThrowArgs>(args?: SelectSubset<T, MessageAttachmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__MessageAttachmentClient<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MessageAttachments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MessageAttachmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MessageAttachments
+     * const messageAttachments = await prisma.messageAttachment.findMany()
+     * 
+     * // Get first 10 MessageAttachments
+     * const messageAttachments = await prisma.messageAttachment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const messageAttachmentWithIdOnly = await prisma.messageAttachment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MessageAttachmentFindManyArgs>(args?: SelectSubset<T, MessageAttachmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MessageAttachment.
+     * @param {MessageAttachmentCreateArgs} args - Arguments to create a MessageAttachment.
+     * @example
+     * // Create one MessageAttachment
+     * const MessageAttachment = await prisma.messageAttachment.create({
+     *   data: {
+     *     // ... data to create a MessageAttachment
+     *   }
+     * })
+     * 
+     */
+    create<T extends MessageAttachmentCreateArgs>(args: SelectSubset<T, MessageAttachmentCreateArgs<ExtArgs>>): Prisma__MessageAttachmentClient<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MessageAttachments.
+     * @param {MessageAttachmentCreateManyArgs} args - Arguments to create many MessageAttachments.
+     * @example
+     * // Create many MessageAttachments
+     * const messageAttachment = await prisma.messageAttachment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MessageAttachmentCreateManyArgs>(args?: SelectSubset<T, MessageAttachmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MessageAttachments and returns the data saved in the database.
+     * @param {MessageAttachmentCreateManyAndReturnArgs} args - Arguments to create many MessageAttachments.
+     * @example
+     * // Create many MessageAttachments
+     * const messageAttachment = await prisma.messageAttachment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MessageAttachments and only return the `id`
+     * const messageAttachmentWithIdOnly = await prisma.messageAttachment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MessageAttachmentCreateManyAndReturnArgs>(args?: SelectSubset<T, MessageAttachmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MessageAttachment.
+     * @param {MessageAttachmentDeleteArgs} args - Arguments to delete one MessageAttachment.
+     * @example
+     * // Delete one MessageAttachment
+     * const MessageAttachment = await prisma.messageAttachment.delete({
+     *   where: {
+     *     // ... filter to delete one MessageAttachment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MessageAttachmentDeleteArgs>(args: SelectSubset<T, MessageAttachmentDeleteArgs<ExtArgs>>): Prisma__MessageAttachmentClient<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MessageAttachment.
+     * @param {MessageAttachmentUpdateArgs} args - Arguments to update one MessageAttachment.
+     * @example
+     * // Update one MessageAttachment
+     * const messageAttachment = await prisma.messageAttachment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MessageAttachmentUpdateArgs>(args: SelectSubset<T, MessageAttachmentUpdateArgs<ExtArgs>>): Prisma__MessageAttachmentClient<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MessageAttachments.
+     * @param {MessageAttachmentDeleteManyArgs} args - Arguments to filter MessageAttachments to delete.
+     * @example
+     * // Delete a few MessageAttachments
+     * const { count } = await prisma.messageAttachment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MessageAttachmentDeleteManyArgs>(args?: SelectSubset<T, MessageAttachmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MessageAttachments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MessageAttachmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MessageAttachments
+     * const messageAttachment = await prisma.messageAttachment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MessageAttachmentUpdateManyArgs>(args: SelectSubset<T, MessageAttachmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MessageAttachments and returns the data updated in the database.
+     * @param {MessageAttachmentUpdateManyAndReturnArgs} args - Arguments to update many MessageAttachments.
+     * @example
+     * // Update many MessageAttachments
+     * const messageAttachment = await prisma.messageAttachment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MessageAttachments and only return the `id`
+     * const messageAttachmentWithIdOnly = await prisma.messageAttachment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MessageAttachmentUpdateManyAndReturnArgs>(args: SelectSubset<T, MessageAttachmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MessageAttachment.
+     * @param {MessageAttachmentUpsertArgs} args - Arguments to update or create a MessageAttachment.
+     * @example
+     * // Update or create a MessageAttachment
+     * const messageAttachment = await prisma.messageAttachment.upsert({
+     *   create: {
+     *     // ... data to create a MessageAttachment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MessageAttachment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MessageAttachmentUpsertArgs>(args: SelectSubset<T, MessageAttachmentUpsertArgs<ExtArgs>>): Prisma__MessageAttachmentClient<$Result.GetResult<Prisma.$MessageAttachmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MessageAttachments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MessageAttachmentCountArgs} args - Arguments to filter MessageAttachments to count.
+     * @example
+     * // Count the number of MessageAttachments
+     * const count = await prisma.messageAttachment.count({
+     *   where: {
+     *     // ... the filter for the MessageAttachments we want to count
+     *   }
+     * })
+    **/
+    count<T extends MessageAttachmentCountArgs>(
+      args?: Subset<T, MessageAttachmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MessageAttachmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MessageAttachment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MessageAttachmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MessageAttachmentAggregateArgs>(args: Subset<T, MessageAttachmentAggregateArgs>): Prisma.PrismaPromise<GetMessageAttachmentAggregateType<T>>
+
+    /**
+     * Group by MessageAttachment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MessageAttachmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MessageAttachmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MessageAttachmentGroupByArgs['orderBy'] }
+        : { orderBy?: MessageAttachmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MessageAttachmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMessageAttachmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MessageAttachment model
+   */
+  readonly fields: MessageAttachmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MessageAttachment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MessageAttachmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    message<T extends TicketMessageDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TicketMessageDefaultArgs<ExtArgs>>): Prisma__TicketMessageClient<$Result.GetResult<Prisma.$TicketMessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MessageAttachment model
+   */
+  interface MessageAttachmentFieldRefs {
+    readonly id: FieldRef<"MessageAttachment", 'String'>
+    readonly messageId: FieldRef<"MessageAttachment", 'String'>
+    readonly url: FieldRef<"MessageAttachment", 'String'>
+    readonly caption: FieldRef<"MessageAttachment", 'String'>
+    readonly mimeType: FieldRef<"MessageAttachment", 'String'>
+    readonly fileName: FieldRef<"MessageAttachment", 'String'>
+    readonly size: FieldRef<"MessageAttachment", 'Int'>
+    readonly createdAt: FieldRef<"MessageAttachment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MessageAttachment findUnique
+   */
+  export type MessageAttachmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which MessageAttachment to fetch.
+     */
+    where: MessageAttachmentWhereUniqueInput
+  }
+
+  /**
+   * MessageAttachment findUniqueOrThrow
+   */
+  export type MessageAttachmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which MessageAttachment to fetch.
+     */
+    where: MessageAttachmentWhereUniqueInput
+  }
+
+  /**
+   * MessageAttachment findFirst
+   */
+  export type MessageAttachmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which MessageAttachment to fetch.
+     */
+    where?: MessageAttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MessageAttachments to fetch.
+     */
+    orderBy?: MessageAttachmentOrderByWithRelationInput | MessageAttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MessageAttachments.
+     */
+    cursor?: MessageAttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MessageAttachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MessageAttachments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MessageAttachments.
+     */
+    distinct?: MessageAttachmentScalarFieldEnum | MessageAttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * MessageAttachment findFirstOrThrow
+   */
+  export type MessageAttachmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which MessageAttachment to fetch.
+     */
+    where?: MessageAttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MessageAttachments to fetch.
+     */
+    orderBy?: MessageAttachmentOrderByWithRelationInput | MessageAttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MessageAttachments.
+     */
+    cursor?: MessageAttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MessageAttachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MessageAttachments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MessageAttachments.
+     */
+    distinct?: MessageAttachmentScalarFieldEnum | MessageAttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * MessageAttachment findMany
+   */
+  export type MessageAttachmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter, which MessageAttachments to fetch.
+     */
+    where?: MessageAttachmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MessageAttachments to fetch.
+     */
+    orderBy?: MessageAttachmentOrderByWithRelationInput | MessageAttachmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MessageAttachments.
+     */
+    cursor?: MessageAttachmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MessageAttachments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MessageAttachments.
+     */
+    skip?: number
+    distinct?: MessageAttachmentScalarFieldEnum | MessageAttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * MessageAttachment create
+   */
+  export type MessageAttachmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MessageAttachment.
+     */
+    data: XOR<MessageAttachmentCreateInput, MessageAttachmentUncheckedCreateInput>
+  }
+
+  /**
+   * MessageAttachment createMany
+   */
+  export type MessageAttachmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MessageAttachments.
+     */
+    data: MessageAttachmentCreateManyInput | MessageAttachmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MessageAttachment createManyAndReturn
+   */
+  export type MessageAttachmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many MessageAttachments.
+     */
+    data: MessageAttachmentCreateManyInput | MessageAttachmentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MessageAttachment update
+   */
+  export type MessageAttachmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MessageAttachment.
+     */
+    data: XOR<MessageAttachmentUpdateInput, MessageAttachmentUncheckedUpdateInput>
+    /**
+     * Choose, which MessageAttachment to update.
+     */
+    where: MessageAttachmentWhereUniqueInput
+  }
+
+  /**
+   * MessageAttachment updateMany
+   */
+  export type MessageAttachmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MessageAttachments.
+     */
+    data: XOR<MessageAttachmentUpdateManyMutationInput, MessageAttachmentUncheckedUpdateManyInput>
+    /**
+     * Filter which MessageAttachments to update
+     */
+    where?: MessageAttachmentWhereInput
+    /**
+     * Limit how many MessageAttachments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MessageAttachment updateManyAndReturn
+   */
+  export type MessageAttachmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * The data used to update MessageAttachments.
+     */
+    data: XOR<MessageAttachmentUpdateManyMutationInput, MessageAttachmentUncheckedUpdateManyInput>
+    /**
+     * Filter which MessageAttachments to update
+     */
+    where?: MessageAttachmentWhereInput
+    /**
+     * Limit how many MessageAttachments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MessageAttachment upsert
+   */
+  export type MessageAttachmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MessageAttachment to update in case it exists.
+     */
+    where: MessageAttachmentWhereUniqueInput
+    /**
+     * In case the MessageAttachment found by the `where` argument doesn't exist, create a new MessageAttachment with this data.
+     */
+    create: XOR<MessageAttachmentCreateInput, MessageAttachmentUncheckedCreateInput>
+    /**
+     * In case the MessageAttachment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MessageAttachmentUpdateInput, MessageAttachmentUncheckedUpdateInput>
+  }
+
+  /**
+   * MessageAttachment delete
+   */
+  export type MessageAttachmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentInclude<ExtArgs> | null
+    /**
+     * Filter which MessageAttachment to delete.
+     */
+    where: MessageAttachmentWhereUniqueInput
+  }
+
+  /**
+   * MessageAttachment deleteMany
+   */
+  export type MessageAttachmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MessageAttachments to delete
+     */
+    where?: MessageAttachmentWhereInput
+    /**
+     * Limit how many MessageAttachments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MessageAttachment without action
+   */
+  export type MessageAttachmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageAttachment
+     */
+    select?: MessageAttachmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MessageAttachment
+     */
+    omit?: MessageAttachmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageAttachmentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TicketStatusHistory
+   */
+
+  export type AggregateTicketStatusHistory = {
+    _count: TicketStatusHistoryCountAggregateOutputType | null
+    _min: TicketStatusHistoryMinAggregateOutputType | null
+    _max: TicketStatusHistoryMaxAggregateOutputType | null
+  }
+
+  export type TicketStatusHistoryMinAggregateOutputType = {
+    id: string | null
+    ticketId: string | null
+    fromStatus: $Enums.TicketStatus | null
+    toStatus: $Enums.TicketStatus | null
+    changedBy: string | null
+    note: string | null
+    createdAt: Date | null
+  }
+
+  export type TicketStatusHistoryMaxAggregateOutputType = {
+    id: string | null
+    ticketId: string | null
+    fromStatus: $Enums.TicketStatus | null
+    toStatus: $Enums.TicketStatus | null
+    changedBy: string | null
+    note: string | null
+    createdAt: Date | null
+  }
+
+  export type TicketStatusHistoryCountAggregateOutputType = {
+    id: number
+    ticketId: number
+    fromStatus: number
+    toStatus: number
+    changedBy: number
+    note: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type TicketStatusHistoryMinAggregateInputType = {
+    id?: true
+    ticketId?: true
+    fromStatus?: true
+    toStatus?: true
+    changedBy?: true
+    note?: true
+    createdAt?: true
+  }
+
+  export type TicketStatusHistoryMaxAggregateInputType = {
+    id?: true
+    ticketId?: true
+    fromStatus?: true
+    toStatus?: true
+    changedBy?: true
+    note?: true
+    createdAt?: true
+  }
+
+  export type TicketStatusHistoryCountAggregateInputType = {
+    id?: true
+    ticketId?: true
+    fromStatus?: true
+    toStatus?: true
+    changedBy?: true
+    note?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type TicketStatusHistoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TicketStatusHistory to aggregate.
+     */
+    where?: TicketStatusHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TicketStatusHistories to fetch.
+     */
+    orderBy?: TicketStatusHistoryOrderByWithRelationInput | TicketStatusHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TicketStatusHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TicketStatusHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TicketStatusHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TicketStatusHistories
+    **/
+    _count?: true | TicketStatusHistoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TicketStatusHistoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TicketStatusHistoryMaxAggregateInputType
+  }
+
+  export type GetTicketStatusHistoryAggregateType<T extends TicketStatusHistoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateTicketStatusHistory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTicketStatusHistory[P]>
+      : GetScalarType<T[P], AggregateTicketStatusHistory[P]>
+  }
+
+
+
+
+  export type TicketStatusHistoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TicketStatusHistoryWhereInput
+    orderBy?: TicketStatusHistoryOrderByWithAggregationInput | TicketStatusHistoryOrderByWithAggregationInput[]
+    by: TicketStatusHistoryScalarFieldEnum[] | TicketStatusHistoryScalarFieldEnum
+    having?: TicketStatusHistoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TicketStatusHistoryCountAggregateInputType | true
+    _min?: TicketStatusHistoryMinAggregateInputType
+    _max?: TicketStatusHistoryMaxAggregateInputType
+  }
+
+  export type TicketStatusHistoryGroupByOutputType = {
+    id: string
+    ticketId: string
+    fromStatus: $Enums.TicketStatus | null
+    toStatus: $Enums.TicketStatus
+    changedBy: string | null
+    note: string | null
+    createdAt: Date
+    _count: TicketStatusHistoryCountAggregateOutputType | null
+    _min: TicketStatusHistoryMinAggregateOutputType | null
+    _max: TicketStatusHistoryMaxAggregateOutputType | null
+  }
+
+  type GetTicketStatusHistoryGroupByPayload<T extends TicketStatusHistoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TicketStatusHistoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TicketStatusHistoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TicketStatusHistoryGroupByOutputType[P]>
+            : GetScalarType<T[P], TicketStatusHistoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TicketStatusHistorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ticketId?: boolean
+    fromStatus?: boolean
+    toStatus?: boolean
+    changedBy?: boolean
+    note?: boolean
+    createdAt?: boolean
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ticketStatusHistory"]>
+
+  export type TicketStatusHistorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ticketId?: boolean
+    fromStatus?: boolean
+    toStatus?: boolean
+    changedBy?: boolean
+    note?: boolean
+    createdAt?: boolean
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ticketStatusHistory"]>
+
+  export type TicketStatusHistorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ticketId?: boolean
+    fromStatus?: boolean
+    toStatus?: boolean
+    changedBy?: boolean
+    note?: boolean
+    createdAt?: boolean
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ticketStatusHistory"]>
+
+  export type TicketStatusHistorySelectScalar = {
+    id?: boolean
+    ticketId?: boolean
+    fromStatus?: boolean
+    toStatus?: boolean
+    changedBy?: boolean
+    note?: boolean
+    createdAt?: boolean
+  }
+
+  export type TicketStatusHistoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ticketId" | "fromStatus" | "toStatus" | "changedBy" | "note" | "createdAt", ExtArgs["result"]["ticketStatusHistory"]>
+  export type TicketStatusHistoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }
+  export type TicketStatusHistoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }
+  export type TicketStatusHistoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }
+
+  export type $TicketStatusHistoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TicketStatusHistory"
+    objects: {
+      ticket: Prisma.$TicketPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      ticketId: string
+      fromStatus: $Enums.TicketStatus | null
+      toStatus: $Enums.TicketStatus
+      changedBy: string | null
+      note: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["ticketStatusHistory"]>
+    composites: {}
+  }
+
+  type TicketStatusHistoryGetPayload<S extends boolean | null | undefined | TicketStatusHistoryDefaultArgs> = $Result.GetResult<Prisma.$TicketStatusHistoryPayload, S>
+
+  type TicketStatusHistoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TicketStatusHistoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TicketStatusHistoryCountAggregateInputType | true
+    }
+
+  export interface TicketStatusHistoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TicketStatusHistory'], meta: { name: 'TicketStatusHistory' } }
+    /**
+     * Find zero or one TicketStatusHistory that matches the filter.
+     * @param {TicketStatusHistoryFindUniqueArgs} args - Arguments to find a TicketStatusHistory
+     * @example
+     * // Get one TicketStatusHistory
+     * const ticketStatusHistory = await prisma.ticketStatusHistory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TicketStatusHistoryFindUniqueArgs>(args: SelectSubset<T, TicketStatusHistoryFindUniqueArgs<ExtArgs>>): Prisma__TicketStatusHistoryClient<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TicketStatusHistory that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TicketStatusHistoryFindUniqueOrThrowArgs} args - Arguments to find a TicketStatusHistory
+     * @example
+     * // Get one TicketStatusHistory
+     * const ticketStatusHistory = await prisma.ticketStatusHistory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TicketStatusHistoryFindUniqueOrThrowArgs>(args: SelectSubset<T, TicketStatusHistoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TicketStatusHistoryClient<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TicketStatusHistory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketStatusHistoryFindFirstArgs} args - Arguments to find a TicketStatusHistory
+     * @example
+     * // Get one TicketStatusHistory
+     * const ticketStatusHistory = await prisma.ticketStatusHistory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TicketStatusHistoryFindFirstArgs>(args?: SelectSubset<T, TicketStatusHistoryFindFirstArgs<ExtArgs>>): Prisma__TicketStatusHistoryClient<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TicketStatusHistory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketStatusHistoryFindFirstOrThrowArgs} args - Arguments to find a TicketStatusHistory
+     * @example
+     * // Get one TicketStatusHistory
+     * const ticketStatusHistory = await prisma.ticketStatusHistory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TicketStatusHistoryFindFirstOrThrowArgs>(args?: SelectSubset<T, TicketStatusHistoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__TicketStatusHistoryClient<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TicketStatusHistories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketStatusHistoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TicketStatusHistories
+     * const ticketStatusHistories = await prisma.ticketStatusHistory.findMany()
+     * 
+     * // Get first 10 TicketStatusHistories
+     * const ticketStatusHistories = await prisma.ticketStatusHistory.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const ticketStatusHistoryWithIdOnly = await prisma.ticketStatusHistory.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TicketStatusHistoryFindManyArgs>(args?: SelectSubset<T, TicketStatusHistoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TicketStatusHistory.
+     * @param {TicketStatusHistoryCreateArgs} args - Arguments to create a TicketStatusHistory.
+     * @example
+     * // Create one TicketStatusHistory
+     * const TicketStatusHistory = await prisma.ticketStatusHistory.create({
+     *   data: {
+     *     // ... data to create a TicketStatusHistory
+     *   }
+     * })
+     * 
+     */
+    create<T extends TicketStatusHistoryCreateArgs>(args: SelectSubset<T, TicketStatusHistoryCreateArgs<ExtArgs>>): Prisma__TicketStatusHistoryClient<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TicketStatusHistories.
+     * @param {TicketStatusHistoryCreateManyArgs} args - Arguments to create many TicketStatusHistories.
+     * @example
+     * // Create many TicketStatusHistories
+     * const ticketStatusHistory = await prisma.ticketStatusHistory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TicketStatusHistoryCreateManyArgs>(args?: SelectSubset<T, TicketStatusHistoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TicketStatusHistories and returns the data saved in the database.
+     * @param {TicketStatusHistoryCreateManyAndReturnArgs} args - Arguments to create many TicketStatusHistories.
+     * @example
+     * // Create many TicketStatusHistories
+     * const ticketStatusHistory = await prisma.ticketStatusHistory.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TicketStatusHistories and only return the `id`
+     * const ticketStatusHistoryWithIdOnly = await prisma.ticketStatusHistory.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TicketStatusHistoryCreateManyAndReturnArgs>(args?: SelectSubset<T, TicketStatusHistoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TicketStatusHistory.
+     * @param {TicketStatusHistoryDeleteArgs} args - Arguments to delete one TicketStatusHistory.
+     * @example
+     * // Delete one TicketStatusHistory
+     * const TicketStatusHistory = await prisma.ticketStatusHistory.delete({
+     *   where: {
+     *     // ... filter to delete one TicketStatusHistory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TicketStatusHistoryDeleteArgs>(args: SelectSubset<T, TicketStatusHistoryDeleteArgs<ExtArgs>>): Prisma__TicketStatusHistoryClient<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TicketStatusHistory.
+     * @param {TicketStatusHistoryUpdateArgs} args - Arguments to update one TicketStatusHistory.
+     * @example
+     * // Update one TicketStatusHistory
+     * const ticketStatusHistory = await prisma.ticketStatusHistory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TicketStatusHistoryUpdateArgs>(args: SelectSubset<T, TicketStatusHistoryUpdateArgs<ExtArgs>>): Prisma__TicketStatusHistoryClient<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TicketStatusHistories.
+     * @param {TicketStatusHistoryDeleteManyArgs} args - Arguments to filter TicketStatusHistories to delete.
+     * @example
+     * // Delete a few TicketStatusHistories
+     * const { count } = await prisma.ticketStatusHistory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TicketStatusHistoryDeleteManyArgs>(args?: SelectSubset<T, TicketStatusHistoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TicketStatusHistories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketStatusHistoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TicketStatusHistories
+     * const ticketStatusHistory = await prisma.ticketStatusHistory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TicketStatusHistoryUpdateManyArgs>(args: SelectSubset<T, TicketStatusHistoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TicketStatusHistories and returns the data updated in the database.
+     * @param {TicketStatusHistoryUpdateManyAndReturnArgs} args - Arguments to update many TicketStatusHistories.
+     * @example
+     * // Update many TicketStatusHistories
+     * const ticketStatusHistory = await prisma.ticketStatusHistory.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TicketStatusHistories and only return the `id`
+     * const ticketStatusHistoryWithIdOnly = await prisma.ticketStatusHistory.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TicketStatusHistoryUpdateManyAndReturnArgs>(args: SelectSubset<T, TicketStatusHistoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TicketStatusHistory.
+     * @param {TicketStatusHistoryUpsertArgs} args - Arguments to update or create a TicketStatusHistory.
+     * @example
+     * // Update or create a TicketStatusHistory
+     * const ticketStatusHistory = await prisma.ticketStatusHistory.upsert({
+     *   create: {
+     *     // ... data to create a TicketStatusHistory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TicketStatusHistory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TicketStatusHistoryUpsertArgs>(args: SelectSubset<T, TicketStatusHistoryUpsertArgs<ExtArgs>>): Prisma__TicketStatusHistoryClient<$Result.GetResult<Prisma.$TicketStatusHistoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TicketStatusHistories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketStatusHistoryCountArgs} args - Arguments to filter TicketStatusHistories to count.
+     * @example
+     * // Count the number of TicketStatusHistories
+     * const count = await prisma.ticketStatusHistory.count({
+     *   where: {
+     *     // ... the filter for the TicketStatusHistories we want to count
+     *   }
+     * })
+    **/
+    count<T extends TicketStatusHistoryCountArgs>(
+      args?: Subset<T, TicketStatusHistoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TicketStatusHistoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TicketStatusHistory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketStatusHistoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TicketStatusHistoryAggregateArgs>(args: Subset<T, TicketStatusHistoryAggregateArgs>): Prisma.PrismaPromise<GetTicketStatusHistoryAggregateType<T>>
+
+    /**
+     * Group by TicketStatusHistory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketStatusHistoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TicketStatusHistoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TicketStatusHistoryGroupByArgs['orderBy'] }
+        : { orderBy?: TicketStatusHistoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TicketStatusHistoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTicketStatusHistoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TicketStatusHistory model
+   */
+  readonly fields: TicketStatusHistoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TicketStatusHistory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TicketStatusHistoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    ticket<T extends TicketDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TicketDefaultArgs<ExtArgs>>): Prisma__TicketClient<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TicketStatusHistory model
+   */
+  interface TicketStatusHistoryFieldRefs {
+    readonly id: FieldRef<"TicketStatusHistory", 'String'>
+    readonly ticketId: FieldRef<"TicketStatusHistory", 'String'>
+    readonly fromStatus: FieldRef<"TicketStatusHistory", 'TicketStatus'>
+    readonly toStatus: FieldRef<"TicketStatusHistory", 'TicketStatus'>
+    readonly changedBy: FieldRef<"TicketStatusHistory", 'String'>
+    readonly note: FieldRef<"TicketStatusHistory", 'String'>
+    readonly createdAt: FieldRef<"TicketStatusHistory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TicketStatusHistory findUnique
+   */
+  export type TicketStatusHistoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TicketStatusHistory to fetch.
+     */
+    where: TicketStatusHistoryWhereUniqueInput
+  }
+
+  /**
+   * TicketStatusHistory findUniqueOrThrow
+   */
+  export type TicketStatusHistoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TicketStatusHistory to fetch.
+     */
+    where: TicketStatusHistoryWhereUniqueInput
+  }
+
+  /**
+   * TicketStatusHistory findFirst
+   */
+  export type TicketStatusHistoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TicketStatusHistory to fetch.
+     */
+    where?: TicketStatusHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TicketStatusHistories to fetch.
+     */
+    orderBy?: TicketStatusHistoryOrderByWithRelationInput | TicketStatusHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TicketStatusHistories.
+     */
+    cursor?: TicketStatusHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TicketStatusHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TicketStatusHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TicketStatusHistories.
+     */
+    distinct?: TicketStatusHistoryScalarFieldEnum | TicketStatusHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * TicketStatusHistory findFirstOrThrow
+   */
+  export type TicketStatusHistoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TicketStatusHistory to fetch.
+     */
+    where?: TicketStatusHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TicketStatusHistories to fetch.
+     */
+    orderBy?: TicketStatusHistoryOrderByWithRelationInput | TicketStatusHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TicketStatusHistories.
+     */
+    cursor?: TicketStatusHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TicketStatusHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TicketStatusHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TicketStatusHistories.
+     */
+    distinct?: TicketStatusHistoryScalarFieldEnum | TicketStatusHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * TicketStatusHistory findMany
+   */
+  export type TicketStatusHistoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TicketStatusHistories to fetch.
+     */
+    where?: TicketStatusHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TicketStatusHistories to fetch.
+     */
+    orderBy?: TicketStatusHistoryOrderByWithRelationInput | TicketStatusHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TicketStatusHistories.
+     */
+    cursor?: TicketStatusHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TicketStatusHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TicketStatusHistories.
+     */
+    skip?: number
+    distinct?: TicketStatusHistoryScalarFieldEnum | TicketStatusHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * TicketStatusHistory create
+   */
+  export type TicketStatusHistoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TicketStatusHistory.
+     */
+    data: XOR<TicketStatusHistoryCreateInput, TicketStatusHistoryUncheckedCreateInput>
+  }
+
+  /**
+   * TicketStatusHistory createMany
+   */
+  export type TicketStatusHistoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TicketStatusHistories.
+     */
+    data: TicketStatusHistoryCreateManyInput | TicketStatusHistoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TicketStatusHistory createManyAndReturn
+   */
+  export type TicketStatusHistoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many TicketStatusHistories.
+     */
+    data: TicketStatusHistoryCreateManyInput | TicketStatusHistoryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TicketStatusHistory update
+   */
+  export type TicketStatusHistoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TicketStatusHistory.
+     */
+    data: XOR<TicketStatusHistoryUpdateInput, TicketStatusHistoryUncheckedUpdateInput>
+    /**
+     * Choose, which TicketStatusHistory to update.
+     */
+    where: TicketStatusHistoryWhereUniqueInput
+  }
+
+  /**
+   * TicketStatusHistory updateMany
+   */
+  export type TicketStatusHistoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TicketStatusHistories.
+     */
+    data: XOR<TicketStatusHistoryUpdateManyMutationInput, TicketStatusHistoryUncheckedUpdateManyInput>
+    /**
+     * Filter which TicketStatusHistories to update
+     */
+    where?: TicketStatusHistoryWhereInput
+    /**
+     * Limit how many TicketStatusHistories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TicketStatusHistory updateManyAndReturn
+   */
+  export type TicketStatusHistoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * The data used to update TicketStatusHistories.
+     */
+    data: XOR<TicketStatusHistoryUpdateManyMutationInput, TicketStatusHistoryUncheckedUpdateManyInput>
+    /**
+     * Filter which TicketStatusHistories to update
+     */
+    where?: TicketStatusHistoryWhereInput
+    /**
+     * Limit how many TicketStatusHistories to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TicketStatusHistory upsert
+   */
+  export type TicketStatusHistoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TicketStatusHistory to update in case it exists.
+     */
+    where: TicketStatusHistoryWhereUniqueInput
+    /**
+     * In case the TicketStatusHistory found by the `where` argument doesn't exist, create a new TicketStatusHistory with this data.
+     */
+    create: XOR<TicketStatusHistoryCreateInput, TicketStatusHistoryUncheckedCreateInput>
+    /**
+     * In case the TicketStatusHistory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TicketStatusHistoryUpdateInput, TicketStatusHistoryUncheckedUpdateInput>
+  }
+
+  /**
+   * TicketStatusHistory delete
+   */
+  export type TicketStatusHistoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter which TicketStatusHistory to delete.
+     */
+    where: TicketStatusHistoryWhereUniqueInput
+  }
+
+  /**
+   * TicketStatusHistory deleteMany
+   */
+  export type TicketStatusHistoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TicketStatusHistories to delete
+     */
+    where?: TicketStatusHistoryWhereInput
+    /**
+     * Limit how many TicketStatusHistories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TicketStatusHistory without action
+   */
+  export type TicketStatusHistoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketStatusHistory
+     */
+    select?: TicketStatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketStatusHistory
+     */
+    omit?: TicketStatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketStatusHistoryInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TicketAssignmentHistory
+   */
+
+  export type AggregateTicketAssignmentHistory = {
+    _count: TicketAssignmentHistoryCountAggregateOutputType | null
+    _min: TicketAssignmentHistoryMinAggregateOutputType | null
+    _max: TicketAssignmentHistoryMaxAggregateOutputType | null
+  }
+
+  export type TicketAssignmentHistoryMinAggregateOutputType = {
+    id: string | null
+    ticketId: string | null
+    fromAdminId: string | null
+    toAdminId: string | null
+    changedBy: string | null
+    trigger: string | null
+    createdAt: Date | null
+  }
+
+  export type TicketAssignmentHistoryMaxAggregateOutputType = {
+    id: string | null
+    ticketId: string | null
+    fromAdminId: string | null
+    toAdminId: string | null
+    changedBy: string | null
+    trigger: string | null
+    createdAt: Date | null
+  }
+
+  export type TicketAssignmentHistoryCountAggregateOutputType = {
+    id: number
+    ticketId: number
+    fromAdminId: number
+    toAdminId: number
+    changedBy: number
+    trigger: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type TicketAssignmentHistoryMinAggregateInputType = {
+    id?: true
+    ticketId?: true
+    fromAdminId?: true
+    toAdminId?: true
+    changedBy?: true
+    trigger?: true
+    createdAt?: true
+  }
+
+  export type TicketAssignmentHistoryMaxAggregateInputType = {
+    id?: true
+    ticketId?: true
+    fromAdminId?: true
+    toAdminId?: true
+    changedBy?: true
+    trigger?: true
+    createdAt?: true
+  }
+
+  export type TicketAssignmentHistoryCountAggregateInputType = {
+    id?: true
+    ticketId?: true
+    fromAdminId?: true
+    toAdminId?: true
+    changedBy?: true
+    trigger?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type TicketAssignmentHistoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TicketAssignmentHistory to aggregate.
+     */
+    where?: TicketAssignmentHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TicketAssignmentHistories to fetch.
+     */
+    orderBy?: TicketAssignmentHistoryOrderByWithRelationInput | TicketAssignmentHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TicketAssignmentHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TicketAssignmentHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TicketAssignmentHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TicketAssignmentHistories
+    **/
+    _count?: true | TicketAssignmentHistoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TicketAssignmentHistoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TicketAssignmentHistoryMaxAggregateInputType
+  }
+
+  export type GetTicketAssignmentHistoryAggregateType<T extends TicketAssignmentHistoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateTicketAssignmentHistory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTicketAssignmentHistory[P]>
+      : GetScalarType<T[P], AggregateTicketAssignmentHistory[P]>
+  }
+
+
+
+
+  export type TicketAssignmentHistoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TicketAssignmentHistoryWhereInput
+    orderBy?: TicketAssignmentHistoryOrderByWithAggregationInput | TicketAssignmentHistoryOrderByWithAggregationInput[]
+    by: TicketAssignmentHistoryScalarFieldEnum[] | TicketAssignmentHistoryScalarFieldEnum
+    having?: TicketAssignmentHistoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TicketAssignmentHistoryCountAggregateInputType | true
+    _min?: TicketAssignmentHistoryMinAggregateInputType
+    _max?: TicketAssignmentHistoryMaxAggregateInputType
+  }
+
+  export type TicketAssignmentHistoryGroupByOutputType = {
+    id: string
+    ticketId: string
+    fromAdminId: string | null
+    toAdminId: string | null
+    changedBy: string | null
+    trigger: string | null
+    createdAt: Date
+    _count: TicketAssignmentHistoryCountAggregateOutputType | null
+    _min: TicketAssignmentHistoryMinAggregateOutputType | null
+    _max: TicketAssignmentHistoryMaxAggregateOutputType | null
+  }
+
+  type GetTicketAssignmentHistoryGroupByPayload<T extends TicketAssignmentHistoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TicketAssignmentHistoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TicketAssignmentHistoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TicketAssignmentHistoryGroupByOutputType[P]>
+            : GetScalarType<T[P], TicketAssignmentHistoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TicketAssignmentHistorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ticketId?: boolean
+    fromAdminId?: boolean
+    toAdminId?: boolean
+    changedBy?: boolean
+    trigger?: boolean
+    createdAt?: boolean
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ticketAssignmentHistory"]>
+
+  export type TicketAssignmentHistorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ticketId?: boolean
+    fromAdminId?: boolean
+    toAdminId?: boolean
+    changedBy?: boolean
+    trigger?: boolean
+    createdAt?: boolean
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ticketAssignmentHistory"]>
+
+  export type TicketAssignmentHistorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    ticketId?: boolean
+    fromAdminId?: boolean
+    toAdminId?: boolean
+    changedBy?: boolean
+    trigger?: boolean
+    createdAt?: boolean
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["ticketAssignmentHistory"]>
+
+  export type TicketAssignmentHistorySelectScalar = {
+    id?: boolean
+    ticketId?: boolean
+    fromAdminId?: boolean
+    toAdminId?: boolean
+    changedBy?: boolean
+    trigger?: boolean
+    createdAt?: boolean
+  }
+
+  export type TicketAssignmentHistoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "ticketId" | "fromAdminId" | "toAdminId" | "changedBy" | "trigger" | "createdAt", ExtArgs["result"]["ticketAssignmentHistory"]>
+  export type TicketAssignmentHistoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }
+  export type TicketAssignmentHistoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }
+  export type TicketAssignmentHistoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    ticket?: boolean | TicketDefaultArgs<ExtArgs>
+  }
+
+  export type $TicketAssignmentHistoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TicketAssignmentHistory"
+    objects: {
+      ticket: Prisma.$TicketPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      ticketId: string
+      fromAdminId: string | null
+      toAdminId: string | null
+      changedBy: string | null
+      trigger: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["ticketAssignmentHistory"]>
+    composites: {}
+  }
+
+  type TicketAssignmentHistoryGetPayload<S extends boolean | null | undefined | TicketAssignmentHistoryDefaultArgs> = $Result.GetResult<Prisma.$TicketAssignmentHistoryPayload, S>
+
+  type TicketAssignmentHistoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TicketAssignmentHistoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TicketAssignmentHistoryCountAggregateInputType | true
+    }
+
+  export interface TicketAssignmentHistoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TicketAssignmentHistory'], meta: { name: 'TicketAssignmentHistory' } }
+    /**
+     * Find zero or one TicketAssignmentHistory that matches the filter.
+     * @param {TicketAssignmentHistoryFindUniqueArgs} args - Arguments to find a TicketAssignmentHistory
+     * @example
+     * // Get one TicketAssignmentHistory
+     * const ticketAssignmentHistory = await prisma.ticketAssignmentHistory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TicketAssignmentHistoryFindUniqueArgs>(args: SelectSubset<T, TicketAssignmentHistoryFindUniqueArgs<ExtArgs>>): Prisma__TicketAssignmentHistoryClient<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TicketAssignmentHistory that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TicketAssignmentHistoryFindUniqueOrThrowArgs} args - Arguments to find a TicketAssignmentHistory
+     * @example
+     * // Get one TicketAssignmentHistory
+     * const ticketAssignmentHistory = await prisma.ticketAssignmentHistory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TicketAssignmentHistoryFindUniqueOrThrowArgs>(args: SelectSubset<T, TicketAssignmentHistoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TicketAssignmentHistoryClient<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TicketAssignmentHistory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketAssignmentHistoryFindFirstArgs} args - Arguments to find a TicketAssignmentHistory
+     * @example
+     * // Get one TicketAssignmentHistory
+     * const ticketAssignmentHistory = await prisma.ticketAssignmentHistory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TicketAssignmentHistoryFindFirstArgs>(args?: SelectSubset<T, TicketAssignmentHistoryFindFirstArgs<ExtArgs>>): Prisma__TicketAssignmentHistoryClient<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TicketAssignmentHistory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketAssignmentHistoryFindFirstOrThrowArgs} args - Arguments to find a TicketAssignmentHistory
+     * @example
+     * // Get one TicketAssignmentHistory
+     * const ticketAssignmentHistory = await prisma.ticketAssignmentHistory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TicketAssignmentHistoryFindFirstOrThrowArgs>(args?: SelectSubset<T, TicketAssignmentHistoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__TicketAssignmentHistoryClient<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TicketAssignmentHistories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketAssignmentHistoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TicketAssignmentHistories
+     * const ticketAssignmentHistories = await prisma.ticketAssignmentHistory.findMany()
+     * 
+     * // Get first 10 TicketAssignmentHistories
+     * const ticketAssignmentHistories = await prisma.ticketAssignmentHistory.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const ticketAssignmentHistoryWithIdOnly = await prisma.ticketAssignmentHistory.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TicketAssignmentHistoryFindManyArgs>(args?: SelectSubset<T, TicketAssignmentHistoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TicketAssignmentHistory.
+     * @param {TicketAssignmentHistoryCreateArgs} args - Arguments to create a TicketAssignmentHistory.
+     * @example
+     * // Create one TicketAssignmentHistory
+     * const TicketAssignmentHistory = await prisma.ticketAssignmentHistory.create({
+     *   data: {
+     *     // ... data to create a TicketAssignmentHistory
+     *   }
+     * })
+     * 
+     */
+    create<T extends TicketAssignmentHistoryCreateArgs>(args: SelectSubset<T, TicketAssignmentHistoryCreateArgs<ExtArgs>>): Prisma__TicketAssignmentHistoryClient<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TicketAssignmentHistories.
+     * @param {TicketAssignmentHistoryCreateManyArgs} args - Arguments to create many TicketAssignmentHistories.
+     * @example
+     * // Create many TicketAssignmentHistories
+     * const ticketAssignmentHistory = await prisma.ticketAssignmentHistory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TicketAssignmentHistoryCreateManyArgs>(args?: SelectSubset<T, TicketAssignmentHistoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TicketAssignmentHistories and returns the data saved in the database.
+     * @param {TicketAssignmentHistoryCreateManyAndReturnArgs} args - Arguments to create many TicketAssignmentHistories.
+     * @example
+     * // Create many TicketAssignmentHistories
+     * const ticketAssignmentHistory = await prisma.ticketAssignmentHistory.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TicketAssignmentHistories and only return the `id`
+     * const ticketAssignmentHistoryWithIdOnly = await prisma.ticketAssignmentHistory.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TicketAssignmentHistoryCreateManyAndReturnArgs>(args?: SelectSubset<T, TicketAssignmentHistoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TicketAssignmentHistory.
+     * @param {TicketAssignmentHistoryDeleteArgs} args - Arguments to delete one TicketAssignmentHistory.
+     * @example
+     * // Delete one TicketAssignmentHistory
+     * const TicketAssignmentHistory = await prisma.ticketAssignmentHistory.delete({
+     *   where: {
+     *     // ... filter to delete one TicketAssignmentHistory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TicketAssignmentHistoryDeleteArgs>(args: SelectSubset<T, TicketAssignmentHistoryDeleteArgs<ExtArgs>>): Prisma__TicketAssignmentHistoryClient<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TicketAssignmentHistory.
+     * @param {TicketAssignmentHistoryUpdateArgs} args - Arguments to update one TicketAssignmentHistory.
+     * @example
+     * // Update one TicketAssignmentHistory
+     * const ticketAssignmentHistory = await prisma.ticketAssignmentHistory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TicketAssignmentHistoryUpdateArgs>(args: SelectSubset<T, TicketAssignmentHistoryUpdateArgs<ExtArgs>>): Prisma__TicketAssignmentHistoryClient<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TicketAssignmentHistories.
+     * @param {TicketAssignmentHistoryDeleteManyArgs} args - Arguments to filter TicketAssignmentHistories to delete.
+     * @example
+     * // Delete a few TicketAssignmentHistories
+     * const { count } = await prisma.ticketAssignmentHistory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TicketAssignmentHistoryDeleteManyArgs>(args?: SelectSubset<T, TicketAssignmentHistoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TicketAssignmentHistories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketAssignmentHistoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TicketAssignmentHistories
+     * const ticketAssignmentHistory = await prisma.ticketAssignmentHistory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TicketAssignmentHistoryUpdateManyArgs>(args: SelectSubset<T, TicketAssignmentHistoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TicketAssignmentHistories and returns the data updated in the database.
+     * @param {TicketAssignmentHistoryUpdateManyAndReturnArgs} args - Arguments to update many TicketAssignmentHistories.
+     * @example
+     * // Update many TicketAssignmentHistories
+     * const ticketAssignmentHistory = await prisma.ticketAssignmentHistory.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TicketAssignmentHistories and only return the `id`
+     * const ticketAssignmentHistoryWithIdOnly = await prisma.ticketAssignmentHistory.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TicketAssignmentHistoryUpdateManyAndReturnArgs>(args: SelectSubset<T, TicketAssignmentHistoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TicketAssignmentHistory.
+     * @param {TicketAssignmentHistoryUpsertArgs} args - Arguments to update or create a TicketAssignmentHistory.
+     * @example
+     * // Update or create a TicketAssignmentHistory
+     * const ticketAssignmentHistory = await prisma.ticketAssignmentHistory.upsert({
+     *   create: {
+     *     // ... data to create a TicketAssignmentHistory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TicketAssignmentHistory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TicketAssignmentHistoryUpsertArgs>(args: SelectSubset<T, TicketAssignmentHistoryUpsertArgs<ExtArgs>>): Prisma__TicketAssignmentHistoryClient<$Result.GetResult<Prisma.$TicketAssignmentHistoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TicketAssignmentHistories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketAssignmentHistoryCountArgs} args - Arguments to filter TicketAssignmentHistories to count.
+     * @example
+     * // Count the number of TicketAssignmentHistories
+     * const count = await prisma.ticketAssignmentHistory.count({
+     *   where: {
+     *     // ... the filter for the TicketAssignmentHistories we want to count
+     *   }
+     * })
+    **/
+    count<T extends TicketAssignmentHistoryCountArgs>(
+      args?: Subset<T, TicketAssignmentHistoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TicketAssignmentHistoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TicketAssignmentHistory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketAssignmentHistoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TicketAssignmentHistoryAggregateArgs>(args: Subset<T, TicketAssignmentHistoryAggregateArgs>): Prisma.PrismaPromise<GetTicketAssignmentHistoryAggregateType<T>>
+
+    /**
+     * Group by TicketAssignmentHistory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TicketAssignmentHistoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TicketAssignmentHistoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TicketAssignmentHistoryGroupByArgs['orderBy'] }
+        : { orderBy?: TicketAssignmentHistoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TicketAssignmentHistoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTicketAssignmentHistoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TicketAssignmentHistory model
+   */
+  readonly fields: TicketAssignmentHistoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TicketAssignmentHistory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TicketAssignmentHistoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    ticket<T extends TicketDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TicketDefaultArgs<ExtArgs>>): Prisma__TicketClient<$Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TicketAssignmentHistory model
+   */
+  interface TicketAssignmentHistoryFieldRefs {
+    readonly id: FieldRef<"TicketAssignmentHistory", 'String'>
+    readonly ticketId: FieldRef<"TicketAssignmentHistory", 'String'>
+    readonly fromAdminId: FieldRef<"TicketAssignmentHistory", 'String'>
+    readonly toAdminId: FieldRef<"TicketAssignmentHistory", 'String'>
+    readonly changedBy: FieldRef<"TicketAssignmentHistory", 'String'>
+    readonly trigger: FieldRef<"TicketAssignmentHistory", 'String'>
+    readonly createdAt: FieldRef<"TicketAssignmentHistory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TicketAssignmentHistory findUnique
+   */
+  export type TicketAssignmentHistoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TicketAssignmentHistory to fetch.
+     */
+    where: TicketAssignmentHistoryWhereUniqueInput
+  }
+
+  /**
+   * TicketAssignmentHistory findUniqueOrThrow
+   */
+  export type TicketAssignmentHistoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TicketAssignmentHistory to fetch.
+     */
+    where: TicketAssignmentHistoryWhereUniqueInput
+  }
+
+  /**
+   * TicketAssignmentHistory findFirst
+   */
+  export type TicketAssignmentHistoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TicketAssignmentHistory to fetch.
+     */
+    where?: TicketAssignmentHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TicketAssignmentHistories to fetch.
+     */
+    orderBy?: TicketAssignmentHistoryOrderByWithRelationInput | TicketAssignmentHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TicketAssignmentHistories.
+     */
+    cursor?: TicketAssignmentHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TicketAssignmentHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TicketAssignmentHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TicketAssignmentHistories.
+     */
+    distinct?: TicketAssignmentHistoryScalarFieldEnum | TicketAssignmentHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * TicketAssignmentHistory findFirstOrThrow
+   */
+  export type TicketAssignmentHistoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TicketAssignmentHistory to fetch.
+     */
+    where?: TicketAssignmentHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TicketAssignmentHistories to fetch.
+     */
+    orderBy?: TicketAssignmentHistoryOrderByWithRelationInput | TicketAssignmentHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TicketAssignmentHistories.
+     */
+    cursor?: TicketAssignmentHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TicketAssignmentHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TicketAssignmentHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TicketAssignmentHistories.
+     */
+    distinct?: TicketAssignmentHistoryScalarFieldEnum | TicketAssignmentHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * TicketAssignmentHistory findMany
+   */
+  export type TicketAssignmentHistoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which TicketAssignmentHistories to fetch.
+     */
+    where?: TicketAssignmentHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TicketAssignmentHistories to fetch.
+     */
+    orderBy?: TicketAssignmentHistoryOrderByWithRelationInput | TicketAssignmentHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TicketAssignmentHistories.
+     */
+    cursor?: TicketAssignmentHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TicketAssignmentHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TicketAssignmentHistories.
+     */
+    skip?: number
+    distinct?: TicketAssignmentHistoryScalarFieldEnum | TicketAssignmentHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * TicketAssignmentHistory create
+   */
+  export type TicketAssignmentHistoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TicketAssignmentHistory.
+     */
+    data: XOR<TicketAssignmentHistoryCreateInput, TicketAssignmentHistoryUncheckedCreateInput>
+  }
+
+  /**
+   * TicketAssignmentHistory createMany
+   */
+  export type TicketAssignmentHistoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TicketAssignmentHistories.
+     */
+    data: TicketAssignmentHistoryCreateManyInput | TicketAssignmentHistoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TicketAssignmentHistory createManyAndReturn
+   */
+  export type TicketAssignmentHistoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many TicketAssignmentHistories.
+     */
+    data: TicketAssignmentHistoryCreateManyInput | TicketAssignmentHistoryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TicketAssignmentHistory update
+   */
+  export type TicketAssignmentHistoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TicketAssignmentHistory.
+     */
+    data: XOR<TicketAssignmentHistoryUpdateInput, TicketAssignmentHistoryUncheckedUpdateInput>
+    /**
+     * Choose, which TicketAssignmentHistory to update.
+     */
+    where: TicketAssignmentHistoryWhereUniqueInput
+  }
+
+  /**
+   * TicketAssignmentHistory updateMany
+   */
+  export type TicketAssignmentHistoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TicketAssignmentHistories.
+     */
+    data: XOR<TicketAssignmentHistoryUpdateManyMutationInput, TicketAssignmentHistoryUncheckedUpdateManyInput>
+    /**
+     * Filter which TicketAssignmentHistories to update
+     */
+    where?: TicketAssignmentHistoryWhereInput
+    /**
+     * Limit how many TicketAssignmentHistories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TicketAssignmentHistory updateManyAndReturn
+   */
+  export type TicketAssignmentHistoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * The data used to update TicketAssignmentHistories.
+     */
+    data: XOR<TicketAssignmentHistoryUpdateManyMutationInput, TicketAssignmentHistoryUncheckedUpdateManyInput>
+    /**
+     * Filter which TicketAssignmentHistories to update
+     */
+    where?: TicketAssignmentHistoryWhereInput
+    /**
+     * Limit how many TicketAssignmentHistories to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TicketAssignmentHistory upsert
+   */
+  export type TicketAssignmentHistoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TicketAssignmentHistory to update in case it exists.
+     */
+    where: TicketAssignmentHistoryWhereUniqueInput
+    /**
+     * In case the TicketAssignmentHistory found by the `where` argument doesn't exist, create a new TicketAssignmentHistory with this data.
+     */
+    create: XOR<TicketAssignmentHistoryCreateInput, TicketAssignmentHistoryUncheckedCreateInput>
+    /**
+     * In case the TicketAssignmentHistory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TicketAssignmentHistoryUpdateInput, TicketAssignmentHistoryUncheckedUpdateInput>
+  }
+
+  /**
+   * TicketAssignmentHistory delete
+   */
+  export type TicketAssignmentHistoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryInclude<ExtArgs> | null
+    /**
+     * Filter which TicketAssignmentHistory to delete.
+     */
+    where: TicketAssignmentHistoryWhereUniqueInput
+  }
+
+  /**
+   * TicketAssignmentHistory deleteMany
+   */
+  export type TicketAssignmentHistoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TicketAssignmentHistories to delete
+     */
+    where?: TicketAssignmentHistoryWhereInput
+    /**
+     * Limit how many TicketAssignmentHistories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TicketAssignmentHistory without action
+   */
+  export type TicketAssignmentHistoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TicketAssignmentHistory
+     */
+    select?: TicketAssignmentHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TicketAssignmentHistory
+     */
+    omit?: TicketAssignmentHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TicketAssignmentHistoryInclude<ExtArgs> | null
   }
 
 
@@ -4426,6 +8323,1040 @@ export namespace Prisma {
 
 
   /**
+   * Model AdminUser
+   */
+
+  export type AggregateAdminUser = {
+    _count: AdminUserCountAggregateOutputType | null
+    _min: AdminUserMinAggregateOutputType | null
+    _max: AdminUserMaxAggregateOutputType | null
+  }
+
+  export type AdminUserMinAggregateOutputType = {
+    id: string | null
+    username: string | null
+    password: string | null
+    name: string | null
+    active: boolean | null
+    isOnline: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AdminUserMaxAggregateOutputType = {
+    id: string | null
+    username: string | null
+    password: string | null
+    name: string | null
+    active: boolean | null
+    isOnline: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type AdminUserCountAggregateOutputType = {
+    id: number
+    username: number
+    password: number
+    name: number
+    active: number
+    isOnline: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type AdminUserMinAggregateInputType = {
+    id?: true
+    username?: true
+    password?: true
+    name?: true
+    active?: true
+    isOnline?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AdminUserMaxAggregateInputType = {
+    id?: true
+    username?: true
+    password?: true
+    name?: true
+    active?: true
+    isOnline?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type AdminUserCountAggregateInputType = {
+    id?: true
+    username?: true
+    password?: true
+    name?: true
+    active?: true
+    isOnline?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type AdminUserAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AdminUser to aggregate.
+     */
+    where?: AdminUserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminUsers to fetch.
+     */
+    orderBy?: AdminUserOrderByWithRelationInput | AdminUserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AdminUserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminUsers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminUsers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AdminUsers
+    **/
+    _count?: true | AdminUserCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AdminUserMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AdminUserMaxAggregateInputType
+  }
+
+  export type GetAdminUserAggregateType<T extends AdminUserAggregateArgs> = {
+        [P in keyof T & keyof AggregateAdminUser]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAdminUser[P]>
+      : GetScalarType<T[P], AggregateAdminUser[P]>
+  }
+
+
+
+
+  export type AdminUserGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AdminUserWhereInput
+    orderBy?: AdminUserOrderByWithAggregationInput | AdminUserOrderByWithAggregationInput[]
+    by: AdminUserScalarFieldEnum[] | AdminUserScalarFieldEnum
+    having?: AdminUserScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AdminUserCountAggregateInputType | true
+    _min?: AdminUserMinAggregateInputType
+    _max?: AdminUserMaxAggregateInputType
+  }
+
+  export type AdminUserGroupByOutputType = {
+    id: string
+    username: string
+    password: string
+    name: string
+    active: boolean
+    isOnline: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: AdminUserCountAggregateOutputType | null
+    _min: AdminUserMinAggregateOutputType | null
+    _max: AdminUserMaxAggregateOutputType | null
+  }
+
+  type GetAdminUserGroupByPayload<T extends AdminUserGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AdminUserGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AdminUserGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AdminUserGroupByOutputType[P]>
+            : GetScalarType<T[P], AdminUserGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AdminUserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    username?: boolean
+    password?: boolean
+    name?: boolean
+    active?: boolean
+    isOnline?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["adminUser"]>
+
+  export type AdminUserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    username?: boolean
+    password?: boolean
+    name?: boolean
+    active?: boolean
+    isOnline?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["adminUser"]>
+
+  export type AdminUserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    username?: boolean
+    password?: boolean
+    name?: boolean
+    active?: boolean
+    isOnline?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["adminUser"]>
+
+  export type AdminUserSelectScalar = {
+    id?: boolean
+    username?: boolean
+    password?: boolean
+    name?: boolean
+    active?: boolean
+    isOnline?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type AdminUserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "password" | "name" | "active" | "isOnline" | "createdAt" | "updatedAt", ExtArgs["result"]["adminUser"]>
+
+  export type $AdminUserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AdminUser"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      username: string
+      password: string
+      name: string
+      active: boolean
+      isOnline: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["adminUser"]>
+    composites: {}
+  }
+
+  type AdminUserGetPayload<S extends boolean | null | undefined | AdminUserDefaultArgs> = $Result.GetResult<Prisma.$AdminUserPayload, S>
+
+  type AdminUserCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AdminUserFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AdminUserCountAggregateInputType | true
+    }
+
+  export interface AdminUserDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AdminUser'], meta: { name: 'AdminUser' } }
+    /**
+     * Find zero or one AdminUser that matches the filter.
+     * @param {AdminUserFindUniqueArgs} args - Arguments to find a AdminUser
+     * @example
+     * // Get one AdminUser
+     * const adminUser = await prisma.adminUser.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AdminUserFindUniqueArgs>(args: SelectSubset<T, AdminUserFindUniqueArgs<ExtArgs>>): Prisma__AdminUserClient<$Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AdminUser that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AdminUserFindUniqueOrThrowArgs} args - Arguments to find a AdminUser
+     * @example
+     * // Get one AdminUser
+     * const adminUser = await prisma.adminUser.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AdminUserFindUniqueOrThrowArgs>(args: SelectSubset<T, AdminUserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AdminUserClient<$Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AdminUser that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminUserFindFirstArgs} args - Arguments to find a AdminUser
+     * @example
+     * // Get one AdminUser
+     * const adminUser = await prisma.adminUser.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AdminUserFindFirstArgs>(args?: SelectSubset<T, AdminUserFindFirstArgs<ExtArgs>>): Prisma__AdminUserClient<$Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AdminUser that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminUserFindFirstOrThrowArgs} args - Arguments to find a AdminUser
+     * @example
+     * // Get one AdminUser
+     * const adminUser = await prisma.adminUser.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AdminUserFindFirstOrThrowArgs>(args?: SelectSubset<T, AdminUserFindFirstOrThrowArgs<ExtArgs>>): Prisma__AdminUserClient<$Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AdminUsers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminUserFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AdminUsers
+     * const adminUsers = await prisma.adminUser.findMany()
+     * 
+     * // Get first 10 AdminUsers
+     * const adminUsers = await prisma.adminUser.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const adminUserWithIdOnly = await prisma.adminUser.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AdminUserFindManyArgs>(args?: SelectSubset<T, AdminUserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AdminUser.
+     * @param {AdminUserCreateArgs} args - Arguments to create a AdminUser.
+     * @example
+     * // Create one AdminUser
+     * const AdminUser = await prisma.adminUser.create({
+     *   data: {
+     *     // ... data to create a AdminUser
+     *   }
+     * })
+     * 
+     */
+    create<T extends AdminUserCreateArgs>(args: SelectSubset<T, AdminUserCreateArgs<ExtArgs>>): Prisma__AdminUserClient<$Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AdminUsers.
+     * @param {AdminUserCreateManyArgs} args - Arguments to create many AdminUsers.
+     * @example
+     * // Create many AdminUsers
+     * const adminUser = await prisma.adminUser.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AdminUserCreateManyArgs>(args?: SelectSubset<T, AdminUserCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AdminUsers and returns the data saved in the database.
+     * @param {AdminUserCreateManyAndReturnArgs} args - Arguments to create many AdminUsers.
+     * @example
+     * // Create many AdminUsers
+     * const adminUser = await prisma.adminUser.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AdminUsers and only return the `id`
+     * const adminUserWithIdOnly = await prisma.adminUser.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AdminUserCreateManyAndReturnArgs>(args?: SelectSubset<T, AdminUserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AdminUser.
+     * @param {AdminUserDeleteArgs} args - Arguments to delete one AdminUser.
+     * @example
+     * // Delete one AdminUser
+     * const AdminUser = await prisma.adminUser.delete({
+     *   where: {
+     *     // ... filter to delete one AdminUser
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AdminUserDeleteArgs>(args: SelectSubset<T, AdminUserDeleteArgs<ExtArgs>>): Prisma__AdminUserClient<$Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AdminUser.
+     * @param {AdminUserUpdateArgs} args - Arguments to update one AdminUser.
+     * @example
+     * // Update one AdminUser
+     * const adminUser = await prisma.adminUser.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AdminUserUpdateArgs>(args: SelectSubset<T, AdminUserUpdateArgs<ExtArgs>>): Prisma__AdminUserClient<$Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AdminUsers.
+     * @param {AdminUserDeleteManyArgs} args - Arguments to filter AdminUsers to delete.
+     * @example
+     * // Delete a few AdminUsers
+     * const { count } = await prisma.adminUser.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AdminUserDeleteManyArgs>(args?: SelectSubset<T, AdminUserDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AdminUsers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminUserUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AdminUsers
+     * const adminUser = await prisma.adminUser.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AdminUserUpdateManyArgs>(args: SelectSubset<T, AdminUserUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AdminUsers and returns the data updated in the database.
+     * @param {AdminUserUpdateManyAndReturnArgs} args - Arguments to update many AdminUsers.
+     * @example
+     * // Update many AdminUsers
+     * const adminUser = await prisma.adminUser.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AdminUsers and only return the `id`
+     * const adminUserWithIdOnly = await prisma.adminUser.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AdminUserUpdateManyAndReturnArgs>(args: SelectSubset<T, AdminUserUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AdminUser.
+     * @param {AdminUserUpsertArgs} args - Arguments to update or create a AdminUser.
+     * @example
+     * // Update or create a AdminUser
+     * const adminUser = await prisma.adminUser.upsert({
+     *   create: {
+     *     // ... data to create a AdminUser
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AdminUser we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AdminUserUpsertArgs>(args: SelectSubset<T, AdminUserUpsertArgs<ExtArgs>>): Prisma__AdminUserClient<$Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AdminUsers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminUserCountArgs} args - Arguments to filter AdminUsers to count.
+     * @example
+     * // Count the number of AdminUsers
+     * const count = await prisma.adminUser.count({
+     *   where: {
+     *     // ... the filter for the AdminUsers we want to count
+     *   }
+     * })
+    **/
+    count<T extends AdminUserCountArgs>(
+      args?: Subset<T, AdminUserCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AdminUserCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AdminUser.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminUserAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AdminUserAggregateArgs>(args: Subset<T, AdminUserAggregateArgs>): Prisma.PrismaPromise<GetAdminUserAggregateType<T>>
+
+    /**
+     * Group by AdminUser.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AdminUserGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AdminUserGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AdminUserGroupByArgs['orderBy'] }
+        : { orderBy?: AdminUserGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AdminUserGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAdminUserGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AdminUser model
+   */
+  readonly fields: AdminUserFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AdminUser.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AdminUserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AdminUser model
+   */
+  interface AdminUserFieldRefs {
+    readonly id: FieldRef<"AdminUser", 'String'>
+    readonly username: FieldRef<"AdminUser", 'String'>
+    readonly password: FieldRef<"AdminUser", 'String'>
+    readonly name: FieldRef<"AdminUser", 'String'>
+    readonly active: FieldRef<"AdminUser", 'Boolean'>
+    readonly isOnline: FieldRef<"AdminUser", 'Boolean'>
+    readonly createdAt: FieldRef<"AdminUser", 'DateTime'>
+    readonly updatedAt: FieldRef<"AdminUser", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AdminUser findUnique
+   */
+  export type AdminUserFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+    /**
+     * Filter, which AdminUser to fetch.
+     */
+    where: AdminUserWhereUniqueInput
+  }
+
+  /**
+   * AdminUser findUniqueOrThrow
+   */
+  export type AdminUserFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+    /**
+     * Filter, which AdminUser to fetch.
+     */
+    where: AdminUserWhereUniqueInput
+  }
+
+  /**
+   * AdminUser findFirst
+   */
+  export type AdminUserFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+    /**
+     * Filter, which AdminUser to fetch.
+     */
+    where?: AdminUserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminUsers to fetch.
+     */
+    orderBy?: AdminUserOrderByWithRelationInput | AdminUserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AdminUsers.
+     */
+    cursor?: AdminUserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminUsers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminUsers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AdminUsers.
+     */
+    distinct?: AdminUserScalarFieldEnum | AdminUserScalarFieldEnum[]
+  }
+
+  /**
+   * AdminUser findFirstOrThrow
+   */
+  export type AdminUserFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+    /**
+     * Filter, which AdminUser to fetch.
+     */
+    where?: AdminUserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminUsers to fetch.
+     */
+    orderBy?: AdminUserOrderByWithRelationInput | AdminUserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AdminUsers.
+     */
+    cursor?: AdminUserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminUsers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminUsers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AdminUsers.
+     */
+    distinct?: AdminUserScalarFieldEnum | AdminUserScalarFieldEnum[]
+  }
+
+  /**
+   * AdminUser findMany
+   */
+  export type AdminUserFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+    /**
+     * Filter, which AdminUsers to fetch.
+     */
+    where?: AdminUserWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AdminUsers to fetch.
+     */
+    orderBy?: AdminUserOrderByWithRelationInput | AdminUserOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AdminUsers.
+     */
+    cursor?: AdminUserWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AdminUsers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AdminUsers.
+     */
+    skip?: number
+    distinct?: AdminUserScalarFieldEnum | AdminUserScalarFieldEnum[]
+  }
+
+  /**
+   * AdminUser create
+   */
+  export type AdminUserCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+    /**
+     * The data needed to create a AdminUser.
+     */
+    data: XOR<AdminUserCreateInput, AdminUserUncheckedCreateInput>
+  }
+
+  /**
+   * AdminUser createMany
+   */
+  export type AdminUserCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AdminUsers.
+     */
+    data: AdminUserCreateManyInput | AdminUserCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AdminUser createManyAndReturn
+   */
+  export type AdminUserCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+    /**
+     * The data used to create many AdminUsers.
+     */
+    data: AdminUserCreateManyInput | AdminUserCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AdminUser update
+   */
+  export type AdminUserUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+    /**
+     * The data needed to update a AdminUser.
+     */
+    data: XOR<AdminUserUpdateInput, AdminUserUncheckedUpdateInput>
+    /**
+     * Choose, which AdminUser to update.
+     */
+    where: AdminUserWhereUniqueInput
+  }
+
+  /**
+   * AdminUser updateMany
+   */
+  export type AdminUserUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AdminUsers.
+     */
+    data: XOR<AdminUserUpdateManyMutationInput, AdminUserUncheckedUpdateManyInput>
+    /**
+     * Filter which AdminUsers to update
+     */
+    where?: AdminUserWhereInput
+    /**
+     * Limit how many AdminUsers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AdminUser updateManyAndReturn
+   */
+  export type AdminUserUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+    /**
+     * The data used to update AdminUsers.
+     */
+    data: XOR<AdminUserUpdateManyMutationInput, AdminUserUncheckedUpdateManyInput>
+    /**
+     * Filter which AdminUsers to update
+     */
+    where?: AdminUserWhereInput
+    /**
+     * Limit how many AdminUsers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AdminUser upsert
+   */
+  export type AdminUserUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+    /**
+     * The filter to search for the AdminUser to update in case it exists.
+     */
+    where: AdminUserWhereUniqueInput
+    /**
+     * In case the AdminUser found by the `where` argument doesn't exist, create a new AdminUser with this data.
+     */
+    create: XOR<AdminUserCreateInput, AdminUserUncheckedCreateInput>
+    /**
+     * In case the AdminUser was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AdminUserUpdateInput, AdminUserUncheckedUpdateInput>
+  }
+
+  /**
+   * AdminUser delete
+   */
+  export type AdminUserDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+    /**
+     * Filter which AdminUser to delete.
+     */
+    where: AdminUserWhereUniqueInput
+  }
+
+  /**
+   * AdminUser deleteMany
+   */
+  export type AdminUserDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AdminUsers to delete
+     */
+    where?: AdminUserWhereInput
+    /**
+     * Limit how many AdminUsers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AdminUser without action
+   */
+  export type AdminUserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AdminUser
+     */
+    select?: AdminUserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AdminUser
+     */
+    omit?: AdminUserOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -4444,6 +9375,9 @@ export namespace Prisma {
     code: 'code',
     title: 'title',
     description: 'description',
+    reporterKey: 'reporterKey',
+    reporterName: 'reporterName',
+    reporterLocation: 'reporterLocation',
     priority: 'priority',
     category: 'category',
     status: 'status',
@@ -4451,6 +9385,8 @@ export namespace Prisma {
     resolveDueAt: 'resolveDueAt',
     firstReplyAt: 'firstReplyAt',
     closedAt: 'closedAt',
+    feedbackRating: 'feedbackRating',
+    feedbackSubmittedAt: 'feedbackSubmittedAt',
     assignedAdminId: 'assignedAdminId',
     assignedAt: 'assignedAt',
     lastAdminReadAt: 'lastAdminReadAt',
@@ -4472,6 +9408,46 @@ export namespace Prisma {
   export type TicketMessageScalarFieldEnum = (typeof TicketMessageScalarFieldEnum)[keyof typeof TicketMessageScalarFieldEnum]
 
 
+  export const MessageAttachmentScalarFieldEnum: {
+    id: 'id',
+    messageId: 'messageId',
+    url: 'url',
+    caption: 'caption',
+    mimeType: 'mimeType',
+    fileName: 'fileName',
+    size: 'size',
+    createdAt: 'createdAt'
+  };
+
+  export type MessageAttachmentScalarFieldEnum = (typeof MessageAttachmentScalarFieldEnum)[keyof typeof MessageAttachmentScalarFieldEnum]
+
+
+  export const TicketStatusHistoryScalarFieldEnum: {
+    id: 'id',
+    ticketId: 'ticketId',
+    fromStatus: 'fromStatus',
+    toStatus: 'toStatus',
+    changedBy: 'changedBy',
+    note: 'note',
+    createdAt: 'createdAt'
+  };
+
+  export type TicketStatusHistoryScalarFieldEnum = (typeof TicketStatusHistoryScalarFieldEnum)[keyof typeof TicketStatusHistoryScalarFieldEnum]
+
+
+  export const TicketAssignmentHistoryScalarFieldEnum: {
+    id: 'id',
+    ticketId: 'ticketId',
+    fromAdminId: 'fromAdminId',
+    toAdminId: 'toAdminId',
+    changedBy: 'changedBy',
+    trigger: 'trigger',
+    createdAt: 'createdAt'
+  };
+
+  export type TicketAssignmentHistoryScalarFieldEnum = (typeof TicketAssignmentHistoryScalarFieldEnum)[keyof typeof TicketAssignmentHistoryScalarFieldEnum]
+
+
   export const SlaPolicyScalarFieldEnum: {
     id: 'id',
     priority: 'priority',
@@ -4481,6 +9457,20 @@ export namespace Prisma {
   };
 
   export type SlaPolicyScalarFieldEnum = (typeof SlaPolicyScalarFieldEnum)[keyof typeof SlaPolicyScalarFieldEnum]
+
+
+  export const AdminUserScalarFieldEnum: {
+    id: 'id',
+    username: 'username',
+    password: 'password',
+    name: 'name',
+    active: 'active',
+    isOnline: 'isOnline',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type AdminUserScalarFieldEnum = (typeof AdminUserScalarFieldEnum)[keyof typeof AdminUserScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -4628,6 +9618,9 @@ export namespace Prisma {
     code?: StringFilter<"Ticket"> | string
     title?: StringFilter<"Ticket"> | string
     description?: StringFilter<"Ticket"> | string
+    reporterKey?: StringNullableFilter<"Ticket"> | string | null
+    reporterName?: StringNullableFilter<"Ticket"> | string | null
+    reporterLocation?: StringNullableFilter<"Ticket"> | string | null
     priority?: EnumTicketPriorityFilter<"Ticket"> | $Enums.TicketPriority
     category?: EnumTicketCategoryFilter<"Ticket"> | $Enums.TicketCategory
     status?: EnumTicketStatusFilter<"Ticket"> | $Enums.TicketStatus
@@ -4635,12 +9628,16 @@ export namespace Prisma {
     resolveDueAt?: DateTimeFilter<"Ticket"> | Date | string
     firstReplyAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     closedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
+    feedbackRating?: IntNullableFilter<"Ticket"> | number | null
+    feedbackSubmittedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     assignedAdminId?: StringNullableFilter<"Ticket"> | string | null
     assignedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     lastAdminReadAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     createdAt?: DateTimeFilter<"Ticket"> | Date | string
     updatedAt?: DateTimeFilter<"Ticket"> | Date | string
     messages?: TicketMessageListRelationFilter
+    statusHistory?: TicketStatusHistoryListRelationFilter
+    assignmentHistory?: TicketAssignmentHistoryListRelationFilter
   }
 
   export type TicketOrderByWithRelationInput = {
@@ -4648,6 +9645,9 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterKey?: SortOrderInput | SortOrder
+    reporterName?: SortOrderInput | SortOrder
+    reporterLocation?: SortOrderInput | SortOrder
     priority?: SortOrder
     category?: SortOrder
     status?: SortOrder
@@ -4655,12 +9655,16 @@ export namespace Prisma {
     resolveDueAt?: SortOrder
     firstReplyAt?: SortOrderInput | SortOrder
     closedAt?: SortOrderInput | SortOrder
+    feedbackRating?: SortOrderInput | SortOrder
+    feedbackSubmittedAt?: SortOrderInput | SortOrder
     assignedAdminId?: SortOrderInput | SortOrder
     assignedAt?: SortOrderInput | SortOrder
     lastAdminReadAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     messages?: TicketMessageOrderByRelationAggregateInput
+    statusHistory?: TicketStatusHistoryOrderByRelationAggregateInput
+    assignmentHistory?: TicketAssignmentHistoryOrderByRelationAggregateInput
   }
 
   export type TicketWhereUniqueInput = Prisma.AtLeast<{
@@ -4671,6 +9675,9 @@ export namespace Prisma {
     NOT?: TicketWhereInput | TicketWhereInput[]
     title?: StringFilter<"Ticket"> | string
     description?: StringFilter<"Ticket"> | string
+    reporterKey?: StringNullableFilter<"Ticket"> | string | null
+    reporterName?: StringNullableFilter<"Ticket"> | string | null
+    reporterLocation?: StringNullableFilter<"Ticket"> | string | null
     priority?: EnumTicketPriorityFilter<"Ticket"> | $Enums.TicketPriority
     category?: EnumTicketCategoryFilter<"Ticket"> | $Enums.TicketCategory
     status?: EnumTicketStatusFilter<"Ticket"> | $Enums.TicketStatus
@@ -4678,12 +9685,16 @@ export namespace Prisma {
     resolveDueAt?: DateTimeFilter<"Ticket"> | Date | string
     firstReplyAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     closedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
+    feedbackRating?: IntNullableFilter<"Ticket"> | number | null
+    feedbackSubmittedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     assignedAdminId?: StringNullableFilter<"Ticket"> | string | null
     assignedAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     lastAdminReadAt?: DateTimeNullableFilter<"Ticket"> | Date | string | null
     createdAt?: DateTimeFilter<"Ticket"> | Date | string
     updatedAt?: DateTimeFilter<"Ticket"> | Date | string
     messages?: TicketMessageListRelationFilter
+    statusHistory?: TicketStatusHistoryListRelationFilter
+    assignmentHistory?: TicketAssignmentHistoryListRelationFilter
   }, "id" | "code">
 
   export type TicketOrderByWithAggregationInput = {
@@ -4691,6 +9702,9 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterKey?: SortOrderInput | SortOrder
+    reporterName?: SortOrderInput | SortOrder
+    reporterLocation?: SortOrderInput | SortOrder
     priority?: SortOrder
     category?: SortOrder
     status?: SortOrder
@@ -4698,14 +9712,18 @@ export namespace Prisma {
     resolveDueAt?: SortOrder
     firstReplyAt?: SortOrderInput | SortOrder
     closedAt?: SortOrderInput | SortOrder
+    feedbackRating?: SortOrderInput | SortOrder
+    feedbackSubmittedAt?: SortOrderInput | SortOrder
     assignedAdminId?: SortOrderInput | SortOrder
     assignedAt?: SortOrderInput | SortOrder
     lastAdminReadAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: TicketCountOrderByAggregateInput
+    _avg?: TicketAvgOrderByAggregateInput
     _max?: TicketMaxOrderByAggregateInput
     _min?: TicketMinOrderByAggregateInput
+    _sum?: TicketSumOrderByAggregateInput
   }
 
   export type TicketScalarWhereWithAggregatesInput = {
@@ -4716,6 +9734,9 @@ export namespace Prisma {
     code?: StringWithAggregatesFilter<"Ticket"> | string
     title?: StringWithAggregatesFilter<"Ticket"> | string
     description?: StringWithAggregatesFilter<"Ticket"> | string
+    reporterKey?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
+    reporterName?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
+    reporterLocation?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
     priority?: EnumTicketPriorityWithAggregatesFilter<"Ticket"> | $Enums.TicketPriority
     category?: EnumTicketCategoryWithAggregatesFilter<"Ticket"> | $Enums.TicketCategory
     status?: EnumTicketStatusWithAggregatesFilter<"Ticket"> | $Enums.TicketStatus
@@ -4723,6 +9744,8 @@ export namespace Prisma {
     resolveDueAt?: DateTimeWithAggregatesFilter<"Ticket"> | Date | string
     firstReplyAt?: DateTimeNullableWithAggregatesFilter<"Ticket"> | Date | string | null
     closedAt?: DateTimeNullableWithAggregatesFilter<"Ticket"> | Date | string | null
+    feedbackRating?: IntNullableWithAggregatesFilter<"Ticket"> | number | null
+    feedbackSubmittedAt?: DateTimeNullableWithAggregatesFilter<"Ticket"> | Date | string | null
     assignedAdminId?: StringNullableWithAggregatesFilter<"Ticket"> | string | null
     assignedAt?: DateTimeNullableWithAggregatesFilter<"Ticket"> | Date | string | null
     lastAdminReadAt?: DateTimeNullableWithAggregatesFilter<"Ticket"> | Date | string | null
@@ -4740,6 +9763,7 @@ export namespace Prisma {
     message?: StringFilter<"TicketMessage"> | string
     createdAt?: DateTimeFilter<"TicketMessage"> | Date | string
     ticket?: XOR<TicketScalarRelationFilter, TicketWhereInput>
+    attachments?: MessageAttachmentListRelationFilter
   }
 
   export type TicketMessageOrderByWithRelationInput = {
@@ -4749,6 +9773,7 @@ export namespace Prisma {
     message?: SortOrder
     createdAt?: SortOrder
     ticket?: TicketOrderByWithRelationInput
+    attachments?: MessageAttachmentOrderByRelationAggregateInput
   }
 
   export type TicketMessageWhereUniqueInput = Prisma.AtLeast<{
@@ -4761,6 +9786,7 @@ export namespace Prisma {
     message?: StringFilter<"TicketMessage"> | string
     createdAt?: DateTimeFilter<"TicketMessage"> | Date | string
     ticket?: XOR<TicketScalarRelationFilter, TicketWhereInput>
+    attachments?: MessageAttachmentListRelationFilter
   }, "id">
 
   export type TicketMessageOrderByWithAggregationInput = {
@@ -4783,6 +9809,208 @@ export namespace Prisma {
     sender?: StringWithAggregatesFilter<"TicketMessage"> | string
     message?: StringWithAggregatesFilter<"TicketMessage"> | string
     createdAt?: DateTimeWithAggregatesFilter<"TicketMessage"> | Date | string
+  }
+
+  export type MessageAttachmentWhereInput = {
+    AND?: MessageAttachmentWhereInput | MessageAttachmentWhereInput[]
+    OR?: MessageAttachmentWhereInput[]
+    NOT?: MessageAttachmentWhereInput | MessageAttachmentWhereInput[]
+    id?: StringFilter<"MessageAttachment"> | string
+    messageId?: StringFilter<"MessageAttachment"> | string
+    url?: StringFilter<"MessageAttachment"> | string
+    caption?: StringNullableFilter<"MessageAttachment"> | string | null
+    mimeType?: StringNullableFilter<"MessageAttachment"> | string | null
+    fileName?: StringNullableFilter<"MessageAttachment"> | string | null
+    size?: IntNullableFilter<"MessageAttachment"> | number | null
+    createdAt?: DateTimeFilter<"MessageAttachment"> | Date | string
+    message?: XOR<TicketMessageScalarRelationFilter, TicketMessageWhereInput>
+  }
+
+  export type MessageAttachmentOrderByWithRelationInput = {
+    id?: SortOrder
+    messageId?: SortOrder
+    url?: SortOrder
+    caption?: SortOrderInput | SortOrder
+    mimeType?: SortOrderInput | SortOrder
+    fileName?: SortOrderInput | SortOrder
+    size?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    message?: TicketMessageOrderByWithRelationInput
+  }
+
+  export type MessageAttachmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: MessageAttachmentWhereInput | MessageAttachmentWhereInput[]
+    OR?: MessageAttachmentWhereInput[]
+    NOT?: MessageAttachmentWhereInput | MessageAttachmentWhereInput[]
+    messageId?: StringFilter<"MessageAttachment"> | string
+    url?: StringFilter<"MessageAttachment"> | string
+    caption?: StringNullableFilter<"MessageAttachment"> | string | null
+    mimeType?: StringNullableFilter<"MessageAttachment"> | string | null
+    fileName?: StringNullableFilter<"MessageAttachment"> | string | null
+    size?: IntNullableFilter<"MessageAttachment"> | number | null
+    createdAt?: DateTimeFilter<"MessageAttachment"> | Date | string
+    message?: XOR<TicketMessageScalarRelationFilter, TicketMessageWhereInput>
+  }, "id">
+
+  export type MessageAttachmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    messageId?: SortOrder
+    url?: SortOrder
+    caption?: SortOrderInput | SortOrder
+    mimeType?: SortOrderInput | SortOrder
+    fileName?: SortOrderInput | SortOrder
+    size?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: MessageAttachmentCountOrderByAggregateInput
+    _avg?: MessageAttachmentAvgOrderByAggregateInput
+    _max?: MessageAttachmentMaxOrderByAggregateInput
+    _min?: MessageAttachmentMinOrderByAggregateInput
+    _sum?: MessageAttachmentSumOrderByAggregateInput
+  }
+
+  export type MessageAttachmentScalarWhereWithAggregatesInput = {
+    AND?: MessageAttachmentScalarWhereWithAggregatesInput | MessageAttachmentScalarWhereWithAggregatesInput[]
+    OR?: MessageAttachmentScalarWhereWithAggregatesInput[]
+    NOT?: MessageAttachmentScalarWhereWithAggregatesInput | MessageAttachmentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MessageAttachment"> | string
+    messageId?: StringWithAggregatesFilter<"MessageAttachment"> | string
+    url?: StringWithAggregatesFilter<"MessageAttachment"> | string
+    caption?: StringNullableWithAggregatesFilter<"MessageAttachment"> | string | null
+    mimeType?: StringNullableWithAggregatesFilter<"MessageAttachment"> | string | null
+    fileName?: StringNullableWithAggregatesFilter<"MessageAttachment"> | string | null
+    size?: IntNullableWithAggregatesFilter<"MessageAttachment"> | number | null
+    createdAt?: DateTimeWithAggregatesFilter<"MessageAttachment"> | Date | string
+  }
+
+  export type TicketStatusHistoryWhereInput = {
+    AND?: TicketStatusHistoryWhereInput | TicketStatusHistoryWhereInput[]
+    OR?: TicketStatusHistoryWhereInput[]
+    NOT?: TicketStatusHistoryWhereInput | TicketStatusHistoryWhereInput[]
+    id?: StringFilter<"TicketStatusHistory"> | string
+    ticketId?: StringFilter<"TicketStatusHistory"> | string
+    fromStatus?: EnumTicketStatusNullableFilter<"TicketStatusHistory"> | $Enums.TicketStatus | null
+    toStatus?: EnumTicketStatusFilter<"TicketStatusHistory"> | $Enums.TicketStatus
+    changedBy?: StringNullableFilter<"TicketStatusHistory"> | string | null
+    note?: StringNullableFilter<"TicketStatusHistory"> | string | null
+    createdAt?: DateTimeFilter<"TicketStatusHistory"> | Date | string
+    ticket?: XOR<TicketScalarRelationFilter, TicketWhereInput>
+  }
+
+  export type TicketStatusHistoryOrderByWithRelationInput = {
+    id?: SortOrder
+    ticketId?: SortOrder
+    fromStatus?: SortOrderInput | SortOrder
+    toStatus?: SortOrder
+    changedBy?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    ticket?: TicketOrderByWithRelationInput
+  }
+
+  export type TicketStatusHistoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TicketStatusHistoryWhereInput | TicketStatusHistoryWhereInput[]
+    OR?: TicketStatusHistoryWhereInput[]
+    NOT?: TicketStatusHistoryWhereInput | TicketStatusHistoryWhereInput[]
+    ticketId?: StringFilter<"TicketStatusHistory"> | string
+    fromStatus?: EnumTicketStatusNullableFilter<"TicketStatusHistory"> | $Enums.TicketStatus | null
+    toStatus?: EnumTicketStatusFilter<"TicketStatusHistory"> | $Enums.TicketStatus
+    changedBy?: StringNullableFilter<"TicketStatusHistory"> | string | null
+    note?: StringNullableFilter<"TicketStatusHistory"> | string | null
+    createdAt?: DateTimeFilter<"TicketStatusHistory"> | Date | string
+    ticket?: XOR<TicketScalarRelationFilter, TicketWhereInput>
+  }, "id">
+
+  export type TicketStatusHistoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    ticketId?: SortOrder
+    fromStatus?: SortOrderInput | SortOrder
+    toStatus?: SortOrder
+    changedBy?: SortOrderInput | SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: TicketStatusHistoryCountOrderByAggregateInput
+    _max?: TicketStatusHistoryMaxOrderByAggregateInput
+    _min?: TicketStatusHistoryMinOrderByAggregateInput
+  }
+
+  export type TicketStatusHistoryScalarWhereWithAggregatesInput = {
+    AND?: TicketStatusHistoryScalarWhereWithAggregatesInput | TicketStatusHistoryScalarWhereWithAggregatesInput[]
+    OR?: TicketStatusHistoryScalarWhereWithAggregatesInput[]
+    NOT?: TicketStatusHistoryScalarWhereWithAggregatesInput | TicketStatusHistoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TicketStatusHistory"> | string
+    ticketId?: StringWithAggregatesFilter<"TicketStatusHistory"> | string
+    fromStatus?: EnumTicketStatusNullableWithAggregatesFilter<"TicketStatusHistory"> | $Enums.TicketStatus | null
+    toStatus?: EnumTicketStatusWithAggregatesFilter<"TicketStatusHistory"> | $Enums.TicketStatus
+    changedBy?: StringNullableWithAggregatesFilter<"TicketStatusHistory"> | string | null
+    note?: StringNullableWithAggregatesFilter<"TicketStatusHistory"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TicketStatusHistory"> | Date | string
+  }
+
+  export type TicketAssignmentHistoryWhereInput = {
+    AND?: TicketAssignmentHistoryWhereInput | TicketAssignmentHistoryWhereInput[]
+    OR?: TicketAssignmentHistoryWhereInput[]
+    NOT?: TicketAssignmentHistoryWhereInput | TicketAssignmentHistoryWhereInput[]
+    id?: StringFilter<"TicketAssignmentHistory"> | string
+    ticketId?: StringFilter<"TicketAssignmentHistory"> | string
+    fromAdminId?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    toAdminId?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    changedBy?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    trigger?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    createdAt?: DateTimeFilter<"TicketAssignmentHistory"> | Date | string
+    ticket?: XOR<TicketScalarRelationFilter, TicketWhereInput>
+  }
+
+  export type TicketAssignmentHistoryOrderByWithRelationInput = {
+    id?: SortOrder
+    ticketId?: SortOrder
+    fromAdminId?: SortOrderInput | SortOrder
+    toAdminId?: SortOrderInput | SortOrder
+    changedBy?: SortOrderInput | SortOrder
+    trigger?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    ticket?: TicketOrderByWithRelationInput
+  }
+
+  export type TicketAssignmentHistoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TicketAssignmentHistoryWhereInput | TicketAssignmentHistoryWhereInput[]
+    OR?: TicketAssignmentHistoryWhereInput[]
+    NOT?: TicketAssignmentHistoryWhereInput | TicketAssignmentHistoryWhereInput[]
+    ticketId?: StringFilter<"TicketAssignmentHistory"> | string
+    fromAdminId?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    toAdminId?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    changedBy?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    trigger?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    createdAt?: DateTimeFilter<"TicketAssignmentHistory"> | Date | string
+    ticket?: XOR<TicketScalarRelationFilter, TicketWhereInput>
+  }, "id">
+
+  export type TicketAssignmentHistoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    ticketId?: SortOrder
+    fromAdminId?: SortOrderInput | SortOrder
+    toAdminId?: SortOrderInput | SortOrder
+    changedBy?: SortOrderInput | SortOrder
+    trigger?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: TicketAssignmentHistoryCountOrderByAggregateInput
+    _max?: TicketAssignmentHistoryMaxOrderByAggregateInput
+    _min?: TicketAssignmentHistoryMinOrderByAggregateInput
+  }
+
+  export type TicketAssignmentHistoryScalarWhereWithAggregatesInput = {
+    AND?: TicketAssignmentHistoryScalarWhereWithAggregatesInput | TicketAssignmentHistoryScalarWhereWithAggregatesInput[]
+    OR?: TicketAssignmentHistoryScalarWhereWithAggregatesInput[]
+    NOT?: TicketAssignmentHistoryScalarWhereWithAggregatesInput | TicketAssignmentHistoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TicketAssignmentHistory"> | string
+    ticketId?: StringWithAggregatesFilter<"TicketAssignmentHistory"> | string
+    fromAdminId?: StringNullableWithAggregatesFilter<"TicketAssignmentHistory"> | string | null
+    toAdminId?: StringNullableWithAggregatesFilter<"TicketAssignmentHistory"> | string | null
+    changedBy?: StringNullableWithAggregatesFilter<"TicketAssignmentHistory"> | string | null
+    trigger?: StringNullableWithAggregatesFilter<"TicketAssignmentHistory"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TicketAssignmentHistory"> | Date | string
   }
 
   export type SlaPolicyWhereInput = {
@@ -4839,11 +10067,81 @@ export namespace Prisma {
     active?: BoolWithAggregatesFilter<"SlaPolicy"> | boolean
   }
 
+  export type AdminUserWhereInput = {
+    AND?: AdminUserWhereInput | AdminUserWhereInput[]
+    OR?: AdminUserWhereInput[]
+    NOT?: AdminUserWhereInput | AdminUserWhereInput[]
+    id?: StringFilter<"AdminUser"> | string
+    username?: StringFilter<"AdminUser"> | string
+    password?: StringFilter<"AdminUser"> | string
+    name?: StringFilter<"AdminUser"> | string
+    active?: BoolFilter<"AdminUser"> | boolean
+    isOnline?: BoolFilter<"AdminUser"> | boolean
+    createdAt?: DateTimeFilter<"AdminUser"> | Date | string
+    updatedAt?: DateTimeFilter<"AdminUser"> | Date | string
+  }
+
+  export type AdminUserOrderByWithRelationInput = {
+    id?: SortOrder
+    username?: SortOrder
+    password?: SortOrder
+    name?: SortOrder
+    active?: SortOrder
+    isOnline?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AdminUserWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    username?: string
+    AND?: AdminUserWhereInput | AdminUserWhereInput[]
+    OR?: AdminUserWhereInput[]
+    NOT?: AdminUserWhereInput | AdminUserWhereInput[]
+    password?: StringFilter<"AdminUser"> | string
+    name?: StringFilter<"AdminUser"> | string
+    active?: BoolFilter<"AdminUser"> | boolean
+    isOnline?: BoolFilter<"AdminUser"> | boolean
+    createdAt?: DateTimeFilter<"AdminUser"> | Date | string
+    updatedAt?: DateTimeFilter<"AdminUser"> | Date | string
+  }, "id" | "username">
+
+  export type AdminUserOrderByWithAggregationInput = {
+    id?: SortOrder
+    username?: SortOrder
+    password?: SortOrder
+    name?: SortOrder
+    active?: SortOrder
+    isOnline?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: AdminUserCountOrderByAggregateInput
+    _max?: AdminUserMaxOrderByAggregateInput
+    _min?: AdminUserMinOrderByAggregateInput
+  }
+
+  export type AdminUserScalarWhereWithAggregatesInput = {
+    AND?: AdminUserScalarWhereWithAggregatesInput | AdminUserScalarWhereWithAggregatesInput[]
+    OR?: AdminUserScalarWhereWithAggregatesInput[]
+    NOT?: AdminUserScalarWhereWithAggregatesInput | AdminUserScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"AdminUser"> | string
+    username?: StringWithAggregatesFilter<"AdminUser"> | string
+    password?: StringWithAggregatesFilter<"AdminUser"> | string
+    name?: StringWithAggregatesFilter<"AdminUser"> | string
+    active?: BoolWithAggregatesFilter<"AdminUser"> | boolean
+    isOnline?: BoolWithAggregatesFilter<"AdminUser"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"AdminUser"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"AdminUser"> | Date | string
+  }
+
   export type TicketCreateInput = {
     id?: string
     code: string
     title: string
     description: string
+    reporterKey?: string | null
+    reporterName?: string | null
+    reporterLocation?: string | null
     priority: $Enums.TicketPriority
     category?: $Enums.TicketCategory
     status?: $Enums.TicketStatus
@@ -4851,12 +10149,16 @@ export namespace Prisma {
     resolveDueAt: Date | string
     firstReplyAt?: Date | string | null
     closedAt?: Date | string | null
+    feedbackRating?: number | null
+    feedbackSubmittedAt?: Date | string | null
     assignedAdminId?: string | null
     assignedAt?: Date | string | null
     lastAdminReadAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: TicketMessageCreateNestedManyWithoutTicketInput
+    statusHistory?: TicketStatusHistoryCreateNestedManyWithoutTicketInput
+    assignmentHistory?: TicketAssignmentHistoryCreateNestedManyWithoutTicketInput
   }
 
   export type TicketUncheckedCreateInput = {
@@ -4864,6 +10166,9 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterKey?: string | null
+    reporterName?: string | null
+    reporterLocation?: string | null
     priority: $Enums.TicketPriority
     category?: $Enums.TicketCategory
     status?: $Enums.TicketStatus
@@ -4871,12 +10176,16 @@ export namespace Prisma {
     resolveDueAt: Date | string
     firstReplyAt?: Date | string | null
     closedAt?: Date | string | null
+    feedbackRating?: number | null
+    feedbackSubmittedAt?: Date | string | null
     assignedAdminId?: string | null
     assignedAt?: Date | string | null
     lastAdminReadAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: TicketMessageUncheckedCreateNestedManyWithoutTicketInput
+    statusHistory?: TicketStatusHistoryUncheckedCreateNestedManyWithoutTicketInput
+    assignmentHistory?: TicketAssignmentHistoryUncheckedCreateNestedManyWithoutTicketInput
   }
 
   export type TicketUpdateInput = {
@@ -4884,6 +10193,9 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
@@ -4891,12 +10203,16 @@ export namespace Prisma {
     resolveDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstReplyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feedbackRating?: NullableIntFieldUpdateOperationsInput | number | null
+    feedbackSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedAdminId?: NullableStringFieldUpdateOperationsInput | string | null
     assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastAdminReadAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: TicketMessageUpdateManyWithoutTicketNestedInput
+    statusHistory?: TicketStatusHistoryUpdateManyWithoutTicketNestedInput
+    assignmentHistory?: TicketAssignmentHistoryUpdateManyWithoutTicketNestedInput
   }
 
   export type TicketUncheckedUpdateInput = {
@@ -4904,6 +10220,9 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
@@ -4911,12 +10230,16 @@ export namespace Prisma {
     resolveDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstReplyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feedbackRating?: NullableIntFieldUpdateOperationsInput | number | null
+    feedbackSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedAdminId?: NullableStringFieldUpdateOperationsInput | string | null
     assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastAdminReadAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: TicketMessageUncheckedUpdateManyWithoutTicketNestedInput
+    statusHistory?: TicketStatusHistoryUncheckedUpdateManyWithoutTicketNestedInput
+    assignmentHistory?: TicketAssignmentHistoryUncheckedUpdateManyWithoutTicketNestedInput
   }
 
   export type TicketCreateManyInput = {
@@ -4924,6 +10247,9 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterKey?: string | null
+    reporterName?: string | null
+    reporterLocation?: string | null
     priority: $Enums.TicketPriority
     category?: $Enums.TicketCategory
     status?: $Enums.TicketStatus
@@ -4931,6 +10257,8 @@ export namespace Prisma {
     resolveDueAt: Date | string
     firstReplyAt?: Date | string | null
     closedAt?: Date | string | null
+    feedbackRating?: number | null
+    feedbackSubmittedAt?: Date | string | null
     assignedAdminId?: string | null
     assignedAt?: Date | string | null
     lastAdminReadAt?: Date | string | null
@@ -4943,6 +10271,9 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
@@ -4950,6 +10281,8 @@ export namespace Prisma {
     resolveDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstReplyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feedbackRating?: NullableIntFieldUpdateOperationsInput | number | null
+    feedbackSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedAdminId?: NullableStringFieldUpdateOperationsInput | string | null
     assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastAdminReadAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4962,6 +10295,9 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
@@ -4969,6 +10305,8 @@ export namespace Prisma {
     resolveDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstReplyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feedbackRating?: NullableIntFieldUpdateOperationsInput | number | null
+    feedbackSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedAdminId?: NullableStringFieldUpdateOperationsInput | string | null
     assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastAdminReadAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4982,6 +10320,7 @@ export namespace Prisma {
     message: string
     createdAt?: Date | string
     ticket: TicketCreateNestedOneWithoutMessagesInput
+    attachments?: MessageAttachmentCreateNestedManyWithoutMessageInput
   }
 
   export type TicketMessageUncheckedCreateInput = {
@@ -4990,6 +10329,7 @@ export namespace Prisma {
     sender: string
     message: string
     createdAt?: Date | string
+    attachments?: MessageAttachmentUncheckedCreateNestedManyWithoutMessageInput
   }
 
   export type TicketMessageUpdateInput = {
@@ -4998,6 +10338,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ticket?: TicketUpdateOneRequiredWithoutMessagesNestedInput
+    attachments?: MessageAttachmentUpdateManyWithoutMessageNestedInput
   }
 
   export type TicketMessageUncheckedUpdateInput = {
@@ -5006,6 +10347,7 @@ export namespace Prisma {
     sender?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachments?: MessageAttachmentUncheckedUpdateManyWithoutMessageNestedInput
   }
 
   export type TicketMessageCreateManyInput = {
@@ -5028,6 +10370,220 @@ export namespace Prisma {
     ticketId?: StringFieldUpdateOperationsInput | string
     sender?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MessageAttachmentCreateInput = {
+    id?: string
+    url: string
+    caption?: string | null
+    mimeType?: string | null
+    fileName?: string | null
+    size?: number | null
+    createdAt?: Date | string
+    message: TicketMessageCreateNestedOneWithoutAttachmentsInput
+  }
+
+  export type MessageAttachmentUncheckedCreateInput = {
+    id?: string
+    messageId: string
+    url: string
+    caption?: string | null
+    mimeType?: string | null
+    fileName?: string | null
+    size?: number | null
+    createdAt?: Date | string
+  }
+
+  export type MessageAttachmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    message?: TicketMessageUpdateOneRequiredWithoutAttachmentsNestedInput
+  }
+
+  export type MessageAttachmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    messageId?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MessageAttachmentCreateManyInput = {
+    id?: string
+    messageId: string
+    url: string
+    caption?: string | null
+    mimeType?: string | null
+    fileName?: string | null
+    size?: number | null
+    createdAt?: Date | string
+  }
+
+  export type MessageAttachmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MessageAttachmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    messageId?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketStatusHistoryCreateInput = {
+    id?: string
+    fromStatus?: $Enums.TicketStatus | null
+    toStatus: $Enums.TicketStatus
+    changedBy?: string | null
+    note?: string | null
+    createdAt?: Date | string
+    ticket: TicketCreateNestedOneWithoutStatusHistoryInput
+  }
+
+  export type TicketStatusHistoryUncheckedCreateInput = {
+    id?: string
+    ticketId: string
+    fromStatus?: $Enums.TicketStatus | null
+    toStatus: $Enums.TicketStatus
+    changedBy?: string | null
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TicketStatusHistoryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromStatus?: NullableEnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus | null
+    toStatus?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ticket?: TicketUpdateOneRequiredWithoutStatusHistoryNestedInput
+  }
+
+  export type TicketStatusHistoryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticketId?: StringFieldUpdateOperationsInput | string
+    fromStatus?: NullableEnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus | null
+    toStatus?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketStatusHistoryCreateManyInput = {
+    id?: string
+    ticketId: string
+    fromStatus?: $Enums.TicketStatus | null
+    toStatus: $Enums.TicketStatus
+    changedBy?: string | null
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TicketStatusHistoryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromStatus?: NullableEnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus | null
+    toStatus?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketStatusHistoryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticketId?: StringFieldUpdateOperationsInput | string
+    fromStatus?: NullableEnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus | null
+    toStatus?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketAssignmentHistoryCreateInput = {
+    id?: string
+    fromAdminId?: string | null
+    toAdminId?: string | null
+    changedBy?: string | null
+    trigger?: string | null
+    createdAt?: Date | string
+    ticket: TicketCreateNestedOneWithoutAssignmentHistoryInput
+  }
+
+  export type TicketAssignmentHistoryUncheckedCreateInput = {
+    id?: string
+    ticketId: string
+    fromAdminId?: string | null
+    toAdminId?: string | null
+    changedBy?: string | null
+    trigger?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TicketAssignmentHistoryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    toAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    trigger?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ticket?: TicketUpdateOneRequiredWithoutAssignmentHistoryNestedInput
+  }
+
+  export type TicketAssignmentHistoryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticketId?: StringFieldUpdateOperationsInput | string
+    fromAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    toAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    trigger?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketAssignmentHistoryCreateManyInput = {
+    id?: string
+    ticketId: string
+    fromAdminId?: string | null
+    toAdminId?: string | null
+    changedBy?: string | null
+    trigger?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TicketAssignmentHistoryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    toAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    trigger?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketAssignmentHistoryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticketId?: StringFieldUpdateOperationsInput | string
+    fromAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    toAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    trigger?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -5087,6 +10643,83 @@ export namespace Prisma {
     active?: BoolFieldUpdateOperationsInput | boolean
   }
 
+  export type AdminUserCreateInput = {
+    id?: string
+    username: string
+    password: string
+    name: string
+    active?: boolean
+    isOnline?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AdminUserUncheckedCreateInput = {
+    id?: string
+    username: string
+    password: string
+    name: string
+    active?: boolean
+    isOnline?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AdminUserUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    active?: BoolFieldUpdateOperationsInput | boolean
+    isOnline?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminUserUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    active?: BoolFieldUpdateOperationsInput | boolean
+    isOnline?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminUserCreateManyInput = {
+    id?: string
+    username: string
+    password: string
+    name: string
+    active?: boolean
+    isOnline?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AdminUserUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    active?: BoolFieldUpdateOperationsInput | boolean
+    isOnline?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AdminUserUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    active?: BoolFieldUpdateOperationsInput | boolean
+    isOnline?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -5100,6 +10733,21 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type EnumTicketPriorityFilter<$PrismaModel = never> = {
@@ -5145,25 +10793,33 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type TicketMessageListRelationFilter = {
     every?: TicketMessageWhereInput
     some?: TicketMessageWhereInput
     none?: TicketMessageWhereInput
+  }
+
+  export type TicketStatusHistoryListRelationFilter = {
+    every?: TicketStatusHistoryWhereInput
+    some?: TicketStatusHistoryWhereInput
+    none?: TicketStatusHistoryWhereInput
+  }
+
+  export type TicketAssignmentHistoryListRelationFilter = {
+    every?: TicketAssignmentHistoryWhereInput
+    some?: TicketAssignmentHistoryWhereInput
+    none?: TicketAssignmentHistoryWhereInput
   }
 
   export type SortOrderInput = {
@@ -5175,11 +10831,22 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type TicketStatusHistoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TicketAssignmentHistoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type TicketCountOrderByAggregateInput = {
     id?: SortOrder
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterKey?: SortOrder
+    reporterName?: SortOrder
+    reporterLocation?: SortOrder
     priority?: SortOrder
     category?: SortOrder
     status?: SortOrder
@@ -5187,6 +10854,8 @@ export namespace Prisma {
     resolveDueAt?: SortOrder
     firstReplyAt?: SortOrder
     closedAt?: SortOrder
+    feedbackRating?: SortOrder
+    feedbackSubmittedAt?: SortOrder
     assignedAdminId?: SortOrder
     assignedAt?: SortOrder
     lastAdminReadAt?: SortOrder
@@ -5194,11 +10863,18 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type TicketAvgOrderByAggregateInput = {
+    feedbackRating?: SortOrder
+  }
+
   export type TicketMaxOrderByAggregateInput = {
     id?: SortOrder
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterKey?: SortOrder
+    reporterName?: SortOrder
+    reporterLocation?: SortOrder
     priority?: SortOrder
     category?: SortOrder
     status?: SortOrder
@@ -5206,6 +10882,8 @@ export namespace Prisma {
     resolveDueAt?: SortOrder
     firstReplyAt?: SortOrder
     closedAt?: SortOrder
+    feedbackRating?: SortOrder
+    feedbackSubmittedAt?: SortOrder
     assignedAdminId?: SortOrder
     assignedAt?: SortOrder
     lastAdminReadAt?: SortOrder
@@ -5218,6 +10896,9 @@ export namespace Prisma {
     code?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    reporterKey?: SortOrder
+    reporterName?: SortOrder
+    reporterLocation?: SortOrder
     priority?: SortOrder
     category?: SortOrder
     status?: SortOrder
@@ -5225,11 +10906,17 @@ export namespace Prisma {
     resolveDueAt?: SortOrder
     firstReplyAt?: SortOrder
     closedAt?: SortOrder
+    feedbackRating?: SortOrder
+    feedbackSubmittedAt?: SortOrder
     assignedAdminId?: SortOrder
     assignedAt?: SortOrder
     lastAdminReadAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type TicketSumOrderByAggregateInput = {
+    feedbackRating?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -5248,6 +10935,24 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedStringFilter<$PrismaModel>
     _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumTicketPriorityWithAggregatesFilter<$PrismaModel = never> = {
@@ -5308,27 +11013,35 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
     _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type TicketScalarRelationFilter = {
     is?: TicketWhereInput
     isNot?: TicketWhereInput
+  }
+
+  export type MessageAttachmentListRelationFilter = {
+    every?: MessageAttachmentWhereInput
+    some?: MessageAttachmentWhereInput
+    none?: MessageAttachmentWhereInput
+  }
+
+  export type MessageAttachmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type TicketMessageCountOrderByAggregateInput = {
@@ -5352,6 +11065,129 @@ export namespace Prisma {
     ticketId?: SortOrder
     sender?: SortOrder
     message?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TicketMessageScalarRelationFilter = {
+    is?: TicketMessageWhereInput
+    isNot?: TicketMessageWhereInput
+  }
+
+  export type MessageAttachmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    messageId?: SortOrder
+    url?: SortOrder
+    caption?: SortOrder
+    mimeType?: SortOrder
+    fileName?: SortOrder
+    size?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MessageAttachmentAvgOrderByAggregateInput = {
+    size?: SortOrder
+  }
+
+  export type MessageAttachmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    messageId?: SortOrder
+    url?: SortOrder
+    caption?: SortOrder
+    mimeType?: SortOrder
+    fileName?: SortOrder
+    size?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MessageAttachmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    messageId?: SortOrder
+    url?: SortOrder
+    caption?: SortOrder
+    mimeType?: SortOrder
+    fileName?: SortOrder
+    size?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type MessageAttachmentSumOrderByAggregateInput = {
+    size?: SortOrder
+  }
+
+  export type EnumTicketStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.TicketStatus | EnumTicketStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.TicketStatus[] | ListEnumTicketStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.TicketStatus[] | ListEnumTicketStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumTicketStatusNullableFilter<$PrismaModel> | $Enums.TicketStatus | null
+  }
+
+  export type TicketStatusHistoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    ticketId?: SortOrder
+    fromStatus?: SortOrder
+    toStatus?: SortOrder
+    changedBy?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TicketStatusHistoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    ticketId?: SortOrder
+    fromStatus?: SortOrder
+    toStatus?: SortOrder
+    changedBy?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TicketStatusHistoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    ticketId?: SortOrder
+    fromStatus?: SortOrder
+    toStatus?: SortOrder
+    changedBy?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumTicketStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TicketStatus | EnumTicketStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.TicketStatus[] | ListEnumTicketStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.TicketStatus[] | ListEnumTicketStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumTicketStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.TicketStatus | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumTicketStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumTicketStatusNullableFilter<$PrismaModel>
+  }
+
+  export type TicketAssignmentHistoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    ticketId?: SortOrder
+    fromAdminId?: SortOrder
+    toAdminId?: SortOrder
+    changedBy?: SortOrder
+    trigger?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TicketAssignmentHistoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    ticketId?: SortOrder
+    fromAdminId?: SortOrder
+    toAdminId?: SortOrder
+    changedBy?: SortOrder
+    trigger?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type TicketAssignmentHistoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    ticketId?: SortOrder
+    fromAdminId?: SortOrder
+    toAdminId?: SortOrder
+    changedBy?: SortOrder
+    trigger?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -5429,11 +11265,58 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type AdminUserCountOrderByAggregateInput = {
+    id?: SortOrder
+    username?: SortOrder
+    password?: SortOrder
+    name?: SortOrder
+    active?: SortOrder
+    isOnline?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AdminUserMaxOrderByAggregateInput = {
+    id?: SortOrder
+    username?: SortOrder
+    password?: SortOrder
+    name?: SortOrder
+    active?: SortOrder
+    isOnline?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type AdminUserMinOrderByAggregateInput = {
+    id?: SortOrder
+    username?: SortOrder
+    password?: SortOrder
+    name?: SortOrder
+    active?: SortOrder
+    isOnline?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type TicketMessageCreateNestedManyWithoutTicketInput = {
     create?: XOR<TicketMessageCreateWithoutTicketInput, TicketMessageUncheckedCreateWithoutTicketInput> | TicketMessageCreateWithoutTicketInput[] | TicketMessageUncheckedCreateWithoutTicketInput[]
     connectOrCreate?: TicketMessageCreateOrConnectWithoutTicketInput | TicketMessageCreateOrConnectWithoutTicketInput[]
     createMany?: TicketMessageCreateManyTicketInputEnvelope
     connect?: TicketMessageWhereUniqueInput | TicketMessageWhereUniqueInput[]
+  }
+
+  export type TicketStatusHistoryCreateNestedManyWithoutTicketInput = {
+    create?: XOR<TicketStatusHistoryCreateWithoutTicketInput, TicketStatusHistoryUncheckedCreateWithoutTicketInput> | TicketStatusHistoryCreateWithoutTicketInput[] | TicketStatusHistoryUncheckedCreateWithoutTicketInput[]
+    connectOrCreate?: TicketStatusHistoryCreateOrConnectWithoutTicketInput | TicketStatusHistoryCreateOrConnectWithoutTicketInput[]
+    createMany?: TicketStatusHistoryCreateManyTicketInputEnvelope
+    connect?: TicketStatusHistoryWhereUniqueInput | TicketStatusHistoryWhereUniqueInput[]
+  }
+
+  export type TicketAssignmentHistoryCreateNestedManyWithoutTicketInput = {
+    create?: XOR<TicketAssignmentHistoryCreateWithoutTicketInput, TicketAssignmentHistoryUncheckedCreateWithoutTicketInput> | TicketAssignmentHistoryCreateWithoutTicketInput[] | TicketAssignmentHistoryUncheckedCreateWithoutTicketInput[]
+    connectOrCreate?: TicketAssignmentHistoryCreateOrConnectWithoutTicketInput | TicketAssignmentHistoryCreateOrConnectWithoutTicketInput[]
+    createMany?: TicketAssignmentHistoryCreateManyTicketInputEnvelope
+    connect?: TicketAssignmentHistoryWhereUniqueInput | TicketAssignmentHistoryWhereUniqueInput[]
   }
 
   export type TicketMessageUncheckedCreateNestedManyWithoutTicketInput = {
@@ -5443,8 +11326,26 @@ export namespace Prisma {
     connect?: TicketMessageWhereUniqueInput | TicketMessageWhereUniqueInput[]
   }
 
+  export type TicketStatusHistoryUncheckedCreateNestedManyWithoutTicketInput = {
+    create?: XOR<TicketStatusHistoryCreateWithoutTicketInput, TicketStatusHistoryUncheckedCreateWithoutTicketInput> | TicketStatusHistoryCreateWithoutTicketInput[] | TicketStatusHistoryUncheckedCreateWithoutTicketInput[]
+    connectOrCreate?: TicketStatusHistoryCreateOrConnectWithoutTicketInput | TicketStatusHistoryCreateOrConnectWithoutTicketInput[]
+    createMany?: TicketStatusHistoryCreateManyTicketInputEnvelope
+    connect?: TicketStatusHistoryWhereUniqueInput | TicketStatusHistoryWhereUniqueInput[]
+  }
+
+  export type TicketAssignmentHistoryUncheckedCreateNestedManyWithoutTicketInput = {
+    create?: XOR<TicketAssignmentHistoryCreateWithoutTicketInput, TicketAssignmentHistoryUncheckedCreateWithoutTicketInput> | TicketAssignmentHistoryCreateWithoutTicketInput[] | TicketAssignmentHistoryUncheckedCreateWithoutTicketInput[]
+    connectOrCreate?: TicketAssignmentHistoryCreateOrConnectWithoutTicketInput | TicketAssignmentHistoryCreateOrConnectWithoutTicketInput[]
+    createMany?: TicketAssignmentHistoryCreateManyTicketInputEnvelope
+    connect?: TicketAssignmentHistoryWhereUniqueInput | TicketAssignmentHistoryWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type EnumTicketPriorityFieldUpdateOperationsInput = {
@@ -5467,8 +11368,12 @@ export namespace Prisma {
     set?: Date | string | null
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type TicketMessageUpdateManyWithoutTicketNestedInput = {
@@ -5485,6 +11390,34 @@ export namespace Prisma {
     deleteMany?: TicketMessageScalarWhereInput | TicketMessageScalarWhereInput[]
   }
 
+  export type TicketStatusHistoryUpdateManyWithoutTicketNestedInput = {
+    create?: XOR<TicketStatusHistoryCreateWithoutTicketInput, TicketStatusHistoryUncheckedCreateWithoutTicketInput> | TicketStatusHistoryCreateWithoutTicketInput[] | TicketStatusHistoryUncheckedCreateWithoutTicketInput[]
+    connectOrCreate?: TicketStatusHistoryCreateOrConnectWithoutTicketInput | TicketStatusHistoryCreateOrConnectWithoutTicketInput[]
+    upsert?: TicketStatusHistoryUpsertWithWhereUniqueWithoutTicketInput | TicketStatusHistoryUpsertWithWhereUniqueWithoutTicketInput[]
+    createMany?: TicketStatusHistoryCreateManyTicketInputEnvelope
+    set?: TicketStatusHistoryWhereUniqueInput | TicketStatusHistoryWhereUniqueInput[]
+    disconnect?: TicketStatusHistoryWhereUniqueInput | TicketStatusHistoryWhereUniqueInput[]
+    delete?: TicketStatusHistoryWhereUniqueInput | TicketStatusHistoryWhereUniqueInput[]
+    connect?: TicketStatusHistoryWhereUniqueInput | TicketStatusHistoryWhereUniqueInput[]
+    update?: TicketStatusHistoryUpdateWithWhereUniqueWithoutTicketInput | TicketStatusHistoryUpdateWithWhereUniqueWithoutTicketInput[]
+    updateMany?: TicketStatusHistoryUpdateManyWithWhereWithoutTicketInput | TicketStatusHistoryUpdateManyWithWhereWithoutTicketInput[]
+    deleteMany?: TicketStatusHistoryScalarWhereInput | TicketStatusHistoryScalarWhereInput[]
+  }
+
+  export type TicketAssignmentHistoryUpdateManyWithoutTicketNestedInput = {
+    create?: XOR<TicketAssignmentHistoryCreateWithoutTicketInput, TicketAssignmentHistoryUncheckedCreateWithoutTicketInput> | TicketAssignmentHistoryCreateWithoutTicketInput[] | TicketAssignmentHistoryUncheckedCreateWithoutTicketInput[]
+    connectOrCreate?: TicketAssignmentHistoryCreateOrConnectWithoutTicketInput | TicketAssignmentHistoryCreateOrConnectWithoutTicketInput[]
+    upsert?: TicketAssignmentHistoryUpsertWithWhereUniqueWithoutTicketInput | TicketAssignmentHistoryUpsertWithWhereUniqueWithoutTicketInput[]
+    createMany?: TicketAssignmentHistoryCreateManyTicketInputEnvelope
+    set?: TicketAssignmentHistoryWhereUniqueInput | TicketAssignmentHistoryWhereUniqueInput[]
+    disconnect?: TicketAssignmentHistoryWhereUniqueInput | TicketAssignmentHistoryWhereUniqueInput[]
+    delete?: TicketAssignmentHistoryWhereUniqueInput | TicketAssignmentHistoryWhereUniqueInput[]
+    connect?: TicketAssignmentHistoryWhereUniqueInput | TicketAssignmentHistoryWhereUniqueInput[]
+    update?: TicketAssignmentHistoryUpdateWithWhereUniqueWithoutTicketInput | TicketAssignmentHistoryUpdateWithWhereUniqueWithoutTicketInput[]
+    updateMany?: TicketAssignmentHistoryUpdateManyWithWhereWithoutTicketInput | TicketAssignmentHistoryUpdateManyWithWhereWithoutTicketInput[]
+    deleteMany?: TicketAssignmentHistoryScalarWhereInput | TicketAssignmentHistoryScalarWhereInput[]
+  }
+
   export type TicketMessageUncheckedUpdateManyWithoutTicketNestedInput = {
     create?: XOR<TicketMessageCreateWithoutTicketInput, TicketMessageUncheckedCreateWithoutTicketInput> | TicketMessageCreateWithoutTicketInput[] | TicketMessageUncheckedCreateWithoutTicketInput[]
     connectOrCreate?: TicketMessageCreateOrConnectWithoutTicketInput | TicketMessageCreateOrConnectWithoutTicketInput[]
@@ -5499,10 +11432,52 @@ export namespace Prisma {
     deleteMany?: TicketMessageScalarWhereInput | TicketMessageScalarWhereInput[]
   }
 
+  export type TicketStatusHistoryUncheckedUpdateManyWithoutTicketNestedInput = {
+    create?: XOR<TicketStatusHistoryCreateWithoutTicketInput, TicketStatusHistoryUncheckedCreateWithoutTicketInput> | TicketStatusHistoryCreateWithoutTicketInput[] | TicketStatusHistoryUncheckedCreateWithoutTicketInput[]
+    connectOrCreate?: TicketStatusHistoryCreateOrConnectWithoutTicketInput | TicketStatusHistoryCreateOrConnectWithoutTicketInput[]
+    upsert?: TicketStatusHistoryUpsertWithWhereUniqueWithoutTicketInput | TicketStatusHistoryUpsertWithWhereUniqueWithoutTicketInput[]
+    createMany?: TicketStatusHistoryCreateManyTicketInputEnvelope
+    set?: TicketStatusHistoryWhereUniqueInput | TicketStatusHistoryWhereUniqueInput[]
+    disconnect?: TicketStatusHistoryWhereUniqueInput | TicketStatusHistoryWhereUniqueInput[]
+    delete?: TicketStatusHistoryWhereUniqueInput | TicketStatusHistoryWhereUniqueInput[]
+    connect?: TicketStatusHistoryWhereUniqueInput | TicketStatusHistoryWhereUniqueInput[]
+    update?: TicketStatusHistoryUpdateWithWhereUniqueWithoutTicketInput | TicketStatusHistoryUpdateWithWhereUniqueWithoutTicketInput[]
+    updateMany?: TicketStatusHistoryUpdateManyWithWhereWithoutTicketInput | TicketStatusHistoryUpdateManyWithWhereWithoutTicketInput[]
+    deleteMany?: TicketStatusHistoryScalarWhereInput | TicketStatusHistoryScalarWhereInput[]
+  }
+
+  export type TicketAssignmentHistoryUncheckedUpdateManyWithoutTicketNestedInput = {
+    create?: XOR<TicketAssignmentHistoryCreateWithoutTicketInput, TicketAssignmentHistoryUncheckedCreateWithoutTicketInput> | TicketAssignmentHistoryCreateWithoutTicketInput[] | TicketAssignmentHistoryUncheckedCreateWithoutTicketInput[]
+    connectOrCreate?: TicketAssignmentHistoryCreateOrConnectWithoutTicketInput | TicketAssignmentHistoryCreateOrConnectWithoutTicketInput[]
+    upsert?: TicketAssignmentHistoryUpsertWithWhereUniqueWithoutTicketInput | TicketAssignmentHistoryUpsertWithWhereUniqueWithoutTicketInput[]
+    createMany?: TicketAssignmentHistoryCreateManyTicketInputEnvelope
+    set?: TicketAssignmentHistoryWhereUniqueInput | TicketAssignmentHistoryWhereUniqueInput[]
+    disconnect?: TicketAssignmentHistoryWhereUniqueInput | TicketAssignmentHistoryWhereUniqueInput[]
+    delete?: TicketAssignmentHistoryWhereUniqueInput | TicketAssignmentHistoryWhereUniqueInput[]
+    connect?: TicketAssignmentHistoryWhereUniqueInput | TicketAssignmentHistoryWhereUniqueInput[]
+    update?: TicketAssignmentHistoryUpdateWithWhereUniqueWithoutTicketInput | TicketAssignmentHistoryUpdateWithWhereUniqueWithoutTicketInput[]
+    updateMany?: TicketAssignmentHistoryUpdateManyWithWhereWithoutTicketInput | TicketAssignmentHistoryUpdateManyWithWhereWithoutTicketInput[]
+    deleteMany?: TicketAssignmentHistoryScalarWhereInput | TicketAssignmentHistoryScalarWhereInput[]
+  }
+
   export type TicketCreateNestedOneWithoutMessagesInput = {
     create?: XOR<TicketCreateWithoutMessagesInput, TicketUncheckedCreateWithoutMessagesInput>
     connectOrCreate?: TicketCreateOrConnectWithoutMessagesInput
     connect?: TicketWhereUniqueInput
+  }
+
+  export type MessageAttachmentCreateNestedManyWithoutMessageInput = {
+    create?: XOR<MessageAttachmentCreateWithoutMessageInput, MessageAttachmentUncheckedCreateWithoutMessageInput> | MessageAttachmentCreateWithoutMessageInput[] | MessageAttachmentUncheckedCreateWithoutMessageInput[]
+    connectOrCreate?: MessageAttachmentCreateOrConnectWithoutMessageInput | MessageAttachmentCreateOrConnectWithoutMessageInput[]
+    createMany?: MessageAttachmentCreateManyMessageInputEnvelope
+    connect?: MessageAttachmentWhereUniqueInput | MessageAttachmentWhereUniqueInput[]
+  }
+
+  export type MessageAttachmentUncheckedCreateNestedManyWithoutMessageInput = {
+    create?: XOR<MessageAttachmentCreateWithoutMessageInput, MessageAttachmentUncheckedCreateWithoutMessageInput> | MessageAttachmentCreateWithoutMessageInput[] | MessageAttachmentUncheckedCreateWithoutMessageInput[]
+    connectOrCreate?: MessageAttachmentCreateOrConnectWithoutMessageInput | MessageAttachmentCreateOrConnectWithoutMessageInput[]
+    createMany?: MessageAttachmentCreateManyMessageInputEnvelope
+    connect?: MessageAttachmentWhereUniqueInput | MessageAttachmentWhereUniqueInput[]
   }
 
   export type TicketUpdateOneRequiredWithoutMessagesNestedInput = {
@@ -5511,6 +11486,80 @@ export namespace Prisma {
     upsert?: TicketUpsertWithoutMessagesInput
     connect?: TicketWhereUniqueInput
     update?: XOR<XOR<TicketUpdateToOneWithWhereWithoutMessagesInput, TicketUpdateWithoutMessagesInput>, TicketUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type MessageAttachmentUpdateManyWithoutMessageNestedInput = {
+    create?: XOR<MessageAttachmentCreateWithoutMessageInput, MessageAttachmentUncheckedCreateWithoutMessageInput> | MessageAttachmentCreateWithoutMessageInput[] | MessageAttachmentUncheckedCreateWithoutMessageInput[]
+    connectOrCreate?: MessageAttachmentCreateOrConnectWithoutMessageInput | MessageAttachmentCreateOrConnectWithoutMessageInput[]
+    upsert?: MessageAttachmentUpsertWithWhereUniqueWithoutMessageInput | MessageAttachmentUpsertWithWhereUniqueWithoutMessageInput[]
+    createMany?: MessageAttachmentCreateManyMessageInputEnvelope
+    set?: MessageAttachmentWhereUniqueInput | MessageAttachmentWhereUniqueInput[]
+    disconnect?: MessageAttachmentWhereUniqueInput | MessageAttachmentWhereUniqueInput[]
+    delete?: MessageAttachmentWhereUniqueInput | MessageAttachmentWhereUniqueInput[]
+    connect?: MessageAttachmentWhereUniqueInput | MessageAttachmentWhereUniqueInput[]
+    update?: MessageAttachmentUpdateWithWhereUniqueWithoutMessageInput | MessageAttachmentUpdateWithWhereUniqueWithoutMessageInput[]
+    updateMany?: MessageAttachmentUpdateManyWithWhereWithoutMessageInput | MessageAttachmentUpdateManyWithWhereWithoutMessageInput[]
+    deleteMany?: MessageAttachmentScalarWhereInput | MessageAttachmentScalarWhereInput[]
+  }
+
+  export type MessageAttachmentUncheckedUpdateManyWithoutMessageNestedInput = {
+    create?: XOR<MessageAttachmentCreateWithoutMessageInput, MessageAttachmentUncheckedCreateWithoutMessageInput> | MessageAttachmentCreateWithoutMessageInput[] | MessageAttachmentUncheckedCreateWithoutMessageInput[]
+    connectOrCreate?: MessageAttachmentCreateOrConnectWithoutMessageInput | MessageAttachmentCreateOrConnectWithoutMessageInput[]
+    upsert?: MessageAttachmentUpsertWithWhereUniqueWithoutMessageInput | MessageAttachmentUpsertWithWhereUniqueWithoutMessageInput[]
+    createMany?: MessageAttachmentCreateManyMessageInputEnvelope
+    set?: MessageAttachmentWhereUniqueInput | MessageAttachmentWhereUniqueInput[]
+    disconnect?: MessageAttachmentWhereUniqueInput | MessageAttachmentWhereUniqueInput[]
+    delete?: MessageAttachmentWhereUniqueInput | MessageAttachmentWhereUniqueInput[]
+    connect?: MessageAttachmentWhereUniqueInput | MessageAttachmentWhereUniqueInput[]
+    update?: MessageAttachmentUpdateWithWhereUniqueWithoutMessageInput | MessageAttachmentUpdateWithWhereUniqueWithoutMessageInput[]
+    updateMany?: MessageAttachmentUpdateManyWithWhereWithoutMessageInput | MessageAttachmentUpdateManyWithWhereWithoutMessageInput[]
+    deleteMany?: MessageAttachmentScalarWhereInput | MessageAttachmentScalarWhereInput[]
+  }
+
+  export type TicketMessageCreateNestedOneWithoutAttachmentsInput = {
+    create?: XOR<TicketMessageCreateWithoutAttachmentsInput, TicketMessageUncheckedCreateWithoutAttachmentsInput>
+    connectOrCreate?: TicketMessageCreateOrConnectWithoutAttachmentsInput
+    connect?: TicketMessageWhereUniqueInput
+  }
+
+  export type TicketMessageUpdateOneRequiredWithoutAttachmentsNestedInput = {
+    create?: XOR<TicketMessageCreateWithoutAttachmentsInput, TicketMessageUncheckedCreateWithoutAttachmentsInput>
+    connectOrCreate?: TicketMessageCreateOrConnectWithoutAttachmentsInput
+    upsert?: TicketMessageUpsertWithoutAttachmentsInput
+    connect?: TicketMessageWhereUniqueInput
+    update?: XOR<XOR<TicketMessageUpdateToOneWithWhereWithoutAttachmentsInput, TicketMessageUpdateWithoutAttachmentsInput>, TicketMessageUncheckedUpdateWithoutAttachmentsInput>
+  }
+
+  export type TicketCreateNestedOneWithoutStatusHistoryInput = {
+    create?: XOR<TicketCreateWithoutStatusHistoryInput, TicketUncheckedCreateWithoutStatusHistoryInput>
+    connectOrCreate?: TicketCreateOrConnectWithoutStatusHistoryInput
+    connect?: TicketWhereUniqueInput
+  }
+
+  export type NullableEnumTicketStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TicketStatus | null
+  }
+
+  export type TicketUpdateOneRequiredWithoutStatusHistoryNestedInput = {
+    create?: XOR<TicketCreateWithoutStatusHistoryInput, TicketUncheckedCreateWithoutStatusHistoryInput>
+    connectOrCreate?: TicketCreateOrConnectWithoutStatusHistoryInput
+    upsert?: TicketUpsertWithoutStatusHistoryInput
+    connect?: TicketWhereUniqueInput
+    update?: XOR<XOR<TicketUpdateToOneWithWhereWithoutStatusHistoryInput, TicketUpdateWithoutStatusHistoryInput>, TicketUncheckedUpdateWithoutStatusHistoryInput>
+  }
+
+  export type TicketCreateNestedOneWithoutAssignmentHistoryInput = {
+    create?: XOR<TicketCreateWithoutAssignmentHistoryInput, TicketUncheckedCreateWithoutAssignmentHistoryInput>
+    connectOrCreate?: TicketCreateOrConnectWithoutAssignmentHistoryInput
+    connect?: TicketWhereUniqueInput
+  }
+
+  export type TicketUpdateOneRequiredWithoutAssignmentHistoryNestedInput = {
+    create?: XOR<TicketCreateWithoutAssignmentHistoryInput, TicketUncheckedCreateWithoutAssignmentHistoryInput>
+    connectOrCreate?: TicketCreateOrConnectWithoutAssignmentHistoryInput
+    upsert?: TicketUpsertWithoutAssignmentHistoryInput
+    connect?: TicketWhereUniqueInput
+    update?: XOR<XOR<TicketUpdateToOneWithWhereWithoutAssignmentHistoryInput, TicketUpdateWithoutAssignmentHistoryInput>, TicketUncheckedUpdateWithoutAssignmentHistoryInput>
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -5537,6 +11586,20 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringFilter<$PrismaModel> | string
+  }
+
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type NestedEnumTicketPriorityFilter<$PrismaModel = never> = {
@@ -5582,18 +11645,15 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -5622,6 +11682,23 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumTicketPriorityWithAggregatesFilter<$PrismaModel = never> = {
@@ -5682,7 +11759,7 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
     notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -5690,24 +11767,40 @@ export namespace Prisma {
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumTicketStatusNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.TicketStatus | EnumTicketStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.TicketStatus[] | ListEnumTicketStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.TicketStatus[] | ListEnumTicketStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumTicketStatusNullableFilter<$PrismaModel> | $Enums.TicketStatus | null
+  }
+
+  export type NestedEnumTicketStatusNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TicketStatus | EnumTicketStatusFieldRefInput<$PrismaModel> | null
+    in?: $Enums.TicketStatus[] | ListEnumTicketStatusFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.TicketStatus[] | ListEnumTicketStatusFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumTicketStatusNullableWithAggregatesFilter<$PrismaModel> | $Enums.TicketStatus | null
     _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
+    _min?: NestedEnumTicketStatusNullableFilter<$PrismaModel>
+    _max?: NestedEnumTicketStatusNullableFilter<$PrismaModel>
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -5755,6 +11848,7 @@ export namespace Prisma {
     sender: string
     message: string
     createdAt?: Date | string
+    attachments?: MessageAttachmentCreateNestedManyWithoutMessageInput
   }
 
   export type TicketMessageUncheckedCreateWithoutTicketInput = {
@@ -5762,6 +11856,7 @@ export namespace Prisma {
     sender: string
     message: string
     createdAt?: Date | string
+    attachments?: MessageAttachmentUncheckedCreateNestedManyWithoutMessageInput
   }
 
   export type TicketMessageCreateOrConnectWithoutTicketInput = {
@@ -5771,6 +11866,62 @@ export namespace Prisma {
 
   export type TicketMessageCreateManyTicketInputEnvelope = {
     data: TicketMessageCreateManyTicketInput | TicketMessageCreateManyTicketInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TicketStatusHistoryCreateWithoutTicketInput = {
+    id?: string
+    fromStatus?: $Enums.TicketStatus | null
+    toStatus: $Enums.TicketStatus
+    changedBy?: string | null
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TicketStatusHistoryUncheckedCreateWithoutTicketInput = {
+    id?: string
+    fromStatus?: $Enums.TicketStatus | null
+    toStatus: $Enums.TicketStatus
+    changedBy?: string | null
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TicketStatusHistoryCreateOrConnectWithoutTicketInput = {
+    where: TicketStatusHistoryWhereUniqueInput
+    create: XOR<TicketStatusHistoryCreateWithoutTicketInput, TicketStatusHistoryUncheckedCreateWithoutTicketInput>
+  }
+
+  export type TicketStatusHistoryCreateManyTicketInputEnvelope = {
+    data: TicketStatusHistoryCreateManyTicketInput | TicketStatusHistoryCreateManyTicketInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TicketAssignmentHistoryCreateWithoutTicketInput = {
+    id?: string
+    fromAdminId?: string | null
+    toAdminId?: string | null
+    changedBy?: string | null
+    trigger?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TicketAssignmentHistoryUncheckedCreateWithoutTicketInput = {
+    id?: string
+    fromAdminId?: string | null
+    toAdminId?: string | null
+    changedBy?: string | null
+    trigger?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TicketAssignmentHistoryCreateOrConnectWithoutTicketInput = {
+    where: TicketAssignmentHistoryWhereUniqueInput
+    create: XOR<TicketAssignmentHistoryCreateWithoutTicketInput, TicketAssignmentHistoryUncheckedCreateWithoutTicketInput>
+  }
+
+  export type TicketAssignmentHistoryCreateManyTicketInputEnvelope = {
+    data: TicketAssignmentHistoryCreateManyTicketInput | TicketAssignmentHistoryCreateManyTicketInput[]
     skipDuplicates?: boolean
   }
 
@@ -5801,11 +11952,72 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"TicketMessage"> | Date | string
   }
 
+  export type TicketStatusHistoryUpsertWithWhereUniqueWithoutTicketInput = {
+    where: TicketStatusHistoryWhereUniqueInput
+    update: XOR<TicketStatusHistoryUpdateWithoutTicketInput, TicketStatusHistoryUncheckedUpdateWithoutTicketInput>
+    create: XOR<TicketStatusHistoryCreateWithoutTicketInput, TicketStatusHistoryUncheckedCreateWithoutTicketInput>
+  }
+
+  export type TicketStatusHistoryUpdateWithWhereUniqueWithoutTicketInput = {
+    where: TicketStatusHistoryWhereUniqueInput
+    data: XOR<TicketStatusHistoryUpdateWithoutTicketInput, TicketStatusHistoryUncheckedUpdateWithoutTicketInput>
+  }
+
+  export type TicketStatusHistoryUpdateManyWithWhereWithoutTicketInput = {
+    where: TicketStatusHistoryScalarWhereInput
+    data: XOR<TicketStatusHistoryUpdateManyMutationInput, TicketStatusHistoryUncheckedUpdateManyWithoutTicketInput>
+  }
+
+  export type TicketStatusHistoryScalarWhereInput = {
+    AND?: TicketStatusHistoryScalarWhereInput | TicketStatusHistoryScalarWhereInput[]
+    OR?: TicketStatusHistoryScalarWhereInput[]
+    NOT?: TicketStatusHistoryScalarWhereInput | TicketStatusHistoryScalarWhereInput[]
+    id?: StringFilter<"TicketStatusHistory"> | string
+    ticketId?: StringFilter<"TicketStatusHistory"> | string
+    fromStatus?: EnumTicketStatusNullableFilter<"TicketStatusHistory"> | $Enums.TicketStatus | null
+    toStatus?: EnumTicketStatusFilter<"TicketStatusHistory"> | $Enums.TicketStatus
+    changedBy?: StringNullableFilter<"TicketStatusHistory"> | string | null
+    note?: StringNullableFilter<"TicketStatusHistory"> | string | null
+    createdAt?: DateTimeFilter<"TicketStatusHistory"> | Date | string
+  }
+
+  export type TicketAssignmentHistoryUpsertWithWhereUniqueWithoutTicketInput = {
+    where: TicketAssignmentHistoryWhereUniqueInput
+    update: XOR<TicketAssignmentHistoryUpdateWithoutTicketInput, TicketAssignmentHistoryUncheckedUpdateWithoutTicketInput>
+    create: XOR<TicketAssignmentHistoryCreateWithoutTicketInput, TicketAssignmentHistoryUncheckedCreateWithoutTicketInput>
+  }
+
+  export type TicketAssignmentHistoryUpdateWithWhereUniqueWithoutTicketInput = {
+    where: TicketAssignmentHistoryWhereUniqueInput
+    data: XOR<TicketAssignmentHistoryUpdateWithoutTicketInput, TicketAssignmentHistoryUncheckedUpdateWithoutTicketInput>
+  }
+
+  export type TicketAssignmentHistoryUpdateManyWithWhereWithoutTicketInput = {
+    where: TicketAssignmentHistoryScalarWhereInput
+    data: XOR<TicketAssignmentHistoryUpdateManyMutationInput, TicketAssignmentHistoryUncheckedUpdateManyWithoutTicketInput>
+  }
+
+  export type TicketAssignmentHistoryScalarWhereInput = {
+    AND?: TicketAssignmentHistoryScalarWhereInput | TicketAssignmentHistoryScalarWhereInput[]
+    OR?: TicketAssignmentHistoryScalarWhereInput[]
+    NOT?: TicketAssignmentHistoryScalarWhereInput | TicketAssignmentHistoryScalarWhereInput[]
+    id?: StringFilter<"TicketAssignmentHistory"> | string
+    ticketId?: StringFilter<"TicketAssignmentHistory"> | string
+    fromAdminId?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    toAdminId?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    changedBy?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    trigger?: StringNullableFilter<"TicketAssignmentHistory"> | string | null
+    createdAt?: DateTimeFilter<"TicketAssignmentHistory"> | Date | string
+  }
+
   export type TicketCreateWithoutMessagesInput = {
     id?: string
     code: string
     title: string
     description: string
+    reporterKey?: string | null
+    reporterName?: string | null
+    reporterLocation?: string | null
     priority: $Enums.TicketPriority
     category?: $Enums.TicketCategory
     status?: $Enums.TicketStatus
@@ -5813,11 +12025,15 @@ export namespace Prisma {
     resolveDueAt: Date | string
     firstReplyAt?: Date | string | null
     closedAt?: Date | string | null
+    feedbackRating?: number | null
+    feedbackSubmittedAt?: Date | string | null
     assignedAdminId?: string | null
     assignedAt?: Date | string | null
     lastAdminReadAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    statusHistory?: TicketStatusHistoryCreateNestedManyWithoutTicketInput
+    assignmentHistory?: TicketAssignmentHistoryCreateNestedManyWithoutTicketInput
   }
 
   export type TicketUncheckedCreateWithoutMessagesInput = {
@@ -5825,6 +12041,9 @@ export namespace Prisma {
     code: string
     title: string
     description: string
+    reporterKey?: string | null
+    reporterName?: string | null
+    reporterLocation?: string | null
     priority: $Enums.TicketPriority
     category?: $Enums.TicketCategory
     status?: $Enums.TicketStatus
@@ -5832,16 +12051,50 @@ export namespace Prisma {
     resolveDueAt: Date | string
     firstReplyAt?: Date | string | null
     closedAt?: Date | string | null
+    feedbackRating?: number | null
+    feedbackSubmittedAt?: Date | string | null
     assignedAdminId?: string | null
     assignedAt?: Date | string | null
     lastAdminReadAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    statusHistory?: TicketStatusHistoryUncheckedCreateNestedManyWithoutTicketInput
+    assignmentHistory?: TicketAssignmentHistoryUncheckedCreateNestedManyWithoutTicketInput
   }
 
   export type TicketCreateOrConnectWithoutMessagesInput = {
     where: TicketWhereUniqueInput
     create: XOR<TicketCreateWithoutMessagesInput, TicketUncheckedCreateWithoutMessagesInput>
+  }
+
+  export type MessageAttachmentCreateWithoutMessageInput = {
+    id?: string
+    url: string
+    caption?: string | null
+    mimeType?: string | null
+    fileName?: string | null
+    size?: number | null
+    createdAt?: Date | string
+  }
+
+  export type MessageAttachmentUncheckedCreateWithoutMessageInput = {
+    id?: string
+    url: string
+    caption?: string | null
+    mimeType?: string | null
+    fileName?: string | null
+    size?: number | null
+    createdAt?: Date | string
+  }
+
+  export type MessageAttachmentCreateOrConnectWithoutMessageInput = {
+    where: MessageAttachmentWhereUniqueInput
+    create: XOR<MessageAttachmentCreateWithoutMessageInput, MessageAttachmentUncheckedCreateWithoutMessageInput>
+  }
+
+  export type MessageAttachmentCreateManyMessageInputEnvelope = {
+    data: MessageAttachmentCreateManyMessageInput | MessageAttachmentCreateManyMessageInput[]
+    skipDuplicates?: boolean
   }
 
   export type TicketUpsertWithoutMessagesInput = {
@@ -5860,6 +12113,9 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
@@ -5867,11 +12123,15 @@ export namespace Prisma {
     resolveDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstReplyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feedbackRating?: NullableIntFieldUpdateOperationsInput | number | null
+    feedbackSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedAdminId?: NullableStringFieldUpdateOperationsInput | string | null
     assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastAdminReadAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    statusHistory?: TicketStatusHistoryUpdateManyWithoutTicketNestedInput
+    assignmentHistory?: TicketAssignmentHistoryUpdateManyWithoutTicketNestedInput
   }
 
   export type TicketUncheckedUpdateWithoutMessagesInput = {
@@ -5879,6 +12139,9 @@ export namespace Prisma {
     code?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
     category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
     status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
@@ -5886,11 +12149,333 @@ export namespace Prisma {
     resolveDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
     firstReplyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feedbackRating?: NullableIntFieldUpdateOperationsInput | number | null
+    feedbackSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     assignedAdminId?: NullableStringFieldUpdateOperationsInput | string | null
     assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lastAdminReadAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    statusHistory?: TicketStatusHistoryUncheckedUpdateManyWithoutTicketNestedInput
+    assignmentHistory?: TicketAssignmentHistoryUncheckedUpdateManyWithoutTicketNestedInput
+  }
+
+  export type MessageAttachmentUpsertWithWhereUniqueWithoutMessageInput = {
+    where: MessageAttachmentWhereUniqueInput
+    update: XOR<MessageAttachmentUpdateWithoutMessageInput, MessageAttachmentUncheckedUpdateWithoutMessageInput>
+    create: XOR<MessageAttachmentCreateWithoutMessageInput, MessageAttachmentUncheckedCreateWithoutMessageInput>
+  }
+
+  export type MessageAttachmentUpdateWithWhereUniqueWithoutMessageInput = {
+    where: MessageAttachmentWhereUniqueInput
+    data: XOR<MessageAttachmentUpdateWithoutMessageInput, MessageAttachmentUncheckedUpdateWithoutMessageInput>
+  }
+
+  export type MessageAttachmentUpdateManyWithWhereWithoutMessageInput = {
+    where: MessageAttachmentScalarWhereInput
+    data: XOR<MessageAttachmentUpdateManyMutationInput, MessageAttachmentUncheckedUpdateManyWithoutMessageInput>
+  }
+
+  export type MessageAttachmentScalarWhereInput = {
+    AND?: MessageAttachmentScalarWhereInput | MessageAttachmentScalarWhereInput[]
+    OR?: MessageAttachmentScalarWhereInput[]
+    NOT?: MessageAttachmentScalarWhereInput | MessageAttachmentScalarWhereInput[]
+    id?: StringFilter<"MessageAttachment"> | string
+    messageId?: StringFilter<"MessageAttachment"> | string
+    url?: StringFilter<"MessageAttachment"> | string
+    caption?: StringNullableFilter<"MessageAttachment"> | string | null
+    mimeType?: StringNullableFilter<"MessageAttachment"> | string | null
+    fileName?: StringNullableFilter<"MessageAttachment"> | string | null
+    size?: IntNullableFilter<"MessageAttachment"> | number | null
+    createdAt?: DateTimeFilter<"MessageAttachment"> | Date | string
+  }
+
+  export type TicketMessageCreateWithoutAttachmentsInput = {
+    id?: string
+    sender: string
+    message: string
+    createdAt?: Date | string
+    ticket: TicketCreateNestedOneWithoutMessagesInput
+  }
+
+  export type TicketMessageUncheckedCreateWithoutAttachmentsInput = {
+    id?: string
+    ticketId: string
+    sender: string
+    message: string
+    createdAt?: Date | string
+  }
+
+  export type TicketMessageCreateOrConnectWithoutAttachmentsInput = {
+    where: TicketMessageWhereUniqueInput
+    create: XOR<TicketMessageCreateWithoutAttachmentsInput, TicketMessageUncheckedCreateWithoutAttachmentsInput>
+  }
+
+  export type TicketMessageUpsertWithoutAttachmentsInput = {
+    update: XOR<TicketMessageUpdateWithoutAttachmentsInput, TicketMessageUncheckedUpdateWithoutAttachmentsInput>
+    create: XOR<TicketMessageCreateWithoutAttachmentsInput, TicketMessageUncheckedCreateWithoutAttachmentsInput>
+    where?: TicketMessageWhereInput
+  }
+
+  export type TicketMessageUpdateToOneWithWhereWithoutAttachmentsInput = {
+    where?: TicketMessageWhereInput
+    data: XOR<TicketMessageUpdateWithoutAttachmentsInput, TicketMessageUncheckedUpdateWithoutAttachmentsInput>
+  }
+
+  export type TicketMessageUpdateWithoutAttachmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sender?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ticket?: TicketUpdateOneRequiredWithoutMessagesNestedInput
+  }
+
+  export type TicketMessageUncheckedUpdateWithoutAttachmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    ticketId?: StringFieldUpdateOperationsInput | string
+    sender?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketCreateWithoutStatusHistoryInput = {
+    id?: string
+    code: string
+    title: string
+    description: string
+    reporterKey?: string | null
+    reporterName?: string | null
+    reporterLocation?: string | null
+    priority: $Enums.TicketPriority
+    category?: $Enums.TicketCategory
+    status?: $Enums.TicketStatus
+    responseDueAt: Date | string
+    resolveDueAt: Date | string
+    firstReplyAt?: Date | string | null
+    closedAt?: Date | string | null
+    feedbackRating?: number | null
+    feedbackSubmittedAt?: Date | string | null
+    assignedAdminId?: string | null
+    assignedAt?: Date | string | null
+    lastAdminReadAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    messages?: TicketMessageCreateNestedManyWithoutTicketInput
+    assignmentHistory?: TicketAssignmentHistoryCreateNestedManyWithoutTicketInput
+  }
+
+  export type TicketUncheckedCreateWithoutStatusHistoryInput = {
+    id?: string
+    code: string
+    title: string
+    description: string
+    reporterKey?: string | null
+    reporterName?: string | null
+    reporterLocation?: string | null
+    priority: $Enums.TicketPriority
+    category?: $Enums.TicketCategory
+    status?: $Enums.TicketStatus
+    responseDueAt: Date | string
+    resolveDueAt: Date | string
+    firstReplyAt?: Date | string | null
+    closedAt?: Date | string | null
+    feedbackRating?: number | null
+    feedbackSubmittedAt?: Date | string | null
+    assignedAdminId?: string | null
+    assignedAt?: Date | string | null
+    lastAdminReadAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    messages?: TicketMessageUncheckedCreateNestedManyWithoutTicketInput
+    assignmentHistory?: TicketAssignmentHistoryUncheckedCreateNestedManyWithoutTicketInput
+  }
+
+  export type TicketCreateOrConnectWithoutStatusHistoryInput = {
+    where: TicketWhereUniqueInput
+    create: XOR<TicketCreateWithoutStatusHistoryInput, TicketUncheckedCreateWithoutStatusHistoryInput>
+  }
+
+  export type TicketUpsertWithoutStatusHistoryInput = {
+    update: XOR<TicketUpdateWithoutStatusHistoryInput, TicketUncheckedUpdateWithoutStatusHistoryInput>
+    create: XOR<TicketCreateWithoutStatusHistoryInput, TicketUncheckedCreateWithoutStatusHistoryInput>
+    where?: TicketWhereInput
+  }
+
+  export type TicketUpdateToOneWithWhereWithoutStatusHistoryInput = {
+    where?: TicketWhereInput
+    data: XOR<TicketUpdateWithoutStatusHistoryInput, TicketUncheckedUpdateWithoutStatusHistoryInput>
+  }
+
+  export type TicketUpdateWithoutStatusHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
+    status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    responseDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolveDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    firstReplyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feedbackRating?: NullableIntFieldUpdateOperationsInput | number | null
+    feedbackSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastAdminReadAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: TicketMessageUpdateManyWithoutTicketNestedInput
+    assignmentHistory?: TicketAssignmentHistoryUpdateManyWithoutTicketNestedInput
+  }
+
+  export type TicketUncheckedUpdateWithoutStatusHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
+    status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    responseDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolveDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    firstReplyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feedbackRating?: NullableIntFieldUpdateOperationsInput | number | null
+    feedbackSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastAdminReadAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: TicketMessageUncheckedUpdateManyWithoutTicketNestedInput
+    assignmentHistory?: TicketAssignmentHistoryUncheckedUpdateManyWithoutTicketNestedInput
+  }
+
+  export type TicketCreateWithoutAssignmentHistoryInput = {
+    id?: string
+    code: string
+    title: string
+    description: string
+    reporterKey?: string | null
+    reporterName?: string | null
+    reporterLocation?: string | null
+    priority: $Enums.TicketPriority
+    category?: $Enums.TicketCategory
+    status?: $Enums.TicketStatus
+    responseDueAt: Date | string
+    resolveDueAt: Date | string
+    firstReplyAt?: Date | string | null
+    closedAt?: Date | string | null
+    feedbackRating?: number | null
+    feedbackSubmittedAt?: Date | string | null
+    assignedAdminId?: string | null
+    assignedAt?: Date | string | null
+    lastAdminReadAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    messages?: TicketMessageCreateNestedManyWithoutTicketInput
+    statusHistory?: TicketStatusHistoryCreateNestedManyWithoutTicketInput
+  }
+
+  export type TicketUncheckedCreateWithoutAssignmentHistoryInput = {
+    id?: string
+    code: string
+    title: string
+    description: string
+    reporterKey?: string | null
+    reporterName?: string | null
+    reporterLocation?: string | null
+    priority: $Enums.TicketPriority
+    category?: $Enums.TicketCategory
+    status?: $Enums.TicketStatus
+    responseDueAt: Date | string
+    resolveDueAt: Date | string
+    firstReplyAt?: Date | string | null
+    closedAt?: Date | string | null
+    feedbackRating?: number | null
+    feedbackSubmittedAt?: Date | string | null
+    assignedAdminId?: string | null
+    assignedAt?: Date | string | null
+    lastAdminReadAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    messages?: TicketMessageUncheckedCreateNestedManyWithoutTicketInput
+    statusHistory?: TicketStatusHistoryUncheckedCreateNestedManyWithoutTicketInput
+  }
+
+  export type TicketCreateOrConnectWithoutAssignmentHistoryInput = {
+    where: TicketWhereUniqueInput
+    create: XOR<TicketCreateWithoutAssignmentHistoryInput, TicketUncheckedCreateWithoutAssignmentHistoryInput>
+  }
+
+  export type TicketUpsertWithoutAssignmentHistoryInput = {
+    update: XOR<TicketUpdateWithoutAssignmentHistoryInput, TicketUncheckedUpdateWithoutAssignmentHistoryInput>
+    create: XOR<TicketCreateWithoutAssignmentHistoryInput, TicketUncheckedCreateWithoutAssignmentHistoryInput>
+    where?: TicketWhereInput
+  }
+
+  export type TicketUpdateToOneWithWhereWithoutAssignmentHistoryInput = {
+    where?: TicketWhereInput
+    data: XOR<TicketUpdateWithoutAssignmentHistoryInput, TicketUncheckedUpdateWithoutAssignmentHistoryInput>
+  }
+
+  export type TicketUpdateWithoutAssignmentHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
+    status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    responseDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolveDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    firstReplyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feedbackRating?: NullableIntFieldUpdateOperationsInput | number | null
+    feedbackSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastAdminReadAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: TicketMessageUpdateManyWithoutTicketNestedInput
+    statusHistory?: TicketStatusHistoryUpdateManyWithoutTicketNestedInput
+  }
+
+  export type TicketUncheckedUpdateWithoutAssignmentHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    reporterKey?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterName?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    priority?: EnumTicketPriorityFieldUpdateOperationsInput | $Enums.TicketPriority
+    category?: EnumTicketCategoryFieldUpdateOperationsInput | $Enums.TicketCategory
+    status?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    responseDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    resolveDueAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    firstReplyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feedbackRating?: NullableIntFieldUpdateOperationsInput | number | null
+    feedbackSubmittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lastAdminReadAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: TicketMessageUncheckedUpdateManyWithoutTicketNestedInput
+    statusHistory?: TicketStatusHistoryUncheckedUpdateManyWithoutTicketNestedInput
   }
 
   export type TicketMessageCreateManyTicketInput = {
@@ -5900,11 +12485,30 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type TicketStatusHistoryCreateManyTicketInput = {
+    id?: string
+    fromStatus?: $Enums.TicketStatus | null
+    toStatus: $Enums.TicketStatus
+    changedBy?: string | null
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type TicketAssignmentHistoryCreateManyTicketInput = {
+    id?: string
+    fromAdminId?: string | null
+    toAdminId?: string | null
+    changedBy?: string | null
+    trigger?: string | null
+    createdAt?: Date | string
+  }
+
   export type TicketMessageUpdateWithoutTicketInput = {
     id?: StringFieldUpdateOperationsInput | string
     sender?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachments?: MessageAttachmentUpdateManyWithoutMessageNestedInput
   }
 
   export type TicketMessageUncheckedUpdateWithoutTicketInput = {
@@ -5912,12 +12516,107 @@ export namespace Prisma {
     sender?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachments?: MessageAttachmentUncheckedUpdateManyWithoutMessageNestedInput
   }
 
   export type TicketMessageUncheckedUpdateManyWithoutTicketInput = {
     id?: StringFieldUpdateOperationsInput | string
     sender?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketStatusHistoryUpdateWithoutTicketInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromStatus?: NullableEnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus | null
+    toStatus?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketStatusHistoryUncheckedUpdateWithoutTicketInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromStatus?: NullableEnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus | null
+    toStatus?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketStatusHistoryUncheckedUpdateManyWithoutTicketInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromStatus?: NullableEnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus | null
+    toStatus?: EnumTicketStatusFieldUpdateOperationsInput | $Enums.TicketStatus
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketAssignmentHistoryUpdateWithoutTicketInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    toAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    trigger?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketAssignmentHistoryUncheckedUpdateWithoutTicketInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    toAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    trigger?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TicketAssignmentHistoryUncheckedUpdateManyWithoutTicketInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    fromAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    toAdminId?: NullableStringFieldUpdateOperationsInput | string | null
+    changedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    trigger?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MessageAttachmentCreateManyMessageInput = {
+    id?: string
+    url: string
+    caption?: string | null
+    mimeType?: string | null
+    fileName?: string | null
+    size?: number | null
+    createdAt?: Date | string
+  }
+
+  export type MessageAttachmentUpdateWithoutMessageInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MessageAttachmentUncheckedUpdateWithoutMessageInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MessageAttachmentUncheckedUpdateManyWithoutMessageInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: NullableStringFieldUpdateOperationsInput | string | null
+    size?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

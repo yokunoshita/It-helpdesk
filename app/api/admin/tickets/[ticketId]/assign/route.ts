@@ -21,13 +21,13 @@ export async function POST(
   const assignee =
     typeof body === "object" && body !== null && "assignee" in body
       ? (body as { assignee?: unknown }).assignee
-      : session.username;
+      : session.name;
 
   const ticket = await prisma.ticket.findFirst({
     where: {
       OR: [{ id: ticketId }, { code: ticketId }],
     },
-    select: { id: true },
+    select: { id: true, assignedAdminId: true },
   });
 
   if (!ticket) {
@@ -41,15 +41,32 @@ export async function POST(
   const targetAssignee =
     !unassign && typeof assignee === "string" && assignee.trim()
       ? assignee.trim()
-      : session.username;
+      : session.name;
 
-  const updated = await prisma.ticket.update({
-    where: { id: ticket.id },
-    data: {
-      assignedAdminId: unassign ? null : targetAssignee,
-      assignedAt: unassign ? null : new Date(),
-    },
-  });
+  const nextAssigned = unassign ? null : targetAssignee;
+  const assignmentChanged = ticket.assignedAdminId !== nextAssigned;
+  const [updated] = await prisma.$transaction([
+    prisma.ticket.update({
+      where: { id: ticket.id },
+      data: {
+        assignedAdminId: nextAssigned,
+        assignedAt: unassign ? null : new Date(),
+      },
+    }),
+    ...(assignmentChanged
+      ? [
+          prisma.ticketAssignmentHistory.create({
+            data: {
+              ticketId: ticket.id,
+              fromAdminId: ticket.assignedAdminId,
+              toAdminId: nextAssigned,
+              changedBy: session.name,
+              trigger: unassign ? "manual_unassign" : "manual_assign",
+            },
+          }),
+        ]
+      : []),
+  ]);
 
   return NextResponse.json(updated);
 }

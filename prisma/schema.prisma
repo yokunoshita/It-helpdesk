@@ -39,6 +39,9 @@ model Ticket {
   code        String         @unique
   title       String
   description String
+  reporterKey String?
+  reporterName String?
+  reporterLocation String?
   priority    TicketPriority
   category    TicketCategory @default(HARDWARE)
   status      TicketStatus   @default(OPEN)
@@ -47,6 +50,8 @@ model Ticket {
   resolveDueAt  DateTime
   firstReplyAt  DateTime?
   closedAt      DateTime?
+  feedbackRating Int?
+  feedbackSubmittedAt DateTime?
   assignedAdminId String?
   assignedAt      DateTime?
   lastAdminReadAt DateTime?
@@ -55,6 +60,8 @@ model Ticket {
   updatedAt DateTime @updatedAt
 
   messages TicketMessage[]
+  statusHistory     TicketStatusHistory[]
+  assignmentHistory TicketAssignmentHistory[]
 }
 
 model TicketMessage {
@@ -66,6 +73,44 @@ model TicketMessage {
   createdAt DateTime @default(now())
 
   ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  attachments MessageAttachment[]
+}
+
+model MessageAttachment {
+  id         String  @id @default(uuid())
+  messageId  String
+  url        String
+  caption    String?
+  mimeType   String?
+  fileName   String?
+  size       Int?
+  createdAt  DateTime @default(now())
+
+  message TicketMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+
+model TicketStatusHistory {
+  id         String @id @default(uuid())
+  ticketId   String
+  fromStatus TicketStatus?
+  toStatus   TicketStatus
+  changedBy  String?
+  note       String?
+  createdAt  DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model TicketAssignmentHistory {
+  id          String @id @default(uuid())
+  ticketId    String
+  fromAdminId String?
+  toAdminId   String?
+  changedBy   String?
+  trigger     String?
+  createdAt   DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }
 
 model SlaPolicy {
@@ -74,4 +119,15 @@ model SlaPolicy {
   responseMinutes Int
   resolveMinutes  Int
   active          Boolean        @default(true)
+}
+
+model AdminUser {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  name      String
+  active    Boolean  @default(true)
+  isOnline  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
